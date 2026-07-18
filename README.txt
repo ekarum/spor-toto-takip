@@ -1,11 +1,9 @@
-SPOR TOTO SAFARI UYGULAMASI
+SPOR TOTO SAFARI UYGULAMASI - V2
 
-Bu klasör statik bir web uygulamasıdır. iPhone Safari'de "Ana Ekrana Ekle" olarak kullanılabilmesi için HTTPS üzerinden yayınlanmalıdır. GitHub Pages, Netlify veya Cloudflare Pages ile ücretsiz yayınlanabilir.
+Bu sürüm yeni Excel yüklendiğinde otomatik olarak:
+- Takip Paneli sayfasındaki Maç Adı satırından 15 takım adını,
+- Sonuç satırından girilmiş maç sonuçlarını,
+- Kolonlar sayfasından tüm kolonları okur.
 
-Dosyalar:
-- index.html: ana ekran
-- app.js: hesaplama ve Excel yükleme
-- initial-data.js: mevcut 553 kolon
-- manifest.webmanifest / sw.js: ana ekrana ekleme ve çevrimdışı destek
-
+GitHub'daki mevcut dosyaların yerine bu klasördeki dosyaların tamamını yükleyin.
 Kolon bedeli: 10 TL.
