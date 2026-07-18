@@ -9,3 +9,6 @@ KARUM TOTO V4.1
 - Mobil alt gezinme çubuğu
 - Excel okuma ve hesaplama sistemi korunmuştur
 - Kolon bedeli: 10 TL
+
+V5.1: Takip Paneli sayfasındaki Tarih ve Saat satırları okunur ve maç kartlarında gösterilir.
+Örnek satırlar: Tarih | 19.07.2026 | ... ve Saat | 20:00 | ...

@@ -1,5 +1,5 @@
-const APP_VERSION='5.0.0';
-const state={matchNames:[],results:Array(15).fill(''),columns:[],weekName:'Güncel Hafta',fileName:''};
+const APP_VERSION='5.1.0';
+const state={matchNames:[],matchDates:Array(15).fill(''),matchTimes:Array(15).fill(''),results:Array(15).fill(''),columns:[],weekName:'Güncel Hafta',fileName:''};
 const $=id=>document.getElementById(id);
 const trUpper=v=>String(v??'').trim().toLocaleUpperCase('tr-TR');
 function normalize(v){const s=trUpper(v);return s==='1'||s==='2'||s==='X'?s:''}
@@ -12,7 +12,7 @@ function updateHeader(){
   $('uploadInfo').textContent=state.fileName?`${state.columns.length.toLocaleString('tr-TR')} kolon • ${(state.columns.length*10).toLocaleString('tr-TR')} TL`:'Excel\'deki takım adları, sonuçlar ve kolonlar otomatik okunur.';
   const badge=$('versionBadge'); if(badge) badge.textContent='v'+APP_VERSION;
 }
-function renderMatches(){const box=$('matches');box.innerHTML='';state.matchNames.forEach((name,i)=>{const d=document.createElement('div');d.className='match';d.innerHTML=`<div class="match-head"><span class="match-no">${i+1}</span><span class="match-name">${name||'Maç '+(i+1)}</span></div><div class="choices">${['1','X','2'].map(v=>`<button class="choice ${state.results[i]===v?'active':''}" data-i="${i}" data-v="${v}">${v}</button>`).join('')}</div>`;box.appendChild(d)});box.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,v=b.dataset.v;state.results[i]=state.results[i]===v?'':v;save();renderMatches();calculate()})}
+function renderMatches(){const box=$('matches');box.innerHTML='';state.matchNames.forEach((name,i)=>{const d=document.createElement('div');d.className='match';const date=String(state.matchDates[i]||'').trim(),time=String(state.matchTimes[i]||'').trim();const meta=(date||time)?`<div class="match-meta">${date?`<span><b class="meta-icon">▣</b>${date}</span>`:''}${time?`<span><b class="meta-icon clock">◷</b>${time}</span>`:''}</div>`:'';d.innerHTML=`<div class="match-head"><span class="match-no">${i+1}</span><div class="match-info"><span class="match-name">${name||'Maç '+(i+1)}</span>${meta}</div></div><div class="choices">${['1','X','2'].map(v=>`<button class="choice ${state.results[i]===v?'active':''}" data-i="${i}" data-v="${v}">${v}</button>`).join('')}</div>`;box.appendChild(d)});box.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,v=b.dataset.v;state.results[i]=state.results[i]===v?'':v;save();renderMatches();calculate()})}
 let currentPerfect=[];
 function calculate(){let counts={15:0,14:0,13:0,12:0,11:0},perfect=[];const entered=state.results.filter(Boolean).length;for(let idx=0;idx<state.columns.length;idx++){const col=state.columns[idx];let wrong=0;for(let i=0;i<15;i++)if(state.results[i]&&col[i]!==state.results[i])wrong++;const score=15-wrong;if(score>=15){counts[15]++;perfect.push([idx+1,col])}else if(score===14)counts[14]++;else if(score===13)counts[13]++;else if(score===12)counts[12]++;else counts[11]++}
 currentPerfect=perfect;$('total').textContent=state.columns.length.toLocaleString('tr-TR');$('cost').textContent=(state.columns.length*10).toLocaleString('tr-TR')+' TL';$('s15').textContent=counts[15].toLocaleString('tr-TR');$('s14').textContent=counts[14].toLocaleString('tr-TR');$('s13').textContent=counts[13].toLocaleString('tr-TR');$('s12').textContent=counts[12].toLocaleString('tr-TR');$('s11').textContent=counts[11].toLocaleString('tr-TR');$('remaining').textContent=15-entered;if(document.body.classList.contains('sheet-open'))renderSurvivors()}
@@ -24,8 +24,12 @@ function rowLabelIndex(rows,labels){const wanted=labels.map(trUpper);for(let r=0
 function extractMatchData(rows){
   const nameHit=rowLabelIndex(rows,['Maç Adı','Mac Adi','Maçlar','Takımlar']);
   const resultHit=rowLabelIndex(rows,['Sonuç','Sonuc','Sonuçlar']);
-  let matchNames=null,results=Array(15).fill('');
+  const dateHit=rowLabelIndex(rows,['Tarih','Tarihler','Maç Tarihi','Mac Tarihi']);
+  const timeHit=rowLabelIndex(rows,['Saat','Saatler','Maç Saati','Mac Saati']);
+  let matchNames=null,matchDates=Array(15).fill(''),matchTimes=Array(15).fill(''),results=Array(15).fill('');
   if(nameHit){matchNames=(rows[nameHit.r]||[]).slice(nameHit.c+1,nameHit.c+16).map((v,i)=>cleanName(v,i));}
+  if(dateHit){matchDates=(rows[dateHit.r]||[]).slice(dateHit.c+1,dateHit.c+16).map(v=>String(v??'').trim());}
+  if(timeHit){matchTimes=(rows[timeHit.r]||[]).slice(timeHit.c+1,timeHit.c+16).map(v=>String(v??'').trim());}
   if(resultHit){results=(rows[resultHit.r]||[]).slice(resultHit.c+1,resultHit.c+16).map(normalize);}
   // Etiket bulunamazsa, ilk 25 satırda art arda en az 10 metin içeren satırı takım satırı olarak dene.
   if(!matchNames){
@@ -39,28 +43,28 @@ function extractMatchData(rows){
       if(matchNames)break;
     }
   }
-  return {matchNames:matchNames||Array.from({length:15},(_,i)=>`Maç ${i+1}`),results};
+  return {matchNames:matchNames||Array.from({length:15},(_,i)=>`Maç ${i+1}`),matchDates,matchTimes,results};
 }
 function parseWorkbook(wb,fileName){
   let panelName=wb.SheetNames.find(n=>trUpper(n)==='TAKİP PANELİ')||wb.SheetNames.find(n=>trUpper(n)==='TELEFON TAKİP')||wb.SheetNames[0];
   const panelSheet=wb.Sheets[panelName];
   const panelRows=XLSX.utils.sheet_to_json(panelSheet,{header:1,raw:false,defval:'',blankrows:false});
-  const {matchNames,results}=extractMatchData(panelRows);
+  const {matchNames,matchDates,matchTimes,results}=extractMatchData(panelRows);
   let colName=wb.SheetNames.find(n=>trUpper(n)==='KOLONLAR');
   if(!colName) colName=wb.SheetNames.find(n=>n!==panelName)||panelName;
   const colRows=XLSX.utils.sheet_to_json(wb.Sheets[colName],{header:1,raw:false,defval:'',blankrows:false});
   const columns=parseRows(colRows);
   if(!columns.length) throw new Error('Kolonlar sayfasında 15 sonuçtan oluşan kolon bulunamadı.');
   const weekName=fileName.replace(/\.(xlsx|xls|csv|txt)$/i,'').replace(/[_-]+/g,' ').trim();
-  return {matchNames,results,columns,weekName,fileName};
+  return {matchNames,matchDates,matchTimes,results,columns,weekName,fileName};
 }
-$('fileInput').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{let imported;if(/\.csv$|\.txt$/i.test(f.name)){const text=await f.text();const rows=text.split(/\r?\n/).map(line=>line.split(/[;,\t ]+/));const columns=parseRows(rows);if(!columns.length)throw new Error('15 sonuçtan oluşan kolon bulunamadı.');imported={matchNames:state.matchNames,results:Array(15).fill(''),columns,weekName:f.name.replace(/\.[^.]+$/,''),fileName:f.name}}else{if(!window.XLSX)throw new Error('Excel okuyucu yüklenemedi. İnternet bağlantısını kontrol et.');const data=await f.arrayBuffer();const wb=XLSX.read(data,{type:'array',cellFormula:false,cellHTML:false});imported=parseWorkbook(wb,f.name)}
+$('fileInput').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{let imported;if(/\.csv$|\.txt$/i.test(f.name)){const text=await f.text();const rows=text.split(/\r?\n/).map(line=>line.split(/[;,\t ]+/));const columns=parseRows(rows);if(!columns.length)throw new Error('15 sonuçtan oluşan kolon bulunamadı.');imported={matchNames:state.matchNames,matchDates:state.matchDates,matchTimes:state.matchTimes,results:Array(15).fill(''),columns,weekName:f.name.replace(/\.[^.]+$/,''),fileName:f.name}}else{if(!window.XLSX)throw new Error('Excel okuyucu yüklenemedi. İnternet bağlantısını kontrol et.');const data=await f.arrayBuffer();const wb=XLSX.read(data,{type:'array',cellFormula:false,cellHTML:false});imported=parseWorkbook(wb,f.name)}
 Object.assign(state,imported);save();updateHeader();renderMatches();calculate();alert(`${state.columns.length.toLocaleString('tr-TR')} kolon yüklendi.\n\n1. maç: ${state.matchNames[0]}\n2. maç: ${state.matchNames[1]}\n\nTakım adları Excel'den okundu.`)}catch(err){console.error(err);alert('Dosya yüklenemedi: '+err.message)}finally{e.target.value=''}});
 $('openSurvivors').onclick=openSurvivors;$('closeSheet').onclick=closeSurvivors;$('sheetBackdrop').onclick=closeSurvivors;$('columnSearch').oninput=renderSurvivors;$('clearSearch').onclick=()=>{$('columnSearch').value='';renderSurvivors();$('columnSearch').focus()};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('sheet-open'))closeSurvivors()});
 $('clearResults').onclick=()=>{state.results=Array(15).fill('');save();renderMatches();calculate()};
 $('resetBtn').onclick=()=>{if(confirm('Uygulamadaki kayıtları ilk hâline döndürmek istiyor musun?')){localStorage.removeItem('sporTotoState');location.reload()}};
 async function removeOldCaches(){try{if('serviceWorker' in navigator){const regs=await navigator.serviceWorker.getRegistrations();for(const r of regs)await r.unregister();}if('caches' in window){const keys=await caches.keys();await Promise.all(keys.map(k=>caches.delete(k)));}}catch(e){console.warn('Önbellek temizlenemedi',e)}}
 removeOldCaches();
-load();state.matchNames=(state.matchNames||[]).slice(0,15);while(state.matchNames.length<15)state.matchNames.push('Maç '+(state.matchNames.length+1));state.results=(state.results||[]).map(normalize).slice(0,15);while(state.results.length<15)state.results.push('');updateHeader();renderMatches();calculate();
+load();state.matchNames=(state.matchNames||[]).slice(0,15);while(state.matchNames.length<15)state.matchNames.push('Maç '+(state.matchNames.length+1));state.matchDates=(state.matchDates||[]).map(v=>String(v??'').trim()).slice(0,15);while(state.matchDates.length<15)state.matchDates.push('');state.matchTimes=(state.matchTimes||[]).map(v=>String(v??'').trim()).slice(0,15);while(state.matchTimes.length<15)state.matchTimes.push('');state.results=(state.results||[]).map(normalize).slice(0,15);while(state.results.length<15)state.results.push('');updateHeader();renderMatches();calculate();
 
 window.addEventListener('load',()=>{const splash=document.getElementById('splash');if(splash){setTimeout(()=>splash.classList.add('hide'),850);setTimeout(()=>splash.remove(),1450);}});
