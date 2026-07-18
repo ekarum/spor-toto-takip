@@ -10,5 +10,5 @@ KARUM TOTO V4.1
 - Excel okuma ve hesaplama sistemi korunmuştur
 - Kolon bedeli: 10 TL
 
-V5.1: Takip Paneli sayfasındaki Tarih ve Saat satırları okunur ve maç kartlarında gösterilir.
+V6: Takip Paneli sayfasındaki Tarih ve Saat satırları okunur ve maç kartlarında gösterilir.
 Örnek satırlar: Tarih | 19.07.2026 | ... ve Saat | 20:00 | ...
