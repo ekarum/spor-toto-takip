@@ -1,4 +1,4 @@
-const APP_VERSION='6.0.0';
+const APP_VERSION='6.1.0';
 const state={matchNames:[],matchDates:Array(15).fill(''),matchTimes:Array(15).fill(''),results:Array(15).fill(''),columns:[],excelStats:null,weekName:'Güncel Hafta',fileName:''};
 const $=id=>document.getElementById(id);
 const trUpper=v=>String(v??'').trim().toLocaleUpperCase('tr-TR');
@@ -123,7 +123,7 @@ function parseWorkbook(wb,fileName){
   return {matchNames,matchDates,matchTimes,results,columns,excelStats,weekName,fileName};
 }
 $('fileInput').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{let imported;if(/\.csv$|\.txt$/i.test(f.name)){const text=await f.text();const rows=text.split(/\r?\n/).map(line=>line.split(/[;,\t ]+/));const columns=parseRows(rows);if(!columns.length)throw new Error('15 sonuçtan oluşan kolon bulunamadı.');imported={matchNames:state.matchNames,matchDates:state.matchDates,matchTimes:state.matchTimes,results:Array(15).fill(''),columns,excelStats:null,weekName:f.name.replace(/\.[^.]+$/,''),fileName:f.name}}else{if(!window.XLSX)throw new Error('Excel okuyucu yüklenemedi. İnternet bağlantısını kontrol et.');const data=await f.arrayBuffer();const wb=XLSX.read(data,{type:'array',cellFormula:false,cellHTML:false});imported=parseWorkbook(wb,f.name)}
-Object.assign(state,imported);save();updateHeader();renderMatches();calculate();alert(`${state.columns.length.toLocaleString('tr-TR')} kolon yüklendi.\n\n1. maç: ${state.matchNames[0]}\n2. maç: ${state.matchNames[1]}\n\nTakım adları ve özet değerler Excel'den okundu.`)}catch(err){console.error(err);alert('Dosya yüklenemedi: '+err.message)}finally{e.target.value=''}});
+Object.assign(state,imported);save();updateHeader();renderMatches();calculate();alert(`${state.columns.length.toLocaleString('tr-TR')} kolon yüklendi.\n\n1. maç: ${state.matchNames[0]}\n2. maç: ${state.matchNames[1]}\n\nTakım adları, tarih, saat ve özet değerler Excel'den okundu.`)}catch(err){console.error(err);alert('Dosya yüklenemedi: '+err.message)}finally{e.target.value=''}});
 $('openSurvivors').onclick=openSurvivors;$('closeSheet').onclick=closeSurvivors;$('sheetBackdrop').onclick=closeSurvivors;$('columnSearch').oninput=renderSurvivors;$('clearSearch').onclick=()=>{$('columnSearch').value='';renderSurvivors();$('columnSearch').focus()};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('sheet-open'))closeSurvivors()});
 $('clearResults').onclick=()=>{state.results=Array(15).fill('');save();renderMatches();calculate()};
 $('resetBtn').onclick=()=>{if(confirm('Uygulamadaki kayıtları ilk hâline döndürmek istiyor musun?')){localStorage.removeItem('sporTotoState');location.reload()}};
