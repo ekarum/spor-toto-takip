@@ -1,9 +1,6 @@
-SPOR TOTO SAFARI UYGULAMASI - V2
+SPOR TOTO SAFARI UYGULAMASI - V3
 
-Bu sürüm yeni Excel yüklendiğinde otomatik olarak:
-- Takip Paneli sayfasındaki Maç Adı satırından 15 takım adını,
-- Sonuç satırından girilmiş maç sonuçlarını,
-- Kolonlar sayfasından tüm kolonları okur.
-
-GitHub'daki mevcut dosyaların yerine bu klasördeki dosyaların tamamını yükleyin.
-Kolon bedeli: 10 TL.
+- Excel takım adlarını daha dayanıklı biçimde okur.
+- Yükleme sonrası ilk iki takım adını doğrulama mesajında gösterir.
+- Eski service worker ve cache temizlenir.
+- Kolon bedeli: 10 TL.
