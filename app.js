@@ -1,4 +1,5 @@
-const APP_VERSION='6.1.0';
+const APP_VERSION='6.2.0';
+const LIVE_DURATION_MINUTES=120;
 const state={matchNames:[],matchDates:Array(15).fill(''),matchTimes:Array(15).fill(''),results:Array(15).fill(''),columns:[],excelStats:null,weekName:'Güncel Hafta',fileName:''};
 const $=id=>document.getElementById(id);
 const trUpper=v=>String(v??'').trim().toLocaleUpperCase('tr-TR');
@@ -62,7 +63,45 @@ function showDashboard(live){
   }
   const source=$('statsSource'); if(source)source.textContent=x?'Özet değerler Excel dosyasından birebir okunuyor.':'Excel özeti bulunamadı; uygulama hesabı gösteriliyor.';
 }
-function renderMatches(){const box=$('matches');box.innerHTML='';state.matchNames.forEach((name,i)=>{const d=document.createElement('div');d.className='match';const date=String(state.matchDates[i]||'').trim(),time=String(state.matchTimes[i]||'').trim();const meta=(date||time)?`<div class="match-meta">${date?`<span><b class="meta-icon">▣</b>${date}</span>`:''}${time?`<span><b class="meta-icon clock">◷</b>${time}</span>`:''}</div>`:'';d.innerHTML=`<div class="match-head"><span class="match-no">${i+1}</span><div class="match-info"><span class="match-name">${name||'Maç '+(i+1)}</span>${meta}</div></div><div class="choices">${['1','X','2'].map(v=>`<button class="choice ${state.results[i]===v?'active':''}" data-i="${i}" data-v="${v}">${v}</button>`).join('')}</div>`;box.appendChild(d)});box.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,v=b.dataset.v;state.results[i]=state.results[i]===v?'':v;save();renderMatches();calculate()})}
+function parseMatchDateTime(dateValue,timeValue){
+  const date=String(dateValue||'').trim(),time=String(timeValue||'').trim();
+  if(!date||!time)return null;
+  let y,m,d;
+  let hit=date.match(/^(\d{1,2})[.\/-](\d{1,2})[.\/-](\d{4})$/);
+  if(hit){d=+hit[1];m=+hit[2];y=+hit[3];}
+  else if((hit=date.match(/^(\d{4})[.\/-](\d{1,2})[.\/-](\d{1,2})$/))){y=+hit[1];m=+hit[2];d=+hit[3];}
+  else return null;
+  const clock=time.match(/^(\d{1,2})[:.](\d{2})/); if(!clock)return null;
+  const hh=+clock[1],mm=+clock[2]; if(hh>23||mm>59)return null;
+  const dt=new Date(y,m-1,d,hh,mm,0,0);
+  return Number.isNaN(dt.getTime())?null:dt;
+}
+function getMatchStatus(dateValue,timeValue,now=new Date()){
+  const start=parseMatchDateTime(dateValue,timeValue); if(!start)return null;
+  const diff=start.getTime()-now.getTime();
+  if(diff>0){
+    const mins=Math.ceil(diff/60000),days=Math.floor(mins/1440),hours=Math.floor((mins%1440)/60),minutes=mins%60;
+    let text;
+    if(days>0)text=`${days} gün ${hours} saat kaldı`;
+    else if(hours>0)text=`${hours} saat ${minutes} dk kaldı`;
+    else text=`${Math.max(1,minutes)} dk kaldı`;
+    return {kind:'upcoming',label:'Başlamadı',text:`⏳ ${text}`};
+  }
+  if(diff>=-(LIVE_DURATION_MINUTES*60000))return {kind:'live',label:'Canlı',text:'● Maç oynanıyor'};
+  return {kind:'finished',label:'Tamamlandı',text:'Maç tamamlandı'};
+}
+function matchStatusHtml(i){
+  const status=getMatchStatus(state.matchDates[i],state.matchTimes[i]);
+  if(!status)return '';
+  return `<div class="match-status ${status.kind}"><span class="status-label">${status.label}</span><span class="status-text">${status.text}</span></div>`;
+}
+function refreshMatchStatuses(){
+  document.querySelectorAll('.match[data-match-index]').forEach(card=>{
+    const i=Number(card.dataset.matchIndex),slot=card.querySelector('.match-status-slot');
+    if(slot)slot.innerHTML=matchStatusHtml(i);
+  });
+}
+function renderMatches(){const box=$('matches');box.innerHTML='';state.matchNames.forEach((name,i)=>{const d=document.createElement('div');d.className='match';d.dataset.matchIndex=i;const date=String(state.matchDates[i]||'').trim(),time=String(state.matchTimes[i]||'').trim();const meta=(date||time)?`<div class="match-meta">${date?`<span><b class="meta-icon">▣</b>${date}</span>`:''}${time?`<span><b class="meta-icon clock">◷</b>${time}</span>`:''}</div>`:'';d.innerHTML=`<div class="match-head"><span class="match-no">${i+1}</span><div class="match-info"><span class="match-name">${name||'Maç '+(i+1)}</span>${meta}<div class="match-status-slot">${matchStatusHtml(i)}</div></div></div><div class="choices">${['1','X','2'].map(v=>`<button class="choice ${state.results[i]===v?'active':''}" data-i="${i}" data-v="${v}">${v}</button>`).join('')}</div>`;box.appendChild(d)});box.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,v=b.dataset.v;state.results[i]=state.results[i]===v?'':v;save();renderMatches();calculate()})}
 let currentPerfect=[];
 function calculate(){
   let counts={15:0,14:0,13:0,12:0,11:0},perfect=[];
@@ -130,5 +169,6 @@ $('resetBtn').onclick=()=>{if(confirm('Uygulamadaki kayıtları ilk hâline dön
 async function removeOldCaches(){try{if('serviceWorker' in navigator){const regs=await navigator.serviceWorker.getRegistrations();for(const r of regs)await r.unregister();}if('caches' in window){const keys=await caches.keys();await Promise.all(keys.map(k=>caches.delete(k)));}}catch(e){console.warn('Önbellek temizlenemedi',e)}}
 removeOldCaches();
 load();state.matchNames=(state.matchNames||[]).slice(0,15);while(state.matchNames.length<15)state.matchNames.push('Maç '+(state.matchNames.length+1));state.matchDates=(state.matchDates||[]).map(v=>String(v??'').trim()).slice(0,15);while(state.matchDates.length<15)state.matchDates.push('');state.matchTimes=(state.matchTimes||[]).map(v=>String(v??'').trim()).slice(0,15);while(state.matchTimes.length<15)state.matchTimes.push('');state.results=(state.results||[]).map(normalize).slice(0,15);while(state.results.length<15)state.results.push('');updateHeader();renderMatches();calculate();
+setInterval(refreshMatchStatuses,30000);
 
 window.addEventListener('load',()=>{const splash=document.getElementById('splash');if(splash){setTimeout(()=>splash.classList.add('hide'),850);setTimeout(()=>splash.remove(),1450);}});
