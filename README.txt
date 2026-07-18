@@ -1,10 +1,11 @@
-KARUM TOTO - V4
+KARUM TOTO V4.1
 
-Yenilikler:
-- Uygulama adı Karum Toto olarak değiştirildi.
-- Siyah, altın sarısı ve bordo premium tema eklendi.
-- KT amblemi ve kısa açılış ekranı eklendi.
-- Sonuç seçimleri altın renkli aktif görünüm kazandı.
-- Excel okuma ve hesaplama altyapısı korunmuştur.
-
-Kolon bedeli: 10 TL.
+- Apple Dark tema
+- #111827 arka plan
+- #1F2937 kartlar
+- Altın vurgu rengi
+- Sade istatistik kartları
+- Yenilenmiş Excel dosya kartı
+- Mobil alt gezinme çubuğu
+- Excel okuma ve hesaplama sistemi korunmuştur
+- Kolon bedeli: 10 TL

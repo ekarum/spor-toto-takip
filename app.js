@@ -1,4 +1,4 @@
-const APP_VERSION='4.0.0';
+const APP_VERSION='4.1.0';
 const state={matchNames:[],results:Array(15).fill(''),columns:[],weekName:'Güncel Hafta',fileName:''};
 const $=id=>document.getElementById(id);
 const trUpper=v=>String(v??'').trim().toLocaleUpperCase('tr-TR');
@@ -8,7 +8,8 @@ function save(){localStorage.setItem('sporTotoState',JSON.stringify(state))}
 function load(){try{const s=JSON.parse(localStorage.getItem('sporTotoState'));if(s&&Array.isArray(s.columns)){Object.assign(state,s);return}}catch(e){} Object.assign(state,window.INITIAL_DATA||{});save()}
 function updateHeader(){
   $('weekName').textContent=state.weekName||state.fileName||'Güncel Hafta';
-  $('uploadInfo').textContent=state.fileName?`${state.fileName} • ${state.columns.length.toLocaleString('tr-TR')} kolon • ${state.matchNames[0]||'Maç 1'}`:'Excel\'deki takım adları, sonuçlar ve kolonlar otomatik okunur.';
+  const fileSummary=$('fileSummary'); if(fileSummary) fileSummary.textContent=state.fileName||'Henüz dosya seçilmedi';
+  $('uploadInfo').textContent=state.fileName?`${state.columns.length.toLocaleString('tr-TR')} kolon • ${(state.columns.length*10).toLocaleString('tr-TR')} TL`:'Excel\'deki takım adları, sonuçlar ve kolonlar otomatik okunur.';
   const badge=$('versionBadge'); if(badge) badge.textContent='v'+APP_VERSION;
 }
 function renderMatches(){const box=$('matches');box.innerHTML='';state.matchNames.forEach((name,i)=>{const d=document.createElement('div');d.className='match';d.innerHTML=`<div class="match-head"><span class="match-no">${i+1}</span><span class="match-name">${name||'Maç '+(i+1)}</span></div><div class="choices">${['1','X','2'].map(v=>`<button class="choice ${state.results[i]===v?'active':''}" data-i="${i}" data-v="${v}">${v}</button>`).join('')}</div>`;box.appendChild(d)});box.querySelectorAll('.choice').forEach(b=>b.onclick=()=>{const i=+b.dataset.i,v=b.dataset.v;state.results[i]=state.results[i]===v?'':v;save();renderMatches();calculate()})}
