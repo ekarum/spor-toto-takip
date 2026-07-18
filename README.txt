@@ -1,6 +1,10 @@
-SPOR TOTO SAFARI UYGULAMASI - V3
+KARUM TOTO - V4
 
-- Excel takım adlarını daha dayanıklı biçimde okur.
-- Yükleme sonrası ilk iki takım adını doğrulama mesajında gösterir.
-- Eski service worker ve cache temizlenir.
-- Kolon bedeli: 10 TL.
+Yenilikler:
+- Uygulama adı Karum Toto olarak değiştirildi.
+- Siyah, altın sarısı ve bordo premium tema eklendi.
+- KT amblemi ve kısa açılış ekranı eklendi.
+- Sonuç seçimleri altın renkli aktif görünüm kazandı.
+- Excel okuma ve hesaplama altyapısı korunmuştur.
+
+Kolon bedeli: 10 TL.

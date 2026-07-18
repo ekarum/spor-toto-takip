@@ -3,56 +3,72 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0b1220">
+  <meta name="theme-color" content="#090806">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Spor Toto">
+  <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=3">
-  <title>Spor Toto Takip</title>
+  <link rel="stylesheet" href="styles.css?v=4">
+  <title>Karum Toto</title>
 </head>
 <body>
+<div id="splash" class="splash" aria-hidden="true">
+  <div class="splash-logo">KT</div>
+  <div class="splash-title">KARUM TOTO</div>
+  <div class="splash-subtitle">by Eyüp Karum</div>
+</div>
+
 <main class="app">
-  <header>
-    <div>
-      <p class="eyebrow">SPOR TOTO</p>
-      <h1>Kolon Takip <small id="versionBadge" style="font-size:.38em;opacity:.65;vertical-align:middle"></small></h1>
-      <p id="weekName">Güncel Hafta</p>
+  <header class="hero">
+    <div class="brand-wrap">
+      <div class="brand-logo">KT</div>
+      <div>
+        <p class="eyebrow">SPOR TOTO TAKİP SİSTEMİ</p>
+        <h1>KARUM TOTO <small id="versionBadge"></small></h1>
+        <p id="weekName" class="week-name">Güncel Hafta</p>
+      </div>
     </div>
     <button id="resetBtn" class="ghost">Sıfırla</button>
   </header>
 
-  <section class="upload-card">
+  <section class="upload-card premium-card">
     <label class="upload">
       <input id="fileInput" type="file" accept=".xlsx,.xls,.csv,.txt">
-      <span>Yeni Hafta / Excel Yükle</span>
+      <span class="upload-icon">↥</span>
+      <span class="upload-title">Yeni Hafta / Excel Yükle</span>
+      <span class="upload-subtitle">Dosyanı seç ve takibe başla</span>
     </label>
     <p id="uploadInfo">Excel'deki takım adları, sonuçlar ve kolonlar otomatik okunur.</p>
   </section>
 
   <section class="stats">
-    <article><span>Kolon</span><strong id="total">0</strong></article>
-    <article><span>Maliyet</span><strong id="cost">0 TL</strong></article>
-    <article class="green"><span>15 Devam</span><strong id="s15">0</strong></article>
-    <article class="orange"><span>14 Devam</span><strong id="s14">0</strong></article>
-    <article class="yellow"><span>13 Devam</span><strong id="s13">0</strong></article>
-    <article class="blue"><span>12 Devam</span><strong id="s12">0</strong></article>
-    <article><span>11 ve Altı</span><strong id="s11">0</strong></article>
-    <article><span>Kalan Maç</span><strong id="remaining">15</strong></article>
+    <article class="stat-card stat-main"><span>Kolon</span><strong id="total">0</strong></article>
+    <article class="stat-card stat-main"><span>Maliyet</span><strong id="cost">0 TL</strong></article>
+    <article class="stat-card green"><span>15 Devam</span><strong id="s15">0</strong></article>
+    <article class="stat-card blue"><span>14 Devam</span><strong id="s14">0</strong></article>
+    <article class="stat-card yellow"><span>13 Devam</span><strong id="s13">0</strong></article>
+    <article class="stat-card orange"><span>12 Devam</span><strong id="s12">0</strong></article>
+    <article class="stat-card red"><span>11 ve Altı</span><strong id="s11">0</strong></article>
+    <article class="stat-card neutral"><span>Kalan Maç</span><strong id="remaining">15</strong></article>
   </section>
 
-  <section class="panel">
-    <div class="section-title"><h2>Maç Sonuçları</h2><button id="clearResults" class="ghost small">Temizle</button></div>
+  <section class="panel premium-card">
+    <div class="section-title">
+      <div><p class="section-kicker">CANLI TAKİP</p><h2>Maç Sonuçları</h2></div>
+      <button id="clearResults" class="ghost small">Temizle</button>
+    </div>
     <div id="matches"></div>
   </section>
 
-  <section id="survivorsPanel" class="panel hidden">
+  <section id="survivorsPanel" class="panel premium-card hidden">
     <div class="section-title"><h2 id="survivorsTitle">Kalan Kolonlar</h2></div>
     <div id="survivors"></div>
   </section>
+
+  <footer>Karum Toto v4 • by Eyüp Karum</footer>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="initial-data.js?v=3"></script>
-<script src="app.js?v=3"></script>
+<script src="initial-data.js?v=4"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>

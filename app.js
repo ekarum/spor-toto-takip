@@ -1,4 +1,4 @@
-const APP_VERSION='3.0.0';
+const APP_VERSION='4.0.0';
 const state={matchNames:[],results:Array(15).fill(''),columns:[],weekName:'Güncel Hafta',fileName:''};
 const $=id=>document.getElementById(id);
 const trUpper=v=>String(v??'').trim().toLocaleUpperCase('tr-TR');
@@ -57,3 +57,5 @@ $('resetBtn').onclick=()=>{if(confirm('Uygulamadaki kayıtları ilk hâline dön
 async function removeOldCaches(){try{if('serviceWorker' in navigator){const regs=await navigator.serviceWorker.getRegistrations();for(const r of regs)await r.unregister();}if('caches' in window){const keys=await caches.keys();await Promise.all(keys.map(k=>caches.delete(k)));}}catch(e){console.warn('Önbellek temizlenemedi',e)}}
 removeOldCaches();
 load();state.matchNames=(state.matchNames||[]).slice(0,15);while(state.matchNames.length<15)state.matchNames.push('Maç '+(state.matchNames.length+1));state.results=(state.results||[]).map(normalize).slice(0,15);while(state.results.length<15)state.results.push('');updateHeader();renderMatches();calculate();
+
+window.addEventListener('load',()=>{const splash=document.getElementById('splash');if(splash){setTimeout(()=>splash.classList.add('hide'),850);setTimeout(()=>splash.remove(),1450);}});

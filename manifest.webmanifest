@@ -1,1 +1,9 @@
-{"name": "Spor Toto Kolon Takip", "short_name": "Spor Toto", "start_url": "./", "display": "standalone", "background_color": "#07101e", "theme_color": "#0b1220", "icons": []}
+{
+  "name": "Karum Toto",
+  "short_name": "Karum Toto",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#090806",
+  "theme_color": "#090806",
+  "description": "Karum Toto Spor Toto takip sistemi"
+}
