@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=4.1">
+  <link rel="stylesheet" href="styles.css?v=5.0">
   <title>Karum Toto</title>
 </head>
 <body>
@@ -49,7 +49,7 @@
   <section class="stats">
     <article class="stat-card stat-main"><span>Kolon</span><strong id="total">0</strong></article>
     <article class="stat-card stat-main"><span>Maliyet</span><strong id="cost">0 TL</strong></article>
-    <article class="stat-card green"><span><i></i>15 Devam</span><strong id="s15">0</strong></article>
+    <button id="openSurvivors" class="stat-card green stat-button" type="button"><span><i></i>15 Devam</span><strong id="s15">0</strong><small>Kolonları gör</small></button>
     <article class="stat-card blue"><span><i></i>14 Devam</span><strong id="s14">0</strong></article>
     <article class="stat-card yellow"><span><i></i>13 Devam</span><strong id="s13">0</strong></article>
     <article class="stat-card orange"><span><i></i>12 Devam</span><strong id="s12">0</strong></article>
@@ -65,13 +65,29 @@
     <div id="matches"></div>
   </section>
 
-  <section id="survivorsPanel" class="panel premium-card hidden">
-    <div class="section-title"><h2 id="survivorsTitle">Kalan Kolonlar</h2></div>
-    <div id="survivors"></div>
-  </section>
 
-  <footer>Karum Toto v4.1 • by Eyüp Karum</footer>
+  <footer>Karum Toto v5.0 • by Eyüp Karum</footer>
 </main>
+
+<div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
+<section id="survivorsSheet" class="bottom-sheet hidden" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet-handle"></div>
+  <div class="sheet-header">
+    <div>
+      <p class="section-kicker">CANLI KOLON TAKİBİ</p>
+      <h2 id="sheetTitle">15 Devam</h2>
+      <p id="sheetCount" class="sheet-count">0 kolon kaldı</p>
+    </div>
+    <button id="closeSheet" class="sheet-close" type="button" aria-label="Kapat">×</button>
+  </div>
+  <label class="column-search">
+    <span>⌕</span>
+    <input id="columnSearch" type="number" inputmode="numeric" min="1" placeholder="Kolon numarası ara...">
+    <button id="clearSearch" type="button" aria-label="Aramayı temizle">×</button>
+  </label>
+  <div id="sheetEmpty" class="sheet-empty hidden"></div>
+  <div id="survivorsList" class="survivors-list"></div>
+</section>
 
 <nav class="bottom-nav" aria-label="Alt menü">
   <button class="nav-item active"><span>⌂</span>Ana Sayfa</button>
@@ -80,7 +96,7 @@
 </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="initial-data.js?v=4.1"></script>
-<script src="app.js?v=4.1"></script>
+<script src="initial-data.js?v=5.0"></script>
+<script src="app.js?v=5.0"></script>
 </body>
 </html>
