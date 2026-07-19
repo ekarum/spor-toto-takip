@@ -65,3 +65,18 @@ body.sheet-open{overflow:hidden}
 
 /* V7.1 — Kategori bazlı kolon merkezi */
 .category-card{appearance:none;-webkit-appearance:none}.category-card small{display:block;margin-top:6px;color:#8d98aa;font-size:10px;font-weight:900}.category-card:hover small{color:#cbd5e1}.column-card-head>div{display:flex;flex-direction:column;gap:3px}.column-status{font-size:10px;color:#8d98aa;font-weight:800}.column-pick.wrong-pick{border-color:rgba(251,113,133,.55);background:rgba(251,113,133,.12);color:#fb8da0}
+
+
+/* V7.1.1 — Bekleyen tahminler ve tamamlanan maç kilidi */
+.column-status{display:flex!important;gap:8px;align-items:center;flex-wrap:wrap}
+.column-status .error-count{color:#fb8da0}
+.column-status .pending-count{color:#f5c84c}
+.column-pick.pending-pick{border-color:rgba(244,180,0,.58);background:rgba(244,180,0,.13);color:#ffd45c;box-shadow:inset 0 0 0 1px rgba(244,180,0,.05)}
+.column-pick.correct-pick{border-color:rgba(96,165,250,.38);background:rgba(96,165,250,.08);color:#e5e7eb}
+.match-finished{background:linear-gradient(180deg,rgba(31,41,55,.76),rgba(23,32,47,.76));opacity:.9}
+.match-finished .match-name,.match-finished .match-meta{color:#aab3c2}
+.match-finished .match-no{background:#202a39;color:#9ca3af;border-color:#3a4658}
+.match-finished .choices{position:relative}
+.match-finished .choice{cursor:not-allowed;background:#151e2c;border-color:#354154;color:#697386;box-shadow:none;opacity:.62}
+.match-finished .choice.active{background:rgba(34,197,94,.16);border-color:rgba(74,222,128,.55);color:#86efac;opacity:1;box-shadow:inset 0 0 0 1px rgba(74,222,128,.12)}
+.match-finished .choice:active{transform:none}
