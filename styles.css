@@ -106,3 +106,85 @@ body.sheet-open{overflow:hidden}
 
 /* V7.3.0 - Maç bazlı kolon dağılımı */
 .distribution-title{margin:2px 0 8px;color:#8f9bad;font-size:11px;font-weight:800;letter-spacing:.15px}.choice{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:68px}.choice-value{font-size:19px;font-weight:1000;line-height:1.05}.choice-count{font-size:11px;font-weight:900;color:#cbd5e1;line-height:1.15}.choice-percent{font-size:10px;font-weight:800;color:#8f9bad;line-height:1.1}.choice.active .choice-count,.choice.active .choice-percent{color:#3b2a00}.match-finished .distribution-title{opacity:.8}@media(max-width:380px){.choice-count{font-size:10px}.choice-percent{font-size:9px}}
+
+/* V7.3.1 - Dağılım kartlarında okunabilirlik iyileştirmesi */
+.distribution-title{
+  margin:4px 0 10px;
+  color:#cbd5e1;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:0;
+}
+.choice{
+  min-height:78px;
+  gap:4px;
+  padding:12px 8px;
+  background:#152033;
+  border-color:#43516a;
+  font-weight:700;
+}
+.choice-value{
+  font-size:25px;
+  font-weight:800;
+  line-height:1;
+  color:#ffffff;
+  letter-spacing:.2px;
+}
+.choice-count{
+  font-size:13px;
+  font-weight:700;
+  color:#f1f5f9;
+  line-height:1.2;
+}
+.choice-percent{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:42px;
+  margin-top:1px;
+  padding:3px 8px;
+  border-radius:999px;
+  background:rgba(148,163,184,.12);
+  color:#b8c4d6;
+  font-size:11px;
+  font-weight:700;
+  line-height:1;
+}
+.choice.active .choice-value,
+.choice.active .choice-count,
+.choice.active .choice-percent{
+  color:#17120a;
+}
+.choice.active .choice-percent{
+  background:rgba(23,18,10,.12);
+}
+.match-finished .distribution-title{
+  opacity:1;
+  color:#b8c4d6;
+}
+.match-finished .choice{
+  opacity:.92;
+}
+.match-finished .choice .choice-value{
+  color:#dce4ef;
+}
+.match-finished .choice .choice-count{
+  color:#cbd5e1;
+}
+.match-finished .choice .choice-percent{
+  color:#aeb9c9;
+}
+.match-finished .choice.active .choice-value,
+.match-finished .choice.active .choice-count,
+.match-finished .choice.active .choice-percent{
+  color:#dcfce7;
+}
+.match-finished .choice.active .choice-percent{
+  background:rgba(74,222,128,.12);
+}
+@media(max-width:380px){
+  .choice{min-height:72px;padding:10px 5px}
+  .choice-value{font-size:22px}
+  .choice-count{font-size:12px}
+  .choice-percent{font-size:10px;min-width:38px}
+}
