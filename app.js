@@ -1,12 +1,13 @@
-const APP_VERSION='6.3.0';
+const APP_VERSION='6.4.0';
+const STORAGE_KEY='sporTotoStateV64';
 const LIVE_DURATION_MINUTES=120;
 const state={matchNames:[],matchDates:Array(15).fill(''),matchTimes:Array(15).fill(''),results:Array(15).fill(''),columns:[],weekName:'Güncel Hafta',fileName:''};
 const $=id=>document.getElementById(id);
 const trUpper=v=>String(v??'').trim().toLocaleUpperCase('tr-TR');
 function normalize(v){const s=trUpper(v);return s==='1'||s==='2'||s==='X'?s:''}
 function cleanName(v,i){const s=String(v??'').trim();return s||`Maç ${i+1}`}
-function save(){localStorage.setItem('sporTotoState',JSON.stringify(state))}
-function load(){try{const s=JSON.parse(localStorage.getItem('sporTotoState'));if(s&&Array.isArray(s.columns)){Object.assign(state,s);return}}catch(e){} Object.assign(state,window.INITIAL_DATA||{});save()}
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+function load(){try{const s=JSON.parse(localStorage.getItem(STORAGE_KEY));if(s&&Array.isArray(s.columns)){Object.assign(state,s);return}}catch(e){} Object.assign(state,window.INITIAL_DATA||{});save()}
 function updateHeader(){
   $('weekName').textContent=state.weekName||state.fileName||'Güncel Hafta';
   const fileSummary=$('fileSummary'); if(fileSummary) fileSummary.textContent=state.fileName||'Henüz dosya seçilmedi';
@@ -110,7 +111,9 @@ function parseWorkbook(wb,fileName){
   let panelName=wb.SheetNames.find(n=>trUpper(n)==='TAKİP PANELİ')||wb.SheetNames.find(n=>trUpper(n)==='TELEFON TAKİP')||wb.SheetNames[0];
   const panelSheet=wb.Sheets[panelName];
   const panelRows=XLSX.utils.sheet_to_json(panelSheet,{header:1,raw:false,defval:'',blankrows:false});
-  const {matchNames,matchDates,matchTimes,results}=extractMatchData(panelRows);
+  const {matchNames,matchDates,matchTimes}=extractMatchData(panelRows);
+  // Excel'deki Sonuç satırı bilinçli olarak kullanılmaz. Sonuçlar yalnızca telefondan seçilir.
+  const results=Array(15).fill('');
   let colName=wb.SheetNames.find(n=>trUpper(n)==='KOLONLAR');
   if(!colName) colName=wb.SheetNames.find(n=>n!==panelName)||panelName;
   const colRows=XLSX.utils.sheet_to_json(wb.Sheets[colName],{header:1,raw:false,defval:'',blankrows:false});
@@ -121,10 +124,11 @@ function parseWorkbook(wb,fileName){
 }
 $('fileInput').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{let imported;if(/\.csv$|\.txt$/i.test(f.name)){const text=await f.text();const rows=text.split(/\r?\n/).map(line=>line.split(/[;,\t ]+/));const columns=parseRows(rows);if(!columns.length)throw new Error('15 sonuçtan oluşan kolon bulunamadı.');imported={matchNames:state.matchNames,matchDates:state.matchDates,matchTimes:state.matchTimes,results:Array(15).fill(''),columns,weekName:f.name.replace(/\.[^.]+$/,''),fileName:f.name}}else{if(!window.XLSX)throw new Error('Excel okuyucu yüklenemedi. İnternet bağlantısını kontrol et.');const data=await f.arrayBuffer();const wb=XLSX.read(data,{type:'array',cellFormula:false,cellHTML:false});imported=parseWorkbook(wb,f.name)}
 Object.assign(state,imported);save();updateHeader();renderMatches();calculate();alert(`${state.columns.length.toLocaleString('tr-TR')} kolon yüklendi.\n\n1. maç: ${state.matchNames[0]}\n2. maç: ${state.matchNames[1]}\n\nTakım adları, tarih, saat ve kolonlar Excel'den okundu.
-Sonuçları telefonda seçtikçe kalan kolonlar canlı hesaplanacak.`)}catch(err){console.error(err);alert('Dosya yüklenemedi: '+err.message)}finally{e.target.value=''}});
+Excel'deki sonuçlar alınmadı; seçimler boş başlatıldı.
+Telefonda 1 / X / 2 seçtikçe kalan kolonlar canlı hesaplanacak.`)}catch(err){console.error(err);alert('Dosya yüklenemedi: '+err.message)}finally{e.target.value=''}});
 $('openSurvivors').onclick=openSurvivors;$('closeSheet').onclick=closeSurvivors;$('sheetBackdrop').onclick=closeSurvivors;$('columnSearch').oninput=renderSurvivors;$('clearSearch').onclick=()=>{$('columnSearch').value='';renderSurvivors();$('columnSearch').focus()};document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.body.classList.contains('sheet-open'))closeSurvivors()});
 $('clearResults').onclick=()=>{state.results=Array(15).fill('');save();renderMatches();calculate()};
-$('resetBtn').onclick=()=>{if(confirm('Uygulamadaki kayıtları ilk hâline döndürmek istiyor musun?')){localStorage.removeItem('sporTotoState');location.reload()}};
+$('resetBtn').onclick=()=>{if(confirm('Uygulamadaki kayıtları ilk hâline döndürmek istiyor musun?')){localStorage.removeItem(STORAGE_KEY);location.reload()}};
 async function removeOldCaches(){try{if('serviceWorker' in navigator){const regs=await navigator.serviceWorker.getRegistrations();for(const r of regs)await r.unregister();}if('caches' in window){const keys=await caches.keys();await Promise.all(keys.map(k=>caches.delete(k)));}}catch(e){console.warn('Önbellek temizlenemedi',e)}}
 removeOldCaches();
 load();state.matchNames=(state.matchNames||[]).slice(0,15);while(state.matchNames.length<15)state.matchNames.push('Maç '+(state.matchNames.length+1));state.matchDates=(state.matchDates||[]).map(v=>String(v??'').trim()).slice(0,15);while(state.matchDates.length<15)state.matchDates.push('');state.matchTimes=(state.matchTimes||[]).map(v=>String(v??'').trim()).slice(0,15);while(state.matchTimes.length<15)state.matchTimes.push('');state.results=(state.results||[]).map(normalize).slice(0,15);while(state.results.length<15)state.results.push('');updateHeader();renderMatches();calculate();
