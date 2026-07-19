@@ -14,3 +14,9 @@ Saat    | 20:00
 
 
 V6.2: Tarih ve saat bilgisine göre geri sayım, Canlı ve Tamamlandı durumu eklendi. Canlı süresi başlangıçtan itibaren 120 dakika kabul edilir.
+
+
+V6.3:
+- Excel yalnızca maç, tarih, saat ve kolonları yükler.
+- 1/X/2 sonuçları telefonda seçildikçe 15/14/13/12 devam ve 11 ve altı değerleri canlı hesaplanır.
+- Toplam maliyet kolon sayısı x 10 TL olarak gösterilir.
