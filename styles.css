@@ -103,3 +103,6 @@ body.sheet-open{overflow:hidden}
 .match-league{display:inline-flex;align-items:center;margin-top:6px;padding:4px 8px;border-radius:999px;background:rgba(96,165,250,.09);border:1px solid rgba(96,165,250,.25);color:#93c5fd;font-size:10px;font-weight:900;letter-spacing:.15px}
 .match-finished .match-league{background:rgba(107,114,128,.10);border-color:rgba(107,114,128,.25);color:#9ca3af}
 .remaining-league{display:inline-flex;margin-top:6px;padding:4px 7px;border-radius:999px;background:rgba(96,165,250,.09);border:1px solid rgba(96,165,250,.25);color:#93c5fd;font-size:9px;font-weight:900}
+
+/* V7.3.0 - Maç bazlı kolon dağılımı */
+.distribution-title{margin:2px 0 8px;color:#8f9bad;font-size:11px;font-weight:800;letter-spacing:.15px}.choice{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:68px}.choice-value{font-size:19px;font-weight:1000;line-height:1.05}.choice-count{font-size:11px;font-weight:900;color:#cbd5e1;line-height:1.15}.choice-percent{font-size:10px;font-weight:800;color:#8f9bad;line-height:1.1}.choice.active .choice-count,.choice.active .choice-percent{color:#3b2a00}.match-finished .distribution-title{opacity:.8}@media(max-width:380px){.choice-count{font-size:10px}.choice-percent{font-size:9px}}
