@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=7.0">
+  <link rel="stylesheet" href="styles.css?v=7.1">
   <title>Karum Toto</title>
 </head>
 <body>
@@ -56,11 +56,11 @@
   <section class="stats">
     <article class="stat-card stat-main"><span>Kolon</span><strong id="total">0</strong></article>
     <article class="stat-card stat-main"><span>Maliyet</span><strong id="cost">0 TL</strong></article>
-    <button id="openSurvivors" class="stat-card green stat-button" type="button"><span><i></i>Kalan Kolon</span><strong id="s15">0</strong><small>Kolonları gör</small></button>
-    <article class="stat-card blue"><span><i></i>14 Devam</span><strong id="s14">0</strong></article>
-    <article class="stat-card yellow"><span><i></i>13 Devam</span><strong id="s13">0</strong></article>
-    <article class="stat-card orange"><span><i></i>12 Devam</span><strong id="s12">0</strong></article>
-    <article class="stat-card red wide"><span><i></i>11 ve Altı</span><strong id="s11">0</strong></article>
+    <button class="stat-card green stat-button category-card" type="button" data-category="15"><span><i></i>15 Devam</span><strong id="s15">0</strong><small>Kolonları gör</small></button>
+    <button class="stat-card blue stat-button category-card" type="button" data-category="14"><span><i></i>14 Devam</span><strong id="s14">0</strong><small>Kolonları gör</small></button>
+    <button class="stat-card yellow stat-button category-card" type="button" data-category="13"><span><i></i>13 Devam</span><strong id="s13">0</strong><small>Kolonları gör</small></button>
+    <button class="stat-card orange stat-button category-card" type="button" data-category="12"><span><i></i>12 Devam</span><strong id="s12">0</strong><small>Kolonları gör</small></button>
+    <button class="stat-card red stat-button category-card" type="button" data-category="11"><span><i></i>11 ve Altı</span><strong id="s11">0</strong><small>Kolonları gör</small></button>
     <article class="stat-card neutral wide"><span><i></i>Kalan Maç</span><strong id="remaining">15</strong></article>
   </section>
   <p id="statsSource" class="stats-source">Sonuçları telefonda seçtikçe kalan kolonlar anında hesaplanır.</p>
@@ -83,16 +83,11 @@
   <div class="sheet-header">
     <div>
       <p class="section-kicker">CANLI KOLON TAKİBİ</p>
-      <h2 id="sheetTitle">Kalan Kolonlar</h2>
-      <p id="sheetCount" class="sheet-count">0 kolon kaldı</p>
+      <h2 id="sheetTitle">15 Devam Kolonları</h2>
+      <p id="sheetCount" class="sheet-count">0 kolon</p>
     </div>
     <button id="closeSheet" class="sheet-close" type="button" aria-label="Kapat">×</button>
   </div>
-  <label class="column-search">
-    <span>⌕</span>
-    <input id="columnSearch" type="number" inputmode="numeric" min="1" placeholder="Kolon numarası ara...">
-    <button id="clearSearch" type="button" aria-label="Aramayı temizle">×</button>
-  </label>
   <div id="sheetEmpty" class="sheet-empty hidden"></div>
   <div id="survivorsList" class="survivors-list"></div>
 </section>
@@ -119,7 +114,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="initial-data.js?v=7.0"></script>
-<script src="app.js?v=7.0"></script>
+<script src="initial-data.js?v=7.1"></script>
+<script src="app.js?v=7.1"></script>
 </body>
 </html>

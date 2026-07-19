@@ -16,3 +16,11 @@ GÜVENLİK
 - Publishable key tarayıcı için kullanılabilir.
 - Secret/service_role anahtarını hiçbir dosyaya koyma.
 - RLS kuralları sayesinde her hesap yalnızca kendi haftalarını görür.
+
+
+V7.1 yenilikleri:
+- Kalan Kolon adı 15 Devam olarak değiştirildi.
+- 15, 14, 13, 12 ve 11 ve Altı kartları tıklanabilir yapıldı.
+- Her kategori kendi kolon listesini açar.
+- Kolon numarası araması kaldırıldı.
+- Hatalı tahminler kolon listesinde işaretlenir.
