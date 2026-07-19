@@ -24,3 +24,5 @@ V7.1 yenilikleri:
 - Her kategori kendi kolon listesini açar.
 - Kolon numarası araması kaldırıldı.
 - Hatalı tahminler kolon listesinde işaretlenir.
+
+V7.1.4: Takip Paneli'nde Lig satırı desteklenir. Maç kartlarında lig adı takım adının altında gösterilir.
