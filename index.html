@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=6.5">
+  <link rel="stylesheet" href="styles.css?v=7.0">
   <title>Karum Toto</title>
 </head>
 <body>
@@ -28,8 +28,15 @@
         <p id="weekName" class="week-name">Güncel Hafta</p>
       </div>
     </div>
-    <button id="resetBtn" class="ghost">Sıfırla</button>
+    <div class="hero-actions"><span id="syncBadge" class="sync-badge offline">Çevrimdışı</span><button id="accountBtn" class="ghost">Hesap</button></div>
   </header>
+
+  <section id="cloudBar" class="cloud-card premium-card hidden">
+    <div class="cloud-row">
+      <div><span class="summary-label">ORTAK KAYIT</span><strong id="cloudUser">Giriş yapılmadı</strong><p id="cloudInfo">Telefon ve bilgisayar aynı veriyi kullanır.</p></div>
+      <select id="weekSelect" class="week-select" aria-label="Hafta seç"><option value="">Hafta seç</option></select>
+    </div>
+  </section>
 
   <section class="upload-card premium-card">
     <div class="file-summary">
@@ -67,7 +74,7 @@
   </section>
 
 
-  <footer>Karum Toto v6.5 • by Eyüp Karum</footer>
+  <footer>Karum Toto v7.0 • Bulut Senkronizasyon • by Eyüp Karum</footer>
 </main>
 
 <div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
@@ -90,6 +97,20 @@
   <div id="survivorsList" class="survivors-list"></div>
 </section>
 
+<div id="authBackdrop" class="auth-backdrop hidden"></div>
+<section id="authModal" class="auth-modal hidden" role="dialog" aria-modal="true">
+  <button id="closeAuth" class="auth-close" aria-label="Kapat">×</button>
+  <div class="brand-logo auth-logo">KT</div>
+  <h2>Karum Toto Bulut</h2>
+  <p>Telefon ve bilgisayarda aynı e-posta ve şifreyle giriş yap.</p>
+  <label>E-posta<input id="authEmail" type="email" autocomplete="email" placeholder="ornek@email.com"></label>
+  <label>Şifre<input id="authPassword" type="password" autocomplete="current-password" minlength="6" placeholder="En az 6 karakter"></label>
+  <button id="loginBtn" class="primary-action">Giriş Yap</button>
+  <button id="signupBtn" class="secondary-action">İlk Kez Kayıt Ol</button>
+  <button id="logoutBtn" class="danger-action hidden">Çıkış Yap</button>
+  <p id="authMessage" class="auth-message"></p>
+</section>
+
 <nav class="bottom-nav" aria-label="Alt menü">
   <button class="nav-item active"><span>⌂</span>Ana Sayfa</button>
   <button class="nav-item" disabled><span>▥</span>İstatistik</button>
@@ -97,7 +118,8 @@
 </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="initial-data.js?v=6.5"></script>
-<script src="app.js?v=6.5"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="initial-data.js?v=7.0"></script>
+<script src="app.js?v=7.0"></script>
 </body>
 </html>

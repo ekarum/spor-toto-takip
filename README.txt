@@ -1,12 +1,18 @@
-KARUM TOTO V6.5
+KARUM TOTO V7.0 — TELEFON/BİLGİSAYAR ANLIK SENKRONİZASYON
 
-- Excel'deki Sonuç satırı artık içe aktarılmaz.
-- Sonuçlar her Excel yüklemesinde boş başlar.
-- Yalnızca telefonda seçilen 1 / X / 2 sonuçları hesaba katılır.
-- Kalan Kolon sayısı her seçimde anında güncellenir.
-- 14, 13, 12 ve 11 ve Altı dağılımları canlı hesaplanır.
-- Kolon maliyeti kolon sayısı x 10 TL'dir.
+1) Supabase panelinde SQL Editor bölümünü aç.
+2) supabase-kurulum.sql dosyasının tamamını yapıştırıp Run düğmesine bas.
+3) Authentication > Providers > Email bölümünde Email sağlayıcısının açık olduğundan emin ol.
+4) Bu klasörün içindeki TÜM dosyaları GitHub deposunun ana dizinine yükle.
+5) Siteyi aç, Hesap düğmesine bas ve ilk kez Kayıt Ol.
+6) Supabase e-posta onayı açıksa gelen bağlantıyı onayla, sonra aynı hesapla iki cihazda giriş yap.
+7) Excel'i yalnızca bir cihazda yükle. Hafta ve kolonlar buluta kaydedilir.
+8) Diğer cihaz aynı hesapla giriş yapınca hafta listesinden otomatik açılır.
+9) 1/X/2 seçimi yaklaşık bir saniye içinde diğer cihazda görünür.
 
-Kurulum: Klasörün içindeki tüm dosyaları GitHub deposunun kök dizinine yükleyin. Safari'de uygulamayı açın ve Excel'i yeniden yükleyin.
+Her hafta yeni Excel yüklediğinde ayrı bir hafta kaydı oluşur. Aynı dosya/hafta tekrar yüklenirse o haftanın maç ve kolon verileri güncellenir.
 
-V6.5: Kolon No sütununun 1/2 değerleri artık maç tahmini olarak okunmaz. M1-M15 başlıklarıyla kesin sütun eşleştirmesi yapılır.
+GÜVENLİK
+- Publishable key tarayıcı için kullanılabilir.
+- Secret/service_role anahtarını hiçbir dosyaya koyma.
+- RLS kuralları sayesinde her hesap yalnızca kendi haftalarını görür.
