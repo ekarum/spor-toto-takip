@@ -26,3 +26,5 @@ V7.1 yenilikleri:
 - Hatalı tahminler kolon listesinde işaretlenir.
 
 V7.1.4: Takip Paneli'nde Lig satırı desteklenir. Maç kartlarında lig adı takım adının altında gösterilir.
+
+V7.2.0: Excel yüklemedeki matchLeagues tanımsız hatası düzeltildi. Lig satırı güvenli biçimde okunur, eski haftalar boş liglerle çalışır ve ligler bulut senkronizasyonuna dahil edilir.
