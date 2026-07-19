@@ -1,5 +1,5 @@
-const APP_VERSION='6.4.0';
-const STORAGE_KEY='sporTotoStateV64';
+const APP_VERSION='6.5.0';
+const STORAGE_KEY='sporTotoStateV65';
 const LIVE_DURATION_MINUTES=120;
 const state={matchNames:[],matchDates:Array(15).fill(''),matchTimes:Array(15).fill(''),results:Array(15).fill(''),columns:[],weekName:'Güncel Hafta',fileName:''};
 const $=id=>document.getElementById(id);
@@ -74,14 +74,58 @@ function calculate(){
   $('s11').textContent=counts[11].toLocaleString('tr-TR');
   $('remaining').textContent=15-entered;
   const source=$('statsSource');
-  if(source)source.textContent='Sonuçları telefonda seçtikçe kalan kolonlar anında hesaplanır.';
+  const categoryTotal=counts[15]+counts[14]+counts[13]+counts[12]+counts[11];
+  if(source)source.textContent=categoryTotal===state.columns.length
+    ? `${entered} maç seçildi • Kategoriler toplamı: ${categoryTotal.toLocaleString('tr-TR')} kolon`
+    : `Hesap kontrolü başarısız: ${categoryTotal.toLocaleString('tr-TR')} / ${state.columns.length.toLocaleString('tr-TR')}`;
   if(document.body.classList.contains('sheet-open'))renderSurvivors();
 }
 
 function renderSurvivors(){const q=String($('columnSearch').value||'').trim();const rows=q?currentPerfect.filter(([n])=>String(n)===q):currentPerfect;$('sheetCount').textContent=`${currentPerfect.length.toLocaleString('tr-TR')} kolon kaldı`;const empty=$('sheetEmpty'),list=$('survivorsList');if(!rows.length){list.innerHTML='';empty.classList.remove('hidden');empty.innerHTML=q?'<strong>Kolon bulunamadı</strong>Bu numaralı kolon 15 devam edenler arasında değil.':'<strong>15 devam eden kolon kalmadı</strong>Yeni sonuç girdikçe liste canlı güncellenir.';return}empty.classList.add('hidden');list.innerHTML=rows.map(([n,c])=>`<article class="column-card"><div class="column-card-head"><span class="column-number">Kolon #${n}</span><button class="copy-column" data-number="${n}" data-column="${c.join('-')}">Kopyala</button></div><div class="column-picks">${c.map(v=>`<span class="column-pick">${v}</span>`).join('')}</div></article>`).join('');list.querySelectorAll('.copy-column').forEach(btn=>btn.onclick=async()=>{try{await navigator.clipboard.writeText(btn.dataset.column);btn.textContent='Kopyalandı';btn.classList.add('copied');setTimeout(()=>{btn.textContent='Kopyala';btn.classList.remove('copied')},1100)}catch(e){alert('Kolon: '+btn.dataset.column)}})}
 function openSurvivors(){renderSurvivors();$('survivorsSheet').classList.remove('hidden');$('sheetBackdrop').classList.remove('hidden');$('sheetBackdrop').setAttribute('aria-hidden','false');document.body.classList.add('sheet-open')}
 function closeSurvivors(){$('survivorsSheet').classList.add('hidden');$('sheetBackdrop').classList.add('hidden');$('sheetBackdrop').setAttribute('aria-hidden','true');document.body.classList.remove('sheet-open')}
-function parseRows(rows){const out=[];for(const row of rows){let vals=(row||[]).map(normalize);if(vals.length>=16&&!['1','X','2'].includes(vals[0]))vals=vals.slice(1,16);else vals=vals.slice(0,15);if(vals.length===15&&vals.every(Boolean))out.push(vals)}return out}
+function parseRows(rows){
+  const out=[];
+  if(!Array.isArray(rows)||!rows.length)return out;
+
+  // Önce M1...M15 başlıklarını bul. Böylece "Kolon No" değeri 1 veya 2 olsa bile
+  // maç tahmini sanılmaz ve B:P sütunları kesin olarak okunur.
+  let pickIndexes=null;
+  for(const row of rows.slice(0,20)){
+    const upper=(row||[]).map(trUpper);
+    const indexes=[];
+    for(let n=1;n<=15;n++){
+      const candidates=[`M${n}`,`MAÇ ${n}`,`MAC ${n}`];
+      const idx=upper.findIndex(v=>candidates.includes(v));
+      if(idx<0){indexes.length=0;break;}
+      indexes.push(idx);
+    }
+    if(indexes.length===15){pickIndexes=indexes;break;}
+  }
+
+  for(const row of rows){
+    let vals;
+    if(pickIndexes){
+      vals=pickIndexes.map(i=>normalize((row||[])[i]));
+    }else{
+      const raw=row||[];
+      // Yaygın düzen: ilk sütun kolon numarası, ardından 15 tahmin.
+      const afterId=raw.slice(1,16).map(normalize);
+      if(raw.length>=16 && afterId.length===15 && afterId.every(Boolean)){
+        vals=afterId;
+      }else{
+        // Son çare: satır içinde art arda gelen ilk 15 geçerli tahmini bul.
+        vals=[];
+        for(let start=0;start<=raw.length-15;start++){
+          const candidate=raw.slice(start,start+15).map(normalize);
+          if(candidate.every(Boolean)){vals=candidate;break;}
+        }
+      }
+    }
+    if(vals&&vals.length===15&&vals.every(Boolean))out.push(vals);
+  }
+  return out;
+}
 function rowLabelIndex(rows,labels){const wanted=labels.map(trUpper);for(let r=0;r<rows.length;r++){for(let c=0;c<Math.min(4,(rows[r]||[]).length);c++){if(wanted.includes(trUpper(rows[r][c])))return {r,c};}}return null}
 function extractMatchData(rows){
   const nameHit=rowLabelIndex(rows,['Maç Adı','Mac Adi','Maçlar','Takımlar']);
