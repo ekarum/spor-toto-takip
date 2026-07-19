@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=7.1">
+  <link rel="stylesheet" href="styles.css?v=7.1.2">
   <title>Karum Toto</title>
 </head>
 <body>
@@ -34,7 +34,7 @@
   <section id="cloudBar" class="cloud-card premium-card hidden">
     <div class="cloud-row">
       <div><span class="summary-label">ORTAK KAYIT</span><strong id="cloudUser">Giriş yapılmadı</strong><p id="cloudInfo">Telefon ve bilgisayar aynı veriyi kullanır.</p></div>
-      <select id="weekSelect" class="week-select" aria-label="Hafta seç"><option value="">Hafta seç</option></select>
+      <div class="week-actions"><select id="weekSelect" class="week-select" aria-label="Hafta seç"><option value="">Hafta seç</option></select><button id="deleteWeekBtn" class="delete-week hidden" type="button" title="Seçili haftayı sil">Sil</button></div>
     </div>
   </section>
 
@@ -74,7 +74,7 @@
   </section>
 
 
-  <footer>Karum Toto v7.0 • Bulut Senkronizasyon • by Eyüp Karum</footer>
+  <footer>Karum Toto v7.1.2 • Bulut Senkronizasyon • by Eyüp Karum</footer>
 </main>
 
 <div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
@@ -114,7 +114,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="initial-data.js?v=7.1"></script>
-<script src="app.js?v=7.1"></script>
+<script src="initial-data.js?v=7.1.2"></script>
+<script src="app.js?v=7.1.2"></script>
 </body>
 </html>
