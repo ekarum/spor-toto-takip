@@ -46,3 +46,11 @@ V8.2.0 YENİLİKLERİ
 - Canlı yüzdeler başlangıç yüzdeleriyle karşılaştırılır.
 - Isı haritasında başlangıç seviyesi beyaz işaretle, değişim ise puan farkıyla gösterilir.
 - Kolon arama özelliği eklenmemiştir.
+
+
+V9.1.0 KALAN KOLON SENARYO MOTORU
+- Kalan maçlar için birbirinden farklı 15 bilme senaryoları oluşturulur.
+- Aynı bekleyen sonuç dizisine sahip kolonlar tek senaryoda birleştirilir.
+- Her senaryonun kaç kolonda bulunduğu ve toplam içindeki payı gösterilir.
+- Her bekleyen maçta 1, X veya 2 gelirse kaç kolonun 15 Devam kalacağı hesaplanır.
+- Sonuç seçildikçe veya geri alındıkça senaryolar anlık yenilenir.

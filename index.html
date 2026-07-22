@@ -110,6 +110,20 @@
         <div id="analysisInsights" class="analysis-insights"></div>
       </div>
 
+      <div id="scenarioEngine" class="analysis-section scenario-engine premium-card">
+        <div class="analysis-section-head"><div><p class="section-kicker">SENARYO MOTORU</p><h3>15 Bilme Senaryoları</h3></div><small>Kalan kolonların bekleyen maç sonuçları</small></div>
+        <div class="scenario-stats">
+          <article><span>Kalan Maç</span><strong id="scenarioRemainingMatches">0</strong></article>
+          <article><span>15 Devam Kolonu</span><strong id="scenarioExactColumns">0</strong></article>
+          <article><span>Farklı Senaryo</span><strong id="scenarioUniqueCount">0</strong></article>
+        </div>
+        <p id="scenarioSummary" class="scenario-summary"></p>
+        <div class="scenario-subhead"><strong>15 gelmesi için kalan yollar</strong><small>Aynı diziler birleştirilir</small></div>
+        <div id="scenarioList" class="scenario-list"></div>
+        <div class="scenario-subhead impact-head"><strong>Her sonucun 15 devam etkisi</strong><small>Sonuç gelirse kaç kolon yaşar?</small></div>
+        <div id="scenarioImpactList" class="scenario-impact-list"></div>
+      </div>
+
       <div class="analysis-section premium-card">
         <div class="analysis-section-head"><div><p class="section-kicker">ISI HARİTASI</p><h3 id="analysisHeatTitle">Kalan Maçlarda Canlı 1 / X / 2 Dağılımı</h3></div><small id="analysisHeatNote">Yüzdeler yalnızca devam eden kolonlara göredir.</small></div>
         <div class="confidence-legend"><span><i class="very-high"></i>Çok Güçlü</span><span><i class="high"></i>Güçlü</span><span><i class="medium"></i>Orta</span><span><i class="balanced"></i>Dengeli</span><span><i class="low"></i>Çok Riskli</span></div>
@@ -118,7 +132,7 @@
     </div>
   </section>
 
-  <footer>Karum Toto v8.2.0 • Canlı Sayaç ve Güven Endeksi • by Eyüp Karum</footer>
+  <footer>Karum Toto v9.1.0 • Kalan Kolon Senaryo Motoru • by Eyüp Karum</footer>
 </main>
 
 <div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
@@ -158,7 +172,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="initial-data.js?v=8.1.0"></script>
-<script src="app.js?v=8.1.0"></script>
+<script src="initial-data.js?v=9.1.0"></script>
+<script src="app.js?v=9.1.0"></script>
 </body>
 </html>

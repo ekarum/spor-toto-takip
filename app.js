@@ -1,4 +1,4 @@
-const APP_VERSION='8.2.0';
+const APP_VERSION='9.1.0';
 const STORAGE_KEY='sporTotoStateV711';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
@@ -33,6 +33,24 @@ function getAnalysisRows(columns,onlyPending=false){return state.matchNames.map(
 function calculateLastResultImpact(liveTotal){if(lastChangedMatchIndex===null||!state.results[lastChangedMatchIndex])return null;const without=[...state.results];without[lastChangedMatchIndex]='';const before=getSurvivingColumns(without).length;return{index:lastChangedMatchIndex,before,after:liveTotal,eliminated:Math.max(0,before-liveTotal)}}
 function confidenceInfo(value){if(value>=85)return{label:'Çok Güçlü',className:'very-high'};if(value>=70)return{label:'Güçlü',className:'high'};if(value>=55)return{label:'Orta',className:'medium'};if(value>=45)return{label:'Dengeli',className:'balanced'};return{label:'Çok Riskli',className:'low'}}
 function animateNumber(el,value){if(!el)return;const next=Number(value)||0,prev=Number(String(el.dataset.value??el.textContent).replace(/[^0-9-]/g,''))||0;el.dataset.value=String(next);if(prev===next){el.textContent=next.toLocaleString('tr-TR');return}const start=performance.now(),duration=420;function step(now){const t=Math.min(1,(now-start)/duration),ease=1-Math.pow(1-t,3),current=Math.round(prev+(next-prev)*ease);el.textContent=current.toLocaleString('tr-TR');if(t<1)requestAnimationFrame(step)}requestAnimationFrame(step)}
+function getScenarioData(liveColumns){
+  const pending=state.results.map((v,i)=>!v?i:-1).filter(i=>i>=0),groups=new Map();
+  for(const col of liveColumns){const key=pending.map(i=>col[i]).join('');if(!groups.has(key))groups.set(key,{key,count:0,picks:pending.map(i=>col[i]),columnNumbers:[]});const g=groups.get(key);g.count++;if(g.columnNumbers.length<5)g.columnNumbers.push(state.columns.indexOf(col)+1)}
+  const scenarios=[...groups.values()].sort((a,b)=>b.count-a.count||a.key.localeCompare(b.key));
+  return{pending,scenarios};
+}
+function renderScenarioEngine(liveColumns){
+  const box=$('scenarioEngine'),summary=$('scenarioSummary'),list=$('scenarioList'),impact=$('scenarioImpactList');if(!box)return;
+  const {pending,scenarios}=getScenarioData(liveColumns),total=liveColumns.length;
+  $('scenarioRemainingMatches').textContent=pending.length.toLocaleString('tr-TR');$('scenarioExactColumns').textContent=total.toLocaleString('tr-TR');$('scenarioUniqueCount').textContent=scenarios.length.toLocaleString('tr-TR');
+  if(!total){summary.textContent='Girilen sonuçlarla devam eden kolon kalmadığı için senaryo üretilemiyor.';list.innerHTML='';impact.innerHTML='';box.classList.add('scenario-empty');return}
+  box.classList.remove('scenario-empty');
+  if(!pending.length){summary.textContent=`Tüm maçlar tamamlandı. Girilen 15 sonucun tamamına uyan ${total.toLocaleString('tr-TR')} kolon bulunuyor.`;list.innerHTML='<article class="scenario-complete"><strong>Hafta tamamlandı</strong><span>Artık bekleyen maç senaryosu yok.</span></article>';impact.innerHTML='';return}
+  summary.textContent=`${pending.length} maç için ${scenarios.length.toLocaleString('tr-TR')} farklı 15 bilme senaryosu kaldı. Aynı sonuç dizisini taşıyan kolonlar tek senaryoda birleştirildi.`;
+  const limit=20,shown=scenarios.slice(0,limit);
+  list.innerHTML=shown.map((sc,n)=>`<article class="scenario-card"><div class="scenario-card-head"><div><span>Senaryo ${n+1}</span><strong>${sc.count.toLocaleString('tr-TR')} kolon</strong></div><small>%${Math.round(sc.count/total*100)} pay</small></div><div class="scenario-picks">${pending.map((mi,j)=>`<span title="${escapeHtml(state.matchNames[mi])}"><b>${mi+1}</b>${sc.picks[j]}</span>`).join('')}</div></article>`).join('')+(scenarios.length>limit?`<p class="scenario-more">İlk ${limit} senaryo gösteriliyor. Ayrıca ${(scenarios.length-limit).toLocaleString('tr-TR')} senaryo daha var.</p>`:'');
+  impact.innerHTML=pending.map(mi=>{const d=getPickDistribution(mi,liveColumns);return`<article class="scenario-impact-card"><div class="scenario-impact-title"><span>${mi+1}. Maç</span><div><strong>${escapeHtml(state.matchNames[mi])}</strong>${state.matchLeagues[mi]?`<small>${escapeHtml(state.matchLeagues[mi])}</small>`:''}</div></div><div class="scenario-outcomes">${['1','X','2'].map(p=>{const count=d.counts[p],pct=total?Math.round(count/total*100):0;return`<div class="scenario-outcome"><b>${p}</b><strong>${count.toLocaleString('tr-TR')}</strong><small>15 devam • %${pct}</small></div>`}).join('')}</div></article>`}).join('');
+}
 function setAnalysisMode(mode){analysisMode=mode==='all'?'all':'live';document.querySelectorAll('.analysis-mode-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.mode===analysisMode));renderAnalysis()}
 function renderAnalysis(){
   const empty=$('analysisEmpty'),content=$('analysisContent'),allTotal=state.columns.length,entered=state.results.filter(Boolean).length;
@@ -44,6 +62,7 @@ function renderAnalysis(){
   if(allTotal){animateNumber($('liveStart'),allTotal);animateNumber($('liveRemaining'),liveTotal);animateNumber($('liveEliminated'),eliminated);$('liveRate').textContent=`%${survivalRate.toFixed(1).replace('.',',')}`;const impact=calculateLastResultImpact(liveTotal),banner=$('analysisImpactBanner');if(impact&&impact.before!==impact.after){banner.classList.remove('hidden');$('impactMatch').textContent=`${impact.index+1}. maç sonucu`;$('impactFlow').textContent=`${impact.before.toLocaleString('tr-TR')} → ${impact.after.toLocaleString('tr-TR')}`;$('impactEliminated').textContent=`${impact.eliminated.toLocaleString('tr-TR')} kolon elendi`;banner.classList.remove('positive');banner.classList.add('changed')}else{banner.classList.add('hidden');banner.classList.remove('changed')}previousLiveTotal=liveTotal;}
   if(!allTotal){empty.classList.remove('hidden');content.classList.add('hidden');return}
   empty.classList.add('hidden');content.classList.remove('hidden');
+  renderScenarioEngine(liveColumns);
   const pendingOnly=isLive&&entered>0,rows=getAnalysisRows(sourceColumns,pendingOnly);
   $('analysisHeatTitle').textContent=isLive?'Kalan Maçlarda Canlı 1 / X / 2 Dağılımı':'15 Maçta Başlangıç 1 / X / 2 Dağılımı';
   $('analysisHeatNote').textContent=isLive?'Yüzdeler yalnızca hâlâ devam eden kolonlara göredir. Sonuçlanan maçlar listeden çıkarılır.':'Yüzdeler yüklenen bütün kolonlara göredir.';
