@@ -34,3 +34,6 @@ V8.0.0:
 - Her maç için yüklenen kolonlardaki 1 / X / 2 seçim adetleri gösterilir.
 - Her seçimin yüzde oranı gösterilir.
 - Dağılım Excel yüklenince ve hafta değiştirilince otomatik hesaplanır.
+
+
+V8.1.0: Analiz Merkezi canlı hale getirildi. Tüm/Kalan kolon modu, başlangıç-kalan-elenen sayaçları, kalan oranı, son sonuç etkisi ve yalnızca devam eden kolonlara göre dinamik 1/X/2 analizi eklendi.
