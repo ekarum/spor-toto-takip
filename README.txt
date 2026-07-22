@@ -30,7 +30,7 @@ V7.1.4: Takip Paneli'nde Lig satırı desteklenir. Maç kartlarında lig adı ta
 V7.2.0: Excel yüklemedeki matchLeagues tanımsız hatası düzeltildi. Lig satırı güvenli biçimde okunur, eski haftalar boş liglerle çalışır ve ligler bulut senkronizasyonuna dahil edilir.
 
 
-V7.3.1:
+V8.0.0:
 - Her maç için yüklenen kolonlardaki 1 / X / 2 seçim adetleri gösterilir.
 - Her seçimin yüzde oranı gösterilir.
 - Dağılım Excel yüklenince ve hafta değiştirilince otomatik hesaplanır.

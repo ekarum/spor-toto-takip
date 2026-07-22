@@ -8,14 +8,12 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="icon" type="image/png" sizes="64x64" href="karum-logo-64.png?v=7.3.2">
-  <link rel="apple-touch-icon" href="karum-logo-192.png?v=7.3.2">
-  <link rel="stylesheet" href="styles.css?v=7.3.2">
+  <link rel="stylesheet" href="styles.css?v=8.0.0">
   <title>Karum Toto</title>
 </head>
 <body>
 <div id="splash" class="splash" aria-hidden="true">
-  <div class="splash-logo"><img src="karum-logo-512.png?v=7.3.2" alt="Karum Toto logosu"></div>
+  <div class="splash-logo">KT</div>
   <div class="splash-title">KARUM TOTO</div>
   <div class="splash-subtitle">Spor Toto Takip Sistemi</div>
 </div>
@@ -23,7 +21,7 @@
 <main class="app">
   <header class="hero">
     <div class="brand-wrap">
-      <div class="brand-logo"><img src="karum-logo-192.png?v=7.3.2" alt="Karum Toto logosu"></div>
+      <div class="brand-logo">KT</div>
       <div class="brand-text">
         <h1>KARUM TOTO <small id="versionBadge"></small></h1>
         <p class="eyebrow">SPOR TOTO TAKİP SİSTEMİ</p>
@@ -40,6 +38,7 @@
     </div>
   </section>
 
+  <div id="homeView">
   <section class="upload-card premium-card">
     <div class="file-summary">
       <div>
@@ -79,8 +78,35 @@
     <div id="matches"></div>
   </section>
 
+  </div>
 
-  <footer>Karum Toto v7.3.2 • Bulut Senkronizasyon • by Eyüp Karum</footer>
+  <section id="analysisView" class="analysis-view hidden" aria-labelledby="analysisTitle">
+    <div class="analysis-hero premium-card">
+      <div><p class="section-kicker">KOLON ANALİZ MERKEZİ</p><h2 id="analysisTitle">Hafta Özeti</h2><p id="analysisSubtitle">Excel yüklediğinde 15 maç ve bütün kolonlar burada analiz edilir.</p></div>
+      <span id="analysisTotalBadge" class="analysis-total-badge">0 kolon</span>
+    </div>
+    <div id="analysisEmpty" class="analysis-empty premium-card">Analiz için önce kolon içeren bir Excel yükle.</div>
+    <div id="analysisContent" class="hidden">
+      <div class="analysis-summary-grid">
+        <article class="analysis-summary-card"><span>Toplam Kolon</span><strong id="aTotal">0</strong><small>Analize dahil</small></article>
+        <article class="analysis-summary-card"><span>En Çok Oynanan</span><strong id="aTopPick">-</strong><small id="aTopPickMeta">-</small></article>
+        <article class="analysis-summary-card safe"><span>En Güvenli Maç</span><strong id="aSafestNo">-</strong><small id="aSafestMeta">-</small></article>
+        <article class="analysis-summary-card risky"><span>En Riskli Maç</span><strong id="aRiskiestNo">-</strong><small id="aRiskiestMeta">-</small></article>
+      </div>
+
+      <div class="analysis-section premium-card">
+        <div class="analysis-section-head"><div><p class="section-kicker">AKILLI ÖZET</p><h3>Bu Haftanın Yorumu</h3></div></div>
+        <div id="analysisInsights" class="analysis-insights"></div>
+      </div>
+
+      <div class="analysis-section premium-card">
+        <div class="analysis-section-head"><div><p class="section-kicker">ISI HARİTASI</p><h3>15 Maçta 1 / X / 2 Dağılımı</h3></div><small>Yüzdeler yüklenen bütün kolonlara göredir.</small></div>
+        <div id="analysisMatchList" class="analysis-match-list"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>Karum Toto v8.0.0 • Analiz Merkezi • by Eyüp Karum</footer>
 </main>
 
 <div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
@@ -101,7 +127,7 @@
 <div id="authBackdrop" class="auth-backdrop hidden"></div>
 <section id="authModal" class="auth-modal hidden" role="dialog" aria-modal="true">
   <button id="closeAuth" class="auth-close" aria-label="Kapat">×</button>
-  <div class="brand-logo auth-logo"><img src="karum-logo-192.png?v=7.3.2" alt="Karum Toto logosu"></div>
+  <div class="brand-logo auth-logo">KT</div>
   <h2>Karum Toto Bulut</h2>
   <p>Telefon ve bilgisayarda aynı e-posta ve şifreyle giriş yap.</p>
   <label>E-posta<input id="authEmail" type="email" autocomplete="email" placeholder="ornek@email.com"></label>
@@ -113,14 +139,14 @@
 </section>
 
 <nav class="bottom-nav" aria-label="Alt menü">
-  <button class="nav-item active"><span>⌂</span>Ana Sayfa</button>
-  <button class="nav-item" disabled><span>▥</span>İstatistik</button>
+  <button id="homeNavBtn" class="nav-item active" type="button"><span>⌂</span>Ana Sayfa</button>
+  <button id="analysisNavBtn" class="nav-item" type="button"><span>▥</span>Analiz</button>
   <button class="nav-item" disabled><span>⚙</span>Ayarlar</button>
 </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="initial-data.js?v=7.3.2"></script>
-<script src="app.js?v=7.3.2"></script>
+<script src="initial-data.js?v=8.0.0"></script>
+<script src="app.js?v=8.0.0"></script>
 </body>
 </html>
