@@ -36,4 +36,13 @@ V8.0.0:
 - Dağılım Excel yüklenince ve hafta değiştirilince otomatik hesaplanır.
 
 
-V8.1.0: Analiz Merkezi canlı hale getirildi. Tüm/Kalan kolon modu, başlangıç-kalan-elenen sayaçları, kalan oranı, son sonuç etkisi ve yalnızca devam eden kolonlara göre dinamik 1/X/2 analizi eklendi.
+V8.2.0: Analiz Merkezi canlı hale getirildi. Tüm/Kalan kolon modu, başlangıç-kalan-elenen sayaçları, kalan oranı, son sonuç etkisi ve yalnızca devam eden kolonlara göre dinamik 1/X/2 analizi eklendi.
+
+
+V8.2.0 YENİLİKLERİ
+- Canlı kalan ve elenen kolon sayaçları animasyonlu çalışır.
+- Son girilen sonucun etkisi ayrı bir bantta gösterilir.
+- Her maç için Çok Güçlü / Güçlü / Orta / Dengeli / Çok Riskli güven etiketi bulunur.
+- Canlı yüzdeler başlangıç yüzdeleriyle karşılaştırılır.
+- Isı haritasında başlangıç seviyesi beyaz işaretle, değişim ise puan farkıyla gösterilir.
+- Kolon arama özelliği eklenmemiştir.
