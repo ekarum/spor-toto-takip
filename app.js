@@ -137,6 +137,15 @@ document.querySelectorAll('.category-card').forEach(btn=>btn.onclick=()=>openCat
 $('clearResults').onclick=()=>{lastChangedMatchIndex=null;state.results=Array(15).fill('');saveLocal();renderMatches();calculate();queueCloudSave()};
 $('accountBtn').onclick=showAuth;$('closeAuth').onclick=closeAuth;$('authBackdrop').onclick=closeAuth;$('loginBtn').onclick=login;$('signupBtn').onclick=signup;$('logoutBtn').onclick=logout;
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSurvivors();closeAuth()}});
-$('homeNavBtn').onclick=()=>showView('home');$('analysisNavBtn').onclick=()=>showView('analysis');document.querySelectorAll('.analysis-mode-btn').forEach(btn=>btn.onclick=()=>setAnalysisMode(btn.dataset.mode));
+function setActiveNav(tab){document.querySelectorAll('.bottom-nav .nav-item').forEach(btn=>btn.classList.toggle('active',btn.dataset.tab===tab))}
+function openHomeSection(target){showView('home');setActiveNav(target==='matches'?'matches':'home');requestAnimationFrame(()=>{if(target==='matches')$('matchesPanel')?.scrollIntoView({behavior:'smooth',block:'start'});else window.scrollTo({top:0,behavior:'smooth'})})}
+function openAnalysisSection(target){showView('analysis');setActiveNav(target==='smart'?'smart':'analysis');requestAnimationFrame(()=>{if(target==='smart')$('smartDecisionPanel')?.scrollIntoView({behavior:'smooth',block:'start'});else window.scrollTo({top:0,behavior:'smooth'})})}
+$('homeNavBtn').onclick=()=>openHomeSection('home');
+$('matchesNavBtn').onclick=()=>openHomeSection('matches');
+$('analysisNavBtn').onclick=()=>openAnalysisSection('analysis');
+$('smartNavBtn').onclick=()=>openAnalysisSection('smart');
+$('settingsNavBtn').onclick=()=>{setActiveNav('settings');showAuth()};
+document.querySelectorAll('.quick-access button').forEach(btn=>btn.onclick=()=>{const a=btn.dataset.action;if(a==='analysis'||a==='live')openAnalysisSection('analysis');else if(a==='scenario'){openAnalysisSection('analysis');requestAnimationFrame(()=>$('scenarioEngine')?.scrollIntoView({behavior:'smooth',block:'start'}))}else openAnalysisSection('smart')});
+document.querySelectorAll('.analysis-mode-btn').forEach(btn=>btn.onclick=()=>setAnalysisMode(btn.dataset.mode));
 loadLocal();normalizeState();updateHeader();renderMatches();calculate();initSupabase();setInterval(refreshMatchStatuses,30000);
 window.addEventListener('load',()=>{const splash=$('splash');if(splash){setTimeout(()=>splash.classList.add('hide'),650);setTimeout(()=>splash.remove(),1150)}});

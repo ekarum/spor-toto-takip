@@ -8,12 +8,12 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=11.0.0">
+  <link rel="stylesheet" href="styles.css?v=12.0.0">
   <title>Karum Toto</title>
 </head>
 <body>
 <div id="splash" class="splash" aria-hidden="true">
-  <div class="splash-logo">KT</div>
+  <div class="splash-logo"><svg class="crown-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 48h44l-4 8H14l-4-8Zm2-28 12 10 8-20 8 20 12-10-5 24H17l-5-24Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><circle cx="12" cy="18" r="3" fill="currentColor"/><circle cx="32" cy="8" r="3" fill="currentColor"/><circle cx="52" cy="18" r="3" fill="currentColor"/></svg></div>
   <div class="splash-title">KARUM TOTO</div>
   <div class="splash-subtitle">Spor Toto Takip Sistemi</div>
 </div>
@@ -21,7 +21,7 @@
 <main class="app">
   <header class="hero">
     <div class="brand-wrap">
-      <div class="brand-logo">KT</div>
+      <div class="brand-logo"><svg class="crown-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 48h44l-4 8H14l-4-8Zm2-28 12 10 8-20 8 20 12-10-5 24H17l-5-24Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><circle cx="12" cy="18" r="3" fill="currentColor"/><circle cx="32" cy="8" r="3" fill="currentColor"/><circle cx="52" cy="18" r="3" fill="currentColor"/></svg></div>
       <div class="brand-text">
         <h1>KARUM TOTO <small id="versionBadge"></small></h1>
         <p class="eyebrow">SPOR TOTO TAKİP SİSTEMİ</p>
@@ -64,13 +64,20 @@
     <button class="stat-card red stat-button category-card" type="button" data-category="11"><span><i></i>11 ve Altı</span><strong id="s11">0</strong><small>Kolonları gör</small></button>
     <button id="remainingMatchesBtn" class="stat-card neutral wide stat-button remaining-card" type="button"><span><i></i>Kalan Maç</span><strong id="remaining">15</strong><small>Maçları gör</small></button>
   </section>
+  <section class="quick-access premium-card" aria-label="Hızlı erişim">
+    <button type="button" data-action="analysis"><span class="qa-icon qa-gold">▥</span><strong>Analiz Merkezi</strong><small>Genel görünüm</small></button>
+    <button type="button" data-action="live"><span class="qa-icon qa-green">⌁</span><strong>Canlı Analiz</strong><small>Kalan kolonlar</small></button>
+    <button type="button" data-action="scenario"><span class="qa-icon qa-purple">◇</span><strong>Senaryo Motoru</strong><small>15 bilme yolları</small></button>
+    <button type="button" data-action="smart"><span class="qa-icon qa-blue">◉</span><strong>Akıllı Analiz</strong><small>Karar özeti</small></button>
+  </section>
+
   <div class="week-progress" aria-label="Hafta ilerleme durumu">
     <div class="progress-head"><span id="progressText">0 / 15 maç tamamlandı</span><strong id="progressPercent">%0</strong></div>
     <div class="progress-track"><span id="progressBar" style="width:0%"></span></div>
   </div>
   <p id="statsSource" class="stats-source">Sonuçları telefonda seçtikçe kalan kolonlar anında hesaplanır.</p>
 
-  <section class="panel premium-card">
+  <section id="matchesPanel" class="panel premium-card">
     <div class="section-title">
       <div><p class="section-kicker">CANLI TAKİP</p><h2>Maç Sonuçları</h2></div>
       <button id="clearResults" class="ghost small">Temizle</button>
@@ -141,7 +148,7 @@
     </div>
   </section>
 
-  <footer>Karum Toto v11.0.0 • Premium Mobile UI • by Eyüp Karum</footer>
+  <footer>Karum Toto v12.0.0 • Unified Premium UI • by Eyüp Karum</footer>
 </main>
 
 <div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
@@ -162,7 +169,7 @@
 <div id="authBackdrop" class="auth-backdrop hidden"></div>
 <section id="authModal" class="auth-modal hidden" role="dialog" aria-modal="true">
   <button id="closeAuth" class="auth-close" aria-label="Kapat">×</button>
-  <div class="brand-logo auth-logo">KT</div>
+  <div class="brand-logo auth-logo"><svg class="crown-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 48h44l-4 8H14l-4-8Zm2-28 12 10 8-20 8 20 12-10-5 24H17l-5-24Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><circle cx="12" cy="18" r="3" fill="currentColor"/><circle cx="32" cy="8" r="3" fill="currentColor"/><circle cx="52" cy="18" r="3" fill="currentColor"/></svg></div>
   <h2>Karum Toto Bulut</h2>
   <p>Telefon ve bilgisayarda aynı e-posta ve şifreyle giriş yap.</p>
   <label>E-posta<input id="authEmail" type="email" autocomplete="email" placeholder="ornek@email.com"></label>
@@ -174,14 +181,16 @@
 </section>
 
 <nav class="bottom-nav" aria-label="Alt menü">
-  <button id="homeNavBtn" class="nav-item active" type="button"><span>⌂</span>Ana Sayfa</button>
-  <button id="analysisNavBtn" class="nav-item" type="button"><span>▥</span>Analiz</button>
-  <button class="nav-item" disabled><span>⚙</span>Ayarlar</button>
+  <button id="homeNavBtn" class="nav-item active" type="button" data-tab="home"><span class="nav-icon">⌂</span><em>Ana Sayfa</em></button>
+  <button id="matchesNavBtn" class="nav-item" type="button" data-tab="matches"><span class="nav-icon">●</span><em>Maçlar</em></button>
+  <button id="analysisNavBtn" class="nav-item" type="button" data-tab="analysis"><span class="nav-icon">▥</span><em>Analiz</em></button>
+  <button id="smartNavBtn" class="nav-item" type="button" data-tab="smart"><span class="nav-icon">◉</span><em>Akıllı Analiz</em></button>
+  <button id="settingsNavBtn" class="nav-item" type="button" data-tab="settings"><span class="nav-icon">⚙</span><em>Ayarlar</em></button>
 </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="initial-data.js?v=11.0.0"></script>
-<script src="app.js?v=11.0.0"></script>
+<script src="initial-data.js?v=12.0.0"></script>
+<script src="app.js?v=12.0.0"></script>
 </body>
 </html>
