@@ -1,4 +1,4 @@
-const APP_VERSION='10.0.0';
+const APP_VERSION='11.0.0';
 const STORAGE_KEY='sporTotoStateV711';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';

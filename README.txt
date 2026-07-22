@@ -63,3 +63,11 @@ V10.0.0 Akıllı Karar Analizi
 - Canlı kalan kolonlardan kritik maç, avantajlı sonuç ve güçlü yol analizi üretir.
 - Dış maç tahmini yapmaz; sadece yüklenen kolon verisini yorumlar.
 - En güçlü üç 15 bilme senaryosunu öne çıkarır.
+
+
+V11.0.0 Premium Mobile UI
+- Yeni koyu lacivert tasarım sistemi
+- Premium kartlar ve mobil alt menü
+- Modern maç kartları
+- Analiz ekranı görsel iyileştirmeleri
+- İşlevsel hesaplama mantığı korunmuştur
