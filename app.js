@@ -1,4 +1,4 @@
-const APP_VERSION='11.0.0';
+const APP_VERSION='12.0.1';
 const STORAGE_KEY='sporTotoStateV711';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
@@ -141,6 +141,11 @@ function setActiveNav(tab){document.querySelectorAll('.bottom-nav .nav-item').fo
 function openHomeSection(target){showView('home');setActiveNav(target==='matches'?'matches':'home');requestAnimationFrame(()=>{if(target==='matches')$('matchesPanel')?.scrollIntoView({behavior:'smooth',block:'start'});else window.scrollTo({top:0,behavior:'smooth'})})}
 function openAnalysisSection(target){showView('analysis');setActiveNav(target==='smart'?'smart':'analysis');requestAnimationFrame(()=>{if(target==='smart')$('smartDecisionPanel')?.scrollIntoView({behavior:'smooth',block:'start'});else window.scrollTo({top:0,behavior:'smooth'})})}
 $('homeNavBtn').onclick=()=>openHomeSection('home');
+const brandHomeBtn=$('brandHomeBtn');
+if(brandHomeBtn){
+  brandHomeBtn.onclick=()=>openHomeSection('home');
+  brandHomeBtn.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openHomeSection('home')}};
+}
 $('matchesNavBtn').onclick=()=>openHomeSection('matches');
 $('analysisNavBtn').onclick=()=>openAnalysisSection('analysis');
 $('smartNavBtn').onclick=()=>openAnalysisSection('smart');

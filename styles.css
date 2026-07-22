@@ -323,3 +323,8 @@ footer{color:#53627a;font-size:10px;padding-top:8px}
 .analysis-summary-grid{grid-template-columns:repeat(4,1fr)}.analysis-summary-card{min-height:112px}.analysis-section{scroll-margin-top:16px}.smart-decision-panel{border-color:rgba(155,92,255,.32)!important;background:linear-gradient(145deg,rgba(47,25,89,.40),rgba(10,25,43,.98))}.scenario-engine{border-color:rgba(155,92,255,.24)!important}
 @media(max-width:680px){.app{padding-inline:10px}.stats{grid-template-columns:1fr 1fr}.stat-card.wide{grid-column:auto}.quick-access{grid-template-columns:repeat(4,1fr);padding:9px;gap:6px}.quick-access button{padding:11px 4px}.quick-access strong{font-size:9px}.quick-access small{display:none}.analysis-summary-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:390px){.brand-text h1{font-size:20px}.brand-logo{width:46px;height:46px}.hero-actions .ghost{display:none}.quick-access strong{font-size:8px}.bottom-nav{width:calc(100% - 12px)}.nav-item em{font-size:7px}.nav-item .nav-icon{font-size:18px}}
+
+/* V12.0.1: üst marka alanı ana sayfa kısayolu */
+.brand-wrap[role="button"]{cursor:pointer;border-radius:18px;transition:transform .18s ease,opacity .18s ease}
+.brand-wrap[role="button"]:active{transform:scale(.985);opacity:.88}
+.brand-wrap[role="button"]:focus-visible{outline:2px solid #f6bd2f;outline-offset:8px}
