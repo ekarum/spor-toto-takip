@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=12.0.1">
+  <link rel="stylesheet" href="styles.css?v=13.0.0">
   <title>Karum Toto</title>
 </head>
 <body>
@@ -77,15 +77,20 @@
   </div>
   <p id="statsSource" class="stats-source">Sonuçları telefonda seçtikçe kalan kolonlar anında hesaplanır.</p>
 
-  <section id="matchesPanel" class="panel premium-card">
-    <div class="section-title">
-      <div><p class="section-kicker">CANLI TAKİP</p><h2>Maç Sonuçları</h2></div>
+  </div>
+
+  <section id="matchesView" class="matches-view hidden" aria-labelledby="matchesTitle">
+    <div class="page-head premium-card">
+      <div><p class="section-kicker">HAFTA PROGRAMI</p><h2 id="matchesTitle">15 Maç</h2><p>Maça dokunarak ayrıntılı dağılımı ve sonucu aç.</p></div>
       <button id="clearResults" class="ghost small">Temizle</button>
     </div>
-    <div id="matches"></div>
+    <div id="matches" class="matches-list"></div>
   </section>
 
-  </div>
+  <section id="matchDetailView" class="match-detail-view hidden" aria-labelledby="matchDetailTitle">
+    <button id="matchDetailBack" class="detail-back" type="button">← Maçlara dön</button>
+    <div id="matchDetailContent"></div>
+  </section>
 
   <section id="analysisView" class="analysis-view hidden" aria-labelledby="analysisTitle">
     <div class="analysis-hero premium-card">
@@ -148,7 +153,7 @@
     </div>
   </section>
 
-  <footer>Karum Toto v12.0.0 • Unified Premium UI • by Eyüp Karum</footer>
+  <footer>Karum Toto v13.0.0 • Maç Merkezi • by Eyüp Karum</footer>
 </main>
 
 <div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
@@ -190,7 +195,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="initial-data.js?v=12.0.0"></script>
-<script src="app.js?v=12.0.1"></script>
+<script src="initial-data.js?v=13.0.0"></script>
+<script src="app.js?v=13.0.0"></script>
 </body>
 </html>
