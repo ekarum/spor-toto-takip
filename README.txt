@@ -57,3 +57,9 @@ V9.1.0 KALAN KOLON SENARYO MOTORU
 
 
 V9.1.1: Senaryo Motoru stil dosyası önbellek sorunu düzeltildi; kartlar, sayaçlar ve 1/X/2 sonuç kutuları daha okunaklı hale getirildi.
+
+
+V10.0.0 Akıllı Karar Analizi
+- Canlı kalan kolonlardan kritik maç, avantajlı sonuç ve güçlü yol analizi üretir.
+- Dış maç tahmini yapmaz; sadece yüklenen kolon verisini yorumlar.
+- En güçlü üç 15 bilme senaryosunu öne çıkarır.

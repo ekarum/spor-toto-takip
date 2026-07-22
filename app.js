@@ -1,4 +1,4 @@
-const APP_VERSION='9.1.0';
+const APP_VERSION='10.0.0';
 const STORAGE_KEY='sporTotoStateV711';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
@@ -51,6 +51,26 @@ function renderScenarioEngine(liveColumns){
   list.innerHTML=shown.map((sc,n)=>`<article class="scenario-card"><div class="scenario-card-head"><div><span>Senaryo ${n+1}</span><strong>${sc.count.toLocaleString('tr-TR')} kolon</strong></div><small>%${Math.round(sc.count/total*100)} pay</small></div><div class="scenario-picks">${pending.map((mi,j)=>`<span title="${escapeHtml(state.matchNames[mi])}"><b>${mi+1}</b>${sc.picks[j]}</span>`).join('')}</div></article>`).join('')+(scenarios.length>limit?`<p class="scenario-more">İlk ${limit} senaryo gösteriliyor. Ayrıca ${(scenarios.length-limit).toLocaleString('tr-TR')} senaryo daha var.</p>`:'');
   impact.innerHTML=pending.map(mi=>{const d=getPickDistribution(mi,liveColumns);return`<article class="scenario-impact-card"><div class="scenario-impact-title"><span>${mi+1}. Maç</span><div><strong>${escapeHtml(state.matchNames[mi])}</strong>${state.matchLeagues[mi]?`<small>${escapeHtml(state.matchLeagues[mi])}</small>`:''}</div></div><div class="scenario-outcomes">${['1','X','2'].map(p=>{const count=d.counts[p],pct=total?Math.round(count/total*100):0;return`<div class="scenario-outcome"><b>${p}</b><strong>${count.toLocaleString('tr-TR')}</strong><small>15 devam • %${pct}</small></div>`}).join('')}</div></article>`}).join('');
 }
+function renderSmartDecisionAnalysis(liveColumns){
+  const panel=$('smartDecisionPanel'),headline=$('smartHeadline'),summary=$('smartSummary'),cards=$('smartDecisionCards'),path=$('smartBestPath'),scenarioBox=$('smartTopScenarios');
+  if(!panel||!headline||!summary||!cards||!path||!scenarioBox)return;
+  const total=liveColumns.length,{pending,scenarios}=getScenarioData(liveColumns);
+  if(!total){panel.classList.add('smart-empty');headline.textContent='Devam eden kolon yok';summary.textContent='Girilen sonuçlardan biri bütün kolonları elemiş durumda. Bir sonucu geri aldığında karar analizi yeniden oluşur.';cards.innerHTML='';path.innerHTML='';scenarioBox.innerHTML='';return}
+  panel.classList.remove('smart-empty');
+  if(!pending.length){headline.textContent='Hafta tamamlandı';summary.textContent=`Girilen 15 sonucun tamamına uyan ${total.toLocaleString('tr-TR')} kolon bulunuyor.`;cards.innerHTML='<article><span>Durum</span><strong>Tamamlandı</strong><small>Bekleyen maç kalmadı</small></article>';path.innerHTML='';scenarioBox.innerHTML='';return}
+  const matches=pending.map(mi=>{const d=getPickDistribution(mi,liveColumns),items=['1','X','2'].map(p=>({pick:p,count:d.counts[p],pct:total?d.counts[p]/total*100:0})).sort((a,b)=>b.count-a.count);const top=items[0],second=items[1],spread=top.count-second.count;return{mi,items,top,second,spread,confidence:top.pct}});
+  const critical=[...matches].sort((a,b)=>a.spread-b.spread||a.confidence-b.confidence)[0];
+  const strongest=[...matches].sort((a,b)=>b.top.count-a.top.count||b.confidence-a.confidence)[0];
+  const topScenario=scenarios[0],topShare=topScenario?topScenario.count/total*100:0;
+  const concentrated=matches.filter(m=>m.confidence>=70).length;
+  headline.textContent=`${total.toLocaleString('tr-TR')} kolon için canlı karar özeti`;
+  summary.textContent=`Bu bölüm dışarıdan maç tahmini yapmaz; yalnızca hâlâ yaşayan kolonların dağılımını yorumlar. Şu anda ${pending.length} maç ve ${scenarios.length.toLocaleString('tr-TR')} farklı 15 bilme yolu kaldı.`;
+  cards.innerHTML=`<article class="smart-card critical"><span>En Kritik Maç</span><strong>${critical.mi+1}. Maç</strong><small>${escapeHtml(state.matchNames[critical.mi])}<br>${critical.top.pick}: ${critical.top.count.toLocaleString('tr-TR')} • ${critical.second.pick}: ${critical.second.count.toLocaleString('tr-TR')}</small></article><article class="smart-card advantage"><span>En Avantajlı Sonuç</span><strong>${strongest.mi+1}. Maç → ${strongest.top.pick}</strong><small>Bu sonuç gelirse ${strongest.top.count.toLocaleString('tr-TR')} kolon 15 devam eder.</small></article><article class="smart-card"><span>En Güçlü Senaryo</span><strong>%${Math.round(topShare)} pay</strong><small>${topScenario?`${topScenario.count.toLocaleString('tr-TR')} kolon aynı yolu taşıyor.`:'Senaryo yok'}</small></article><article class="smart-card"><span>Yoğunlaşan Maç</span><strong>${concentrated}</strong><small>%70 ve üzeri tek sonuç ağırlığı bulunan bekleyen maç.</small></article>`;
+  const recommended=[...matches].sort((a,b)=>b.confidence-a.confidence).slice(0,Math.min(5,matches.length));
+  path.innerHTML=`<div class="smart-path-head"><div><span>Kolonlara göre en güçlü yol</span><strong>En yüksek yaşayan kolon sayısını koruyan seçimler</strong></div><small>Tahmin değil, kolon yoğunluğu</small></div><div class="smart-path-picks">${recommended.map(m=>`<article><b>${m.mi+1}</b><strong>${m.top.pick}</strong><span>${m.top.count.toLocaleString('tr-TR')} kolon</span><small>%${Math.round(m.confidence)}</small></article>`).join('')}</div>`;
+  const topThree=scenarios.slice(0,3);
+  scenarioBox.innerHTML=`<div class="smart-path-head"><div><span>Öne çıkan 15 senaryoları</span><strong>En fazla kolonda tekrar eden sonuç dizileri</strong></div><small>İlk 3 yol</small></div><div class="smart-scenario-grid">${topThree.map((sc,i)=>`<article><div><span>#${i+1}</span><strong>${sc.count.toLocaleString('tr-TR')} kolon</strong><small>%${Math.round(sc.count/total*100)} pay</small></div><p>${pending.map((mi,j)=>`<b title="${escapeHtml(state.matchNames[mi])}">${mi+1}<em>${sc.picks[j]}</em></b>`).join('')}</p></article>`).join('')}</div>`;
+}
 function setAnalysisMode(mode){analysisMode=mode==='all'?'all':'live';document.querySelectorAll('.analysis-mode-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.mode===analysisMode));renderAnalysis()}
 function renderAnalysis(){
   const empty=$('analysisEmpty'),content=$('analysisContent'),allTotal=state.columns.length,entered=state.results.filter(Boolean).length;
@@ -62,6 +82,7 @@ function renderAnalysis(){
   if(allTotal){animateNumber($('liveStart'),allTotal);animateNumber($('liveRemaining'),liveTotal);animateNumber($('liveEliminated'),eliminated);$('liveRate').textContent=`%${survivalRate.toFixed(1).replace('.',',')}`;const impact=calculateLastResultImpact(liveTotal),banner=$('analysisImpactBanner');if(impact&&impact.before!==impact.after){banner.classList.remove('hidden');$('impactMatch').textContent=`${impact.index+1}. maç sonucu`;$('impactFlow').textContent=`${impact.before.toLocaleString('tr-TR')} → ${impact.after.toLocaleString('tr-TR')}`;$('impactEliminated').textContent=`${impact.eliminated.toLocaleString('tr-TR')} kolon elendi`;banner.classList.remove('positive');banner.classList.add('changed')}else{banner.classList.add('hidden');banner.classList.remove('changed')}previousLiveTotal=liveTotal;}
   if(!allTotal){empty.classList.remove('hidden');content.classList.add('hidden');return}
   empty.classList.add('hidden');content.classList.remove('hidden');
+  renderSmartDecisionAnalysis(liveColumns);
   renderScenarioEngine(liveColumns);
   const pendingOnly=isLive&&entered>0,rows=getAnalysisRows(sourceColumns,pendingOnly);
   $('analysisHeatTitle').textContent=isLive?'Kalan Maçlarda Canlı 1 / X / 2 Dağılımı':'15 Maçta Başlangıç 1 / X / 2 Dağılımı';
