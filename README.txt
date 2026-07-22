@@ -54,3 +54,6 @@ V9.1.0 KALAN KOLON SENARYO MOTORU
 - Her senaryonun kaç kolonda bulunduğu ve toplam içindeki payı gösterilir.
 - Her bekleyen maçta 1, X veya 2 gelirse kaç kolonun 15 Devam kalacağı hesaplanır.
 - Sonuç seçildikçe veya geri alındıkça senaryolar anlık yenilenir.
+
+
+V9.1.1: Senaryo Motoru stil dosyası önbellek sorunu düzeltildi; kartlar, sayaçlar ve 1/X/2 sonuç kutuları daha okunaklı hale getirildi.
