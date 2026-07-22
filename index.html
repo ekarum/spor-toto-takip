@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=13.0.0">
+  <link rel="stylesheet" href="styles.css?v=14.0.0">
   <title>Karum Toto</title>
 </head>
 <body>
@@ -52,6 +52,16 @@
         <span class="upload-title">Excel Yükle</span>
       </label>
     </div>
+  </section>
+
+
+  <section id="systemsPanel" class="systems-panel premium-card">
+    <div class="systems-head">
+      <div><span class="summary-label">BU HAFTANIN SİSTEMLERİ</span><strong>Kupon / Excel Ayrımı</strong><p>Sonuçlar haftaya ortak, kolonlar her sistemde ayrıdır.</p></div>
+      <button id="deleteSystemBtn" class="delete-system hidden" type="button">Sistemi Sil</button>
+    </div>
+    <select id="systemSelect" class="system-select" aria-label="Sistem seç"><option value="">Sistem yok</option></select>
+    <div id="systemCards" class="system-cards"></div>
   </section>
 
   <section class="stats">
@@ -153,7 +163,7 @@
     </div>
   </section>
 
-  <footer>Karum Toto v13.0.0 • Maç Merkezi • by Eyüp Karum</footer>
+  <footer>Karum Toto v14.0.0 • Hafta ve Çoklu Sistem Merkezi • by Eyüp Karum</footer>
 </main>
 
 <div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
@@ -195,7 +205,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="initial-data.js?v=13.0.0"></script>
-<script src="app.js?v=13.0.0"></script>
+<script src="initial-data.js?v=14.0.0"></script>
+<script src="app.js?v=14.0.0"></script>
 </body>
 </html>

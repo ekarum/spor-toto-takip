@@ -71,3 +71,6 @@ V11.0.0 Premium Mobile UI
 - Modern maç kartları
 - Analiz ekranı görsel iyileştirmeleri
 - İşlevsel hesaplama mantığı korunmuştur
+
+
+V14.0.0: Aynı hafta altında birden fazla Excel/sistem, ortak maç sonuçları, sistem seçimi, tüm sistemler birleşik analizi ve sistem silme eklendi.
