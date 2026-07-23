@@ -3,7 +3,7 @@ const STORAGE_KEY='sporTotoStateV140';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
 const LIVE_DURATION_MINUTES=120;
-const state={matchNames:[],matchLeagues:Array(15).fill(''),matchDates:Array(15).fill(''),matchTimes:Array(15).fill(''),results:Array(15).fill(''),fixtureIds:Array(15).fill(null),liveFixtures:Array(15).fill(null),liveUpdatedAt:'',columns:[],systems:[],activeSystemId:'',weekName:'Güncel Hafta',fileName:'',weekKey:'',weekFingerprint:'',cloudId:null,cloudUpdatedAt:null};
+const state={matchNames:[],matchLeagues:Array(15).fill(''),matchDates:Array(15).fill(''),matchTimes:Array(15).fill(''),results:Array(15).fill(''),fixtureIds:Array(15).fill(null),liveFixtures:Array(15).fill(null),matchReports:Array(15).fill(null),liveUpdatedAt:'',columns:[],systems:[],activeSystemId:'',weekName:'Güncel Hafta',fileName:'',weekKey:'',weekFingerprint:'',cloudId:null,cloudUpdatedAt:null};
 let db=null,currentUser=null,realtimeChannel=null,cloudWeeks=[],saveTimer=null,isApplyingRemote=false,currentCategory=15,currentCategoryRows={15:[],14:[],13:[],12:[],11:[]},sheetMode='category',analysisMode='live',lastChangedMatchIndex=null,previousLiveTotal=null;
 const $=id=>document.getElementById(id);
 const trUpper=v=>String(v??'').trim().toLocaleUpperCase('tr-TR');
@@ -14,7 +14,7 @@ function activeSystem(){return state.systems.find(s=>s.id===state.activeSystemId
 function allSystemColumns(){return state.systems.flatMap(s=>s.columns||[])}
 function syncActiveSystem(){const sys=activeSystem();if(sys){sys.columns=state.columns;sys.fileName=state.fileName||sys.fileName}}
 function setActiveSystem(id){syncActiveSystem();state.activeSystemId=id;if(id==='__all__'){state.columns=allSystemColumns();state.fileName='Tüm Sistemler'}else{const sys=state.systems.find(s=>s.id===id)||state.systems[0];if(sys){state.activeSystemId=sys.id;state.columns=sys.columns||[];state.fileName=sys.fileName||sys.name}}normalizeState();saveLocal();updateHeader();renderSystems();renderMatches();calculate();}
-function safeStatePayload(){syncActiveSystem();return {matchNames:state.matchNames,matchLeagues:state.matchLeagues,matchDates:state.matchDates,matchTimes:state.matchTimes,results:state.results,fixtureIds:state.fixtureIds,liveFixtures:state.liveFixtures,liveUpdatedAt:state.liveUpdatedAt,systems:state.systems,activeSystemId:state.activeSystemId,weekName:state.weekName,fileName:state.fileName,weekKey:state.weekKey,weekFingerprint:state.weekFingerprint}}
+function safeStatePayload(){syncActiveSystem();return {matchNames:state.matchNames,matchLeagues:state.matchLeagues,matchDates:state.matchDates,matchTimes:state.matchTimes,results:state.results,fixtureIds:state.fixtureIds,liveFixtures:state.liveFixtures,matchReports:state.matchReports,liveUpdatedAt:state.liveUpdatedAt,systems:state.systems,activeSystemId:state.activeSystemId,weekName:state.weekName,fileName:state.fileName,weekKey:state.weekKey,weekFingerprint:state.weekFingerprint}}
 function saveLocal(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
 function loadLocal(){try{const s=JSON.parse(localStorage.getItem(STORAGE_KEY));if(s&&(Array.isArray(s.columns)||Array.isArray(s.systems))){Object.assign(state,s);return}}catch(e){}Object.assign(state,window.INITIAL_DATA||{});state.results=Array(15).fill('');saveLocal()}
 function slug(v){return String(v||'hafta').toLocaleLowerCase('tr-TR').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,80)||'hafta'}
@@ -28,7 +28,7 @@ function updateHeader(){
   $('uploadInfo').textContent=state.systems.length?`${state.systems.length} sistem • ${state.columns.length.toLocaleString('tr-TR')} kolon • ${(state.columns.length*10).toLocaleString('tr-TR')} TL`:'Excel\'deki takım adları, tarih, saat ve kolonlar okunur.';
   $('versionBadge').textContent='v'+APP_VERSION;
 }
-function normalizeState(){state.matchNames=(state.matchNames||[]).slice(0,15);while(state.matchNames.length<15)state.matchNames.push('Maç '+(state.matchNames.length+1));state.matchLeagues=(state.matchLeagues||[]).map(v=>String(v??'').trim()).slice(0,15);while(state.matchLeagues.length<15)state.matchLeagues.push('');state.matchDates=(state.matchDates||[]).map(v=>String(v??'').trim()).slice(0,15);while(state.matchDates.length<15)state.matchDates.push('');state.matchTimes=(state.matchTimes||[]).map(v=>String(v??'').trim()).slice(0,15);while(state.matchTimes.length<15)state.matchTimes.push('');state.results=(state.results||[]).map(normalize).slice(0,15);while(state.results.length<15)state.results.push('');state.fixtureIds=(state.fixtureIds||[]).slice(0,15).map(v=>Number(v)||null);while(state.fixtureIds.length<15)state.fixtureIds.push(null);state.liveFixtures=(state.liveFixtures||[]).slice(0,15);while(state.liveFixtures.length<15)state.liveFixtures.push(null);state.liveUpdatedAt=String(state.liveUpdatedAt||'');
+function normalizeState(){state.matchNames=(state.matchNames||[]).slice(0,15);while(state.matchNames.length<15)state.matchNames.push('Maç '+(state.matchNames.length+1));state.matchLeagues=(state.matchLeagues||[]).map(v=>String(v??'').trim()).slice(0,15);while(state.matchLeagues.length<15)state.matchLeagues.push('');state.matchDates=(state.matchDates||[]).map(v=>String(v??'').trim()).slice(0,15);while(state.matchDates.length<15)state.matchDates.push('');state.matchTimes=(state.matchTimes||[]).map(v=>String(v??'').trim()).slice(0,15);while(state.matchTimes.length<15)state.matchTimes.push('');state.results=(state.results||[]).map(normalize).slice(0,15);while(state.results.length<15)state.results.push('');state.fixtureIds=(state.fixtureIds||[]).slice(0,15).map(v=>Number(v)||null);while(state.fixtureIds.length<15)state.fixtureIds.push(null);state.liveFixtures=(state.liveFixtures||[]).slice(0,15);while(state.liveFixtures.length<15)state.liveFixtures.push(null);state.matchReports=(state.matchReports||[]).slice(0,15);while(state.matchReports.length<15)state.matchReports.push(null);state.liveUpdatedAt=String(state.liveUpdatedAt||'');
   if(!Array.isArray(state.systems)||!state.systems.length){const legacy=(state.columns||[]).filter(c=>Array.isArray(c)&&c.length===15).map(c=>c.map(normalize));if(legacy.length)state.systems=[{id:makeSystemId(),name:state.fileName?.replace(/\.[^.]+$/,'')||'Sistem 1',fileName:state.fileName||'',columns:legacy}]}
   state.systems=(state.systems||[]).map((s,i)=>({id:s.id||makeSystemId(),name:String(s.name||`Sistem ${i+1}`).trim(),fileName:String(s.fileName||''),columns:(s.columns||[]).filter(c=>Array.isArray(c)&&c.length===15).map(c=>c.map(normalize))}));
   if(!state.activeSystemId||(state.activeSystemId!=='__all__'&&!state.systems.some(s=>s.id===state.activeSystemId)))state.activeSystemId=state.systems[0]?.id||'';
@@ -139,12 +139,37 @@ function splitMatchTeams(name=''){const parts=String(name).split(/\s+(?:-|–|�
 function fixtureResult(f){const h=Number(f?.goalsHome),a=Number(f?.goalsAway);if(!Number.isFinite(h)||!Number.isFinite(a))return '';return h>a?'1':h<a?'2':'X'}
 function isFinalFixture(f){return ['FT','AET','PEN'].includes(String(f?.statusShort||'').toUpperCase())}
 function liveFixtureStatus(f){const code=String(f?.statusShort||'').toUpperCase();if(isFinalFixture(f))return 'Tamamlandı';if(['1H','HT','2H','ET','BT','P','LIVE'].includes(code))return `${f.elapsed||''}${f.elapsed?' dk':''} Canlı`;if(['NS','TBD'].includes(code))return 'Başlamadı';if(['PST','CANC','ABD','AWD','WO'].includes(code))return f.statusLong||code;return f.statusLong||code||'Eşleşti'}
+function matchingReportStatus(i){
+  const report=state.matchReports?.[i],fixture=state.liveFixtures?.[i];
+  if(fixture){const confidence=Number(fixture.confidence||report?.confidence||100);return confidence>=85?'matched':'review'}
+  if(report?.status)return report.status;
+  const date=state.matchDates[i],w=apiFreePlanWindow();
+  return date&&date>=w.min&&date<=w.max?'not_checked':'waiting';
+}
+function renderMatchingReport(){
+  const box=$('matchingReport'),summary=$('matchingSummary');if(!box||!summary)return;
+  const counts={matched:0,review:0,unmatched:0,waiting:0,not_checked:0};
+  const rows=state.matchNames.map((name,i)=>{
+    const f=state.liveFixtures[i],r=state.matchReports[i]||{},status=matchingReportStatus(i);counts[status]=(counts[status]||0)+1;
+    const labels={matched:'Eşleşti',review:'Kontrol gerekli',unmatched:'Eşleşmedi',waiting:'Henüz sorgulanamadı',not_checked:'Kontrol bekliyor'};
+    const icons={matched:'✓',review:'!',unmatched:'×',waiting:'⌛',not_checked:'•'};
+    const [home,away]=splitMatchTeams(name);
+    const apiName=f?`${f.homeName||''} - ${f.awayName||''}`:'—';
+    const confidence=f?Number(f.confidence||100):Number(r.confidence||0);
+    const detail=f?`Fixture ID: ${f.fixtureId}${confidence?` • Güven: %${confidence}`:''}`:(status==='waiting'?`${state.matchDates[i]||'Tarih yok'} ücretsiz plan aralığı dışında`:(status==='unmatched'?'Bu tarihte yeterli benzerlikte maç bulunamadı':'Henüz API sorgusu yapılmadı'));
+    return `<article class="matching-row ${status}"><span class="matching-index">${i+1}</span><div class="matching-teams"><strong>${escapeHtml(home||name)}${away?` - ${escapeHtml(away)}`:''}</strong><small>API: ${escapeHtml(apiName)}</small><em>${escapeHtml(detail)}</em></div><span class="matching-badge"><b>${icons[status]}</b>${labels[status]}</span></article>`;
+  }).join('');
+  const complete=counts.matched+counts.review;
+  summary.innerHTML=`<strong>${complete}/15 API kaydı bulundu</strong><span class="sum-ok">${counts.matched} eşleşti</span><span class="sum-review">${counts.review} kontrol gerekli</span><span class="sum-bad">${counts.unmatched} eşleşmedi</span><span class="sum-wait">${counts.waiting+counts.not_checked} bekliyor</span>`;
+  box.innerHTML=rows;
+}
 function renderLiveScorePanel(message='',kind=''){
   const status=$('liveScoreStatus'),meta=$('liveScoreMeta'),btn=$('liveScoreRefresh');if(!status||!meta||!btn)return;
   btn.disabled=liveScoreBusy;btn.textContent=liveScoreBusy?'Kontrol Ediliyor…':'Şimdi Kontrol Et';
   const matched=state.liveFixtures.filter(Boolean).length,finished=state.liveFixtures.filter(isFinalFixture).length;
   status.className='live-score-status '+(kind||'');status.textContent=message||(matched?`${matched}/15 maç eşleşti • ${finished} maç tamamlandı`:'Henüz canlı skor kontrolü yapılmadı.');
   meta.textContent=state.liveUpdatedAt?`Son güncelleme: ${new Date(state.liveUpdatedAt).toLocaleString('tr-TR')}`:'API-Football bağlantısı hazır.';
+  renderMatchingReport();
 }
 function apiFreePlanWindow(){
   const today=new Date();today.setHours(0,0,0,0);
@@ -160,6 +185,8 @@ async function refreshLiveScores(){
   const window=apiFreePlanWindow();
   const valid=allValid.filter(m=>m.fixtureId||(m.date>=window.min&&m.date<=window.max));
   const waiting=allValid.length-valid.length;
+  const validIndexes=new Set(valid.map(m=>m.index));
+  allValid.forEach(m=>{if(!validIndexes.has(m.index)&&!state.liveFixtures[m.index])state.matchReports[m.index]={status:'waiting',checkedAt:new Date().toISOString()};});
   if(!valid.length){
     renderLiveScorePanel(`Ücretsiz API planı yalnızca ${window.min} – ${window.max} tarihlerini sorgulayabiliyor. Maçlar bu aralığa girdiğinde kontrol başlayacak.`,'warn');
     return;
@@ -170,7 +197,8 @@ async function refreshLiveScores(){
     const data=await response.json().catch(()=>({ok:false,error:'Sunucudan geçerli JSON gelmedi.'}));
     if(!response.ok||!data.ok)throw new Error(data.error||`HTTP ${response.status}`);
     let changed=false,autoResults=0;
-    for(const f of data.fixtures||[]){const i=Number(f.index);if(i<0||i>14)continue;state.liveFixtures[i]=f;if(Number(f.fixtureId)&&state.fixtureIds[i]!==Number(f.fixtureId)){state.fixtureIds[i]=Number(f.fixtureId);changed=true}if(isFinalFixture(f)){const r=fixtureResult(f);if(r&&state.results[i]!==r){state.results[i]=r;lastChangedMatchIndex=i;autoResults++;changed=true}}}
+    valid.forEach(m=>{state.matchReports[m.index]={status:'unmatched',checkedAt:data.updatedAt||new Date().toISOString()};});
+    for(const f of data.fixtures||[]){const i=Number(f.index);if(i<0||i>14)continue;state.liveFixtures[i]=f;state.matchReports[i]={status:Number(f.confidence||100)>=85?'matched':'review',confidence:Number(f.confidence||100),checkedAt:data.updatedAt||new Date().toISOString(),fixtureId:Number(f.fixtureId)||null};if(Number(f.fixtureId)&&state.fixtureIds[i]!==Number(f.fixtureId)){state.fixtureIds[i]=Number(f.fixtureId);changed=true}if(isFinalFixture(f)){const r=fixtureResult(f);if(r&&state.results[i]!==r){state.results[i]=r;lastChangedMatchIndex=i;autoResults++;changed=true}}}
     state.liveUpdatedAt=data.updatedAt||new Date().toISOString();saveLocal();renderMatches();calculate();if(changed)queueCloudSave();
     const quota=data.quotaRemaining!=null?` • Kalan API hakkı: ${data.quotaRemaining}`:'';
     const waitText=waiting?` • ${waiting} ileri tarihli maç bekliyor`:'';
@@ -291,10 +319,10 @@ $('fileInput').addEventListener('change',async e=>{const f=e.target.files[0];if(
   const defaultName=`Sistem ${sameWeek?state.systems.length+1:1}`;const name=(prompt('Bu Excel için sistem/kupon adı yaz:',f.name.replace(/\.[^.]+$/,'')||defaultName)||defaultName).trim();
   const system={id:makeSystemId(),name,fileName:f.name,columns:imported.columns};
   if(sameWeek){syncActiveSystem();state.systems.push(system);state.activeSystemId=system.id;state.columns=system.columns;state.fileName=system.fileName}
-  else{Object.assign(state,imported,{fixtureIds:Array(15).fill(null),liveFixtures:Array(15).fill(null),liveUpdatedAt:'',systems:[system],activeSystemId:system.id,columns:system.columns,fileName:system.fileName,cloudId:null,cloudUpdatedAt:null})}
+  else{Object.assign(state,imported,{fixtureIds:Array(15).fill(null),liveFixtures:Array(15).fill(null),matchReports:Array(15).fill(null),liveUpdatedAt:'',systems:[system],activeSystemId:system.id,columns:system.columns,fileName:system.fileName,cloudId:null,cloudUpdatedAt:null})}
   normalizeState();saveLocal();updateHeader();renderSystems();renderMatches();calculate();if(currentUser)await saveCloudNow();else showAuth();alert(`${name} eklendi.\n\n${system.columns.length.toLocaleString('tr-TR')} kolon • Bu haftada toplam ${state.systems.length} sistem var.`)}catch(err){console.error(err);alert('Dosya yüklenemedi: '+err.message)}finally{e.target.value=''}});
 $('weekSelect').onchange=()=>{const row=cloudWeeks.find(w=>w.id===$('weekSelect').value);if(row)applyCloudWeek(row);updateDeleteWeekButton()};
-$('deleteWeekBtn').onclick=async()=>{const id=$('weekSelect').value,row=cloudWeeks.find(w=>w.id===id);if(!currentUser||!id||!row)return;const ok=confirm(`"${row.week_name}" haftasını kalıcı olarak silmek istiyor musun?\n\nBu işlem telefon ve bilgisayardaki ortak kaydı siler.`);if(!ok)return;setSync('Siliniyor','saving');const {error}=await db.from('karum_weeks').delete().eq('id',id).eq('user_id',currentUser.id);if(error){console.error(error);setSync('Silme hatası','error');alert('Hafta silinemedi: '+error.message);return}cloudWeeks=cloudWeeks.filter(w=>w.id!==id);if(state.cloudId===id){state.cloudId=null;state.cloudUpdatedAt=null;state.weekKey='';state.weekName='Güncel Hafta';state.fileName='';state.matchNames=Array.from({length:15},(_,i)=>`Takım ${i+1}A - Takım ${i+1}B`);state.matchLeagues=Array(15).fill('');state.matchDates=Array(15).fill('');state.matchTimes=Array(15).fill('');state.results=Array(15).fill('');state.fixtureIds=Array(15).fill(null);state.liveFixtures=Array(15).fill(null);state.liveUpdatedAt='';state.columns=[];state.systems=[];state.activeSystemId='';state.weekFingerprint='';normalizeState();saveLocal();updateHeader();renderMatches();calculate()}await loadCloudWeeks();setSync('Anlık bağlı','online');alert('Hafta silindi.')} ;
+$('deleteWeekBtn').onclick=async()=>{const id=$('weekSelect').value,row=cloudWeeks.find(w=>w.id===id);if(!currentUser||!id||!row)return;const ok=confirm(`"${row.week_name}" haftasını kalıcı olarak silmek istiyor musun?\n\nBu işlem telefon ve bilgisayardaki ortak kaydı siler.`);if(!ok)return;setSync('Siliniyor','saving');const {error}=await db.from('karum_weeks').delete().eq('id',id).eq('user_id',currentUser.id);if(error){console.error(error);setSync('Silme hatası','error');alert('Hafta silinemedi: '+error.message);return}cloudWeeks=cloudWeeks.filter(w=>w.id!==id);if(state.cloudId===id){state.cloudId=null;state.cloudUpdatedAt=null;state.weekKey='';state.weekName='Güncel Hafta';state.fileName='';state.matchNames=Array.from({length:15},(_,i)=>`Takım ${i+1}A - Takım ${i+1}B`);state.matchLeagues=Array(15).fill('');state.matchDates=Array(15).fill('');state.matchTimes=Array(15).fill('');state.results=Array(15).fill('');state.fixtureIds=Array(15).fill(null);state.liveFixtures=Array(15).fill(null);state.matchReports=Array(15).fill(null);state.liveUpdatedAt='';state.columns=[];state.systems=[];state.activeSystemId='';state.weekFingerprint='';normalizeState();saveLocal();updateHeader();renderMatches();calculate()}await loadCloudWeeks();setSync('Anlık bağlı','online');alert('Hafta silindi.')} ;
 function renderSystems(){const select=$('systemSelect'),list=$('systemCards'),del=$('deleteSystemBtn');if(!select||!list)return;const total=allSystemColumns().length;select.innerHTML=state.systems.length?`<option value="__all__">Tüm Sistemler • ${total} kolon</option>`+state.systems.map(s=>`<option value="${s.id}">${escapeHtml(s.name)} • ${s.columns.length} kolon</option>`).join(''):'<option value="">Sistem yok</option>';select.value=state.activeSystemId||'';list.innerHTML=state.systems.map(s=>`<button type="button" class="system-chip ${s.id===state.activeSystemId?'active':''}" data-id="${s.id}"><strong>${escapeHtml(s.name)}</strong><span>${s.columns.length.toLocaleString('tr-TR')} kolon</span></button>`).join('');list.querySelectorAll('.system-chip').forEach(b=>b.onclick=()=>setActiveSystem(b.dataset.id));del?.classList.toggle('hidden',!activeSystem()||state.systems.length<2)}
 $('systemSelect')?.addEventListener('change',e=>setActiveSystem(e.target.value));
 $('deleteSystemBtn')?.addEventListener('click',async()=>{const sys=activeSystem();if(!sys)return;if(!confirm(`"${sys.name}" sistemini silmek istiyor musun?`))return;state.systems=state.systems.filter(s=>s.id!==sys.id);state.activeSystemId=state.systems[0]?.id||'';normalizeState();saveLocal();updateHeader();renderSystems();renderMatches();calculate();queueCloudSave()});
