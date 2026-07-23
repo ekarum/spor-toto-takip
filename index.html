@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=17.3.0">
+  <link rel="stylesheet" href="styles.css?v=17.5.0">
   <title>Karum Toto</title>
 </head>
 <body>
@@ -214,7 +214,7 @@
 
   <section id="karumZekaView" class="karum-zeka-view hidden" aria-labelledby="karumZekaTitle">
     <div class="kz-hero premium-card">
-      <div><p class="section-kicker">KARUM ZEKA • V17.3</p><h2 id="karumZekaTitle">Canlı Kupon Asistanı</h2><p>Oynanmış kolonları gerçekleşen sonuçlara göre değerlendirir; maç tahmini üretmez.</p></div>
+      <div><p class="section-kicker">KARUM ZEKA • V17.5</p><h2 id="karumZekaTitle">Canlı Kupon Asistanı</h2><p>Oynanmış kolonları gerçekleşen sonuçlara göre değerlendirir; maç tahmini üretmez.</p></div>
       <span id="kzStatusBadge" class="kz-status-badge">VERİ BEKLİYOR</span>
     </div>
     <div id="kzEmpty" class="kz-empty premium-card">Karum Zeka analizi için önce kolon içeren bir Excel yükle.</div>
@@ -226,6 +226,45 @@
           <article><span>Bekleyen</span><strong id="kzRemaining">15</strong><small>maç</small></article>
           <article class="alive"><span>15 Devam</span><strong id="kzAlive15">0</strong><small>kolon</small></article>
           <article class="lost"><span>Elenen</span><strong id="kzEliminated">0</strong><small>kolon</small></article>
+        </div>
+      </section>
+
+      <section id="prizeEstimatePanel" class="kz-section premium-card prize-panel">
+        <div class="kz-section-head"><div><p class="section-kicker">TÜRKİYE GENELİ MODELİ</p><h3>Tahmini İkramiye Motoru</h3></div><span id="prizeModelStatus" class="prize-model-status">VERİ GİR</span></div>
+        <p class="prize-disclaimer">Bu model, Türkiye genelinde her maça oynanan 1-X-2 yüzdelerini kullanır. Sonuçlar kesin ikramiye değil, istatistiksel tahmindir.</p>
+        <div class="prize-tabs"><button type="button" class="prize-tab active" data-prize-tab="summary">Tahmin</button><button type="button" class="prize-tab" data-prize-tab="settings">Ayarlar ve Yüzdeler</button></div>
+        <div id="prizeSummaryTab" class="prize-tab-page">
+          <div class="prize-head-grid">
+            <article><span>Toplam kolon</span><strong id="prizeTotalColumns">0</strong></article>
+            <article><span>Tahmini ciro</span><strong id="prizeTurnover">0 TL</strong></article>
+            <article><span>Sürpriz endeksi</span><strong id="prizeSurprise">0 / 100</strong></article>
+            <article><span>Tahmin güveni</span><strong id="prizeConfidence">0%</strong></article>
+          </div>
+          <div id="prizeDegreeCards" class="prize-degree-cards"></div>
+          <div class="prize-live-card"><div><p class="section-kicker">CANLI DURUM</p><h4>Gerçekleşen sonuçları bilen tahmini kolon</h4></div><strong id="prizeAliveEstimate">0</strong><small id="prizeAliveMeta">Sonuç girilmedi</small></div>
+          <div class="prize-comment"><span>✦</span><p id="prizeNarrative">Yüzdeleri ve havuz ayarlarını girerek modeli başlat.</p></div>
+          <div class="prize-impact-head"><div><p class="section-kicker">SONRAKİ MAÇ ETKİSİ</p><h4>1-X-2 gelirse tahmini 15 kazananı</h4></div><select id="prizeImpactMatch"></select></div>
+          <div id="prizeImpactGrid" class="prize-impact-grid"></div>
+        </div>
+        <div id="prizeSettingsTab" class="prize-tab-page hidden">
+          <form id="prizeSettingsForm">
+            <div class="prize-settings-grid">
+              <label>Toplam oynanan kolon<input id="prizeInputColumns" type="number" min="0" step="1"></label>
+              <label>Kolon fiyatı (TL)<input id="prizeInputPrice" type="number" min="0" step="0.01"></label>
+              <label>Dağıtılabilir havuz (TL)<input id="prizeInputPool" type="number" min="0" step="1"></label>
+              <label>Devreden (TL)<input id="prizeInputCarry" type="number" min="0" step="1"></label>
+            </div>
+            <div class="prize-share-title"><strong>Derece havuz payları</strong><small>Toplamın %100 olması gerekmez; dağıtılmayan bölüm ayrı kalabilir.</small></div>
+            <div class="prize-settings-grid four">
+              <label>15 payı %<input id="prizeShare15" type="number" min="0" max="100" step="0.1"></label>
+              <label>14 payı %<input id="prizeShare14" type="number" min="0" max="100" step="0.1"></label>
+              <label>13 payı %<input id="prizeShare13" type="number" min="0" max="100" step="0.1"></label>
+              <label>12 payı %<input id="prizeShare12" type="number" min="0" max="100" step="0.1"></label>
+            </div>
+            <div class="prize-percent-head"><div><strong>15 maçın oynanma yüzdeleri</strong><small>Her satır 100 olmalı.</small></div><button id="prizeEqualFill" type="button">Tümünü 34-33-33 yap</button></div>
+            <div id="prizePercentRows" class="prize-percent-rows"></div>
+            <div class="prize-form-actions"><button type="submit" class="primary-action">Kaydet ve Hesapla</button><span id="prizeValidationText"></span></div>
+          </form>
         </div>
       </section>
 
@@ -272,7 +311,7 @@
     </div>
   </section>
 
-  <footer>Karum Toto v17.3.0 • Karum Zeka • by Eyüp Karum</footer>
+  <footer>Karum Toto v17.5.0 • Karum Zeka • by Eyüp Karum</footer>
 </main>
 
 <div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
@@ -314,7 +353,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="initial-data.js?v=17.3.0"></script>
-<script src="app.js?v=17.3.0"></script>
+<script src="initial-data.js?v=17.5.0"></script>
+<script src="app.js?v=17.5.0"></script>
 </body>
 </html>

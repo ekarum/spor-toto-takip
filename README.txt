@@ -1,3 +1,7 @@
+KARUM TOTO V17.5.0 - TÜRKİYE GENELİ TAHMİNİ İKRAMİYE MOTORU
+
+Yeni: 15 maç için 1-X-2 oynanma yüzdeleri, toplam kolon/havuz/devreden ayarları, 15-14-13-12 tahmini kazanan ve ikramiye aralıkları, sürpriz ve güven endeksi, sonraki maç 1-X-2 etki analizi.
+
 KARUM TOTO V17.3.0 - KARUM ZEKA TAM PAKET
 
 Yeni özellikler:
