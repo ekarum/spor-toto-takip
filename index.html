@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=16.1.1">
+  <link rel="stylesheet" href="styles.css?v=17.0.0">
   <title>Karum Toto</title>
 </head>
 <body>
@@ -78,7 +78,7 @@
     <button type="button" data-action="analysis"><span class="qa-icon qa-gold">▥</span><strong>Analiz Merkezi</strong><small>Genel görünüm</small></button>
     <button type="button" data-action="live"><span class="qa-icon qa-green">⌁</span><strong>Canlı Analiz</strong><small>Kalan kolonlar</small></button>
     <button type="button" data-action="scenario"><span class="qa-icon qa-purple">◇</span><strong>Senaryo Motoru</strong><small>15 bilme yolları</small></button>
-    <button type="button" data-action="smart"><span class="qa-icon qa-blue">◉</span><strong>Akıllı Analiz</strong><small>Karar özeti</small></button>
+    <button type="button" data-action="smart"><span class="qa-icon qa-blue">✦</span><strong>Karum Zeka</strong><small>Canlı senaryo asistanı</small></button>
   </section>
 
   <div class="week-progress" aria-label="Hafta ilerleme durumu">
@@ -131,12 +131,16 @@
       </div>
     </section>
 
-    <section class="matching-report-panel premium-card" aria-labelledby="matchingReportTitle">
-      <div class="matching-report-head">
-        <div><p class="section-kicker">EŞLEŞTİRME RAPORU</p><h3 id="matchingReportTitle">15 Maç API Kontrolü</h3></div>
-        <div id="matchingSummary" class="matching-summary"></div>
+    <section id="matchingReportPanel" class="matching-report-panel premium-card is-collapsed" aria-labelledby="matchingReportTitle">
+      <button id="matchingReportToggle" class="matching-report-toggle" type="button" aria-expanded="false" aria-controls="matchingReportDetails">
+        <div class="matching-report-head">
+          <div><p class="section-kicker">EŞLEŞTİRME RAPORU</p><h3 id="matchingReportTitle">15 Maç API Kontrolü</h3><small>Maç eşleşme ayrıntılarını görmek için tıkla</small></div>
+          <div class="matching-toggle-side"><div id="matchingSummary" class="matching-summary"></div><span class="matching-chevron" aria-hidden="true">⌄</span></div>
+        </div>
+      </button>
+      <div id="matchingReportDetails" class="matching-report-details" hidden>
+        <div id="matchingReport" class="matching-report"></div>
       </div>
-      <div id="matchingReport" class="matching-report"></div>
     </section>
 
     <div id="matches" class="matches-list"></div>
@@ -208,7 +212,37 @@
     </div>
   </section>
 
-  <footer>Karum Toto v15.0.0 • Canlı Kapsama Analizi • by Eyüp Karum</footer>
+  <section id="karumZekaView" class="karum-zeka-view hidden" aria-labelledby="karumZekaTitle">
+    <div class="kz-hero premium-card">
+      <div><p class="section-kicker">KARUM ZEKA • V17</p><h2 id="karumZekaTitle">Canlı Kupon Asistanı</h2><p>Oynanmış kolonları gerçekleşen sonuçlara göre değerlendirir; tahmin üretmez.</p></div>
+      <span id="kzStatusBadge" class="kz-status-badge">VERİ BEKLİYOR</span>
+    </div>
+    <div id="kzEmpty" class="kz-empty premium-card">Karum Zeka analizi için önce kolon içeren bir Excel yükle.</div>
+    <div id="kzContent" class="hidden">
+      <section class="kz-overview premium-card">
+        <div class="kz-week"><span>AKTİF HAFTA</span><strong id="kzWeekName">Güncel Hafta</strong></div>
+        <div class="kz-stats">
+          <article><span>Sonuçlanan</span><strong id="kzPlayed">0</strong><small>maç</small></article>
+          <article><span>Bekleyen</span><strong id="kzRemaining">15</strong><small>maç</small></article>
+          <article class="alive"><span>15 Devam</span><strong id="kzAlive15">0</strong><small>kolon</small></article>
+          <article class="lost"><span>Elenen</span><strong id="kzEliminated">0</strong><small>kolon</small></article>
+        </div>
+      </section>
+      <section class="kz-comment premium-card">
+        <div class="kz-brain">✦</div><div><p class="section-kicker">KARUM ZEKA YORUMU</p><h3>Canlı durum değerlendirmesi</h3><p id="kzNarrative"></p></div>
+      </section>
+      <section class="kz-section premium-card">
+        <div class="kz-section-head"><div><p class="section-kicker">KRİTİK MAÇLAR</p><h3>Sonuca göre 15'i etkileyen maçlar</h3></div><small>Mevcut yaşayan kolonlara göre</small></div>
+        <div id="kzCriticalList" class="kz-critical-list"></div>
+      </section>
+      <section class="kz-section premium-card">
+        <div class="kz-section-head"><div><p class="section-kicker">GELİŞİM PLANI</p><h3>Karum Zeka sürümleri</h3></div><small>V17.0 başlangıç sürümü</small></div>
+        <div id="kzRoadmap" class="kz-roadmap"></div>
+      </section>
+    </div>
+  </section>
+
+  <footer>Karum Toto v17.1.0 • Karum Zeka • by Eyüp Karum</footer>
 </main>
 
 <div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
@@ -244,13 +278,13 @@
   <button id="homeNavBtn" class="nav-item active" type="button" data-tab="home"><span class="nav-icon">⌂</span><em>Ana Sayfa</em></button>
   <button id="matchesNavBtn" class="nav-item" type="button" data-tab="matches"><span class="nav-icon">●</span><em>Maçlar</em></button>
   <button id="analysisNavBtn" class="nav-item" type="button" data-tab="analysis"><span class="nav-icon">▥</span><em>Analiz</em></button>
-  <button id="smartNavBtn" class="nav-item" type="button" data-tab="smart"><span class="nav-icon">◉</span><em>Akıllı Analiz</em></button>
+  <button id="smartNavBtn" class="nav-item" type="button" data-tab="smart"><span class="nav-icon">✦</span><em>Karum Zeka</em></button>
   <button id="settingsNavBtn" class="nav-item" type="button" data-tab="settings"><span class="nav-icon">⚙</span><em>Ayarlar</em></button>
 </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="initial-data.js?v=15.0.0"></script>
-<script src="app.js?v=16.1.1"></script>
+<script src="initial-data.js?v=17.1.0"></script>
+<script src="app.js?v=17.1.0"></script>
 </body>
 </html>
