@@ -15,3 +15,5 @@ Korunanlar:
 - iPhone PWA logosu ve güncelleme bildirimi
 
 Sürüm: 20.0.0
+
+V20.0.1: iPhone/PWA açılış ekranının CDN veya eski önbellek nedeniyle takılı kalması düzeltildi.

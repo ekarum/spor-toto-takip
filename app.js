@@ -1,4 +1,4 @@
-const APP_VERSION='20.0.0';
+const APP_VERSION='20.0.1';
 const STORAGE_KEY='sporTotoStateV140';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
@@ -376,10 +376,10 @@ $('settingsNavBtn').onclick=()=>{setActiveNav('settings');showAuth()};
 document.querySelectorAll('.quick-access button').forEach(btn=>btn.onclick=()=>{const a=btn.dataset.action;if(a==='analysis'||a==='live')openAnalysisSection('analysis');else if(a==='scenario'){openAnalysisSection('analysis');requestAnimationFrame(()=>$('scenarioEngine')?.scrollIntoView({behavior:'smooth',block:'start'}))}});
 document.querySelectorAll('.analysis-mode-btn').forEach(btn=>btn.onclick=()=>setAnalysisMode(btn.dataset.mode));
 loadLocal();normalizeState();updateHeader();renderSystems();renderMatches();calculate();initSupabase();setInterval(refreshMatchStatuses,30000);const savedView=localStorage.getItem(LAST_VIEW_KEY)||'home';showView(['home','matches','analysis','karumzeka'].includes(savedView)?savedView:'home',false);
-window.addEventListener('load',()=>{const splash=$('splash');if(splash){setTimeout(()=>splash.classList.add('hide'),650);setTimeout(()=>splash.remove(),1150)}});
+const closeStartupSplash=()=>{if(typeof window.__closeKarumSplash==='function'){window.__closeKarumSplash();return}const splash=$('splash');if(splash){splash.classList.add('hide');setTimeout(()=>splash.remove(),500)}};if(document.readyState==='complete')setTimeout(closeStartupSplash,100);else window.addEventListener('load',()=>setTimeout(closeStartupSplash,100),{once:true});
 
 
-// V20.0.0 — iOS/PWA güncelleme altyapısı
+// V20.0.1 — iOS/PWA güncelleme altyapısı
 (function setupPwaUpdates(){
   if(!('serviceWorker' in navigator)) return;
   let refreshing=false;
@@ -401,7 +401,7 @@ window.addEventListener('load',()=>{const splash=$('splash');if(splash){setTimeo
   window.addEventListener('load', async()=>{
     button()?.addEventListener('click',applyUpdate);
     try{
-      const registration=await navigator.serviceWorker.register('./sw.js?v=20.0.0',{scope:'./',updateViaCache:'none'});
+      const registration=await navigator.serviceWorker.register('./sw.js?v=20.0.1',{scope:'./',updateViaCache:'none'});
       if(registration.waiting && navigator.serviceWorker.controller) showUpdate(registration.waiting);
       registration.addEventListener('updatefound',()=>{
         const worker=registration.installing;
