@@ -1,3 +1,13 @@
+KARUM TOTO V17.3.0 - KARUM ZEKA TAM PAKET
+
+Yeni özellikler:
+- V17.1 Canlı Senaryo Motoru: 15, 14+, 13+ ve 12+ kesin kapsama hesapları
+- V17.2 Otomatik Karum Zeka yorumları, garanti analizi ve tehlike uyarıları
+- V17.3 Doğal dilde soru-cevap: 15 için ne gerekiyor, 14 garanti mi, kritik maç vb.
+- API eşleştirme raporu açılır/kapanır yapı olarak korunmuştur.
+
+Not: Karum Zeka maç tahmini yapmaz. Yalnızca yüklenen oynanmış kolonlar ve girilen sonuçlar üzerinden matematiksel analiz yapar.
+
 <!doctype html>
 <html lang="tr">
 <head>

@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=17.0.0">
+  <link rel="stylesheet" href="styles.css?v=17.3.0">
   <title>Karum Toto</title>
 </head>
 <body>
@@ -214,7 +214,7 @@
 
   <section id="karumZekaView" class="karum-zeka-view hidden" aria-labelledby="karumZekaTitle">
     <div class="kz-hero premium-card">
-      <div><p class="section-kicker">KARUM ZEKA • V17</p><h2 id="karumZekaTitle">Canlı Kupon Asistanı</h2><p>Oynanmış kolonları gerçekleşen sonuçlara göre değerlendirir; tahmin üretmez.</p></div>
+      <div><p class="section-kicker">KARUM ZEKA • V17.3</p><h2 id="karumZekaTitle">Canlı Kupon Asistanı</h2><p>Oynanmış kolonları gerçekleşen sonuçlara göre değerlendirir; maç tahmini üretmez.</p></div>
       <span id="kzStatusBadge" class="kz-status-badge">VERİ BEKLİYOR</span>
     </div>
     <div id="kzEmpty" class="kz-empty premium-card">Karum Zeka analizi için önce kolon içeren bir Excel yükle.</div>
@@ -228,21 +228,51 @@
           <article class="lost"><span>Elenen</span><strong id="kzEliminated">0</strong><small>kolon</small></article>
         </div>
       </section>
+
       <section class="kz-comment premium-card">
         <div class="kz-brain">✦</div><div><p class="section-kicker">KARUM ZEKA YORUMU</p><h3>Canlı durum değerlendirmesi</h3><p id="kzNarrative"></p></div>
       </section>
+
       <section class="kz-section premium-card">
-        <div class="kz-section-head"><div><p class="section-kicker">KRİTİK MAÇLAR</p><h3>Sonuca göre 15'i etkileyen maçlar</h3></div><small>Mevcut yaşayan kolonlara göre</small></div>
+        <div class="kz-section-head"><div><p class="section-kicker">CANLI SENARYO MOTORU</p><h3>15, 14+, 13+ ve 12+ kapsaması</h3></div><small id="kzScenarioTotal">Hesaplanıyor</small></div>
+        <div id="kzDegreeGrid" class="kz-degree-grid"></div>
+        <p class="kz-math-note">Kapsama oranı, kalan 1-X-2 dizilerinin eşit ağırlıklı matematiksel oranıdır; maç tahmini değildir.</p>
+      </section>
+
+      <section class="kz-section premium-card">
+        <div class="kz-section-head"><div><p class="section-kicker">GARANTİ VE UYARILAR</p><h3>Kesinleşen derece ve tehlikeler</h3></div><small>Tüm kalan senaryolara göre</small></div>
+        <div id="kzGuaranteeList" class="kz-guarantee-list"></div>
+        <div id="kzWarningList" class="kz-warning-list"></div>
+      </section>
+
+      <section class="kz-section premium-card">
+        <div class="kz-section-head"><div><p class="section-kicker">KRİTİK MAÇLAR</p><h3>Sonuca göre yaşayan kolonlar</h3></div><small>Mevcut sonuçlara göre</small></div>
         <div id="kzCriticalList" class="kz-critical-list"></div>
       </section>
+
       <section class="kz-section premium-card">
-        <div class="kz-section-head"><div><p class="section-kicker">GELİŞİM PLANI</p><h3>Karum Zeka sürümleri</h3></div><small>V17.0 başlangıç sürümü</small></div>
-        <div id="kzRoadmap" class="kz-roadmap"></div>
+        <div class="kz-section-head"><div><p class="section-kicker">15 İÇİN KALAN YOLLAR</p><h3>En çok kolonda tekrar eden sonuç dizileri</h3></div><small id="kzPathCount">0 yol</small></div>
+        <div id="kzPathList" class="kz-path-list"></div>
+      </section>
+
+      <section class="kz-section premium-card kz-chat-section">
+        <div class="kz-section-head"><div><p class="section-kicker">KARUM ZEKA'YA SOR</p><h3>Doğal dilde kupon soruları</h3></div><small>Kesin hesaplardan cevap verir</small></div>
+        <div class="kz-quick-questions">
+          <button type="button" data-kz-question="15 için ne gerekiyor?">15 için ne gerekiyor?</button>
+          <button type="button" data-kz-question="14 garanti mi?">14 garanti mi?</button>
+          <button type="button" data-kz-question="En kritik maç hangisi?">En kritik maç hangisi?</button>
+          <button type="button" data-kz-question="Hangi sonuç 15'i bitirir?">Hangi sonuç 15'i bitirir?</button>
+        </div>
+        <form id="kzQuestionForm" class="kz-question-form">
+          <input id="kzQuestionInput" type="text" maxlength="160" placeholder="Örnek: 15 için hangi sonuçlar gerekiyor?" autocomplete="off">
+          <button type="submit">Sor</button>
+        </form>
+        <div id="kzAnswer" class="kz-answer"><span>✦</span><p>Bir soru seç veya kendi sorununu yaz.</p></div>
       </section>
     </div>
   </section>
 
-  <footer>Karum Toto v17.1.0 • Karum Zeka • by Eyüp Karum</footer>
+  <footer>Karum Toto v17.3.0 • Karum Zeka • by Eyüp Karum</footer>
 </main>
 
 <div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
@@ -284,7 +314,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="initial-data.js?v=17.1.0"></script>
-<script src="app.js?v=17.1.0"></script>
+<script src="initial-data.js?v=17.3.0"></script>
+<script src="app.js?v=17.3.0"></script>
 </body>
 </html>

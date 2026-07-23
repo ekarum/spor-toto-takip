@@ -1,4 +1,4 @@
-const APP_VERSION='17.1.0';
+const APP_VERSION='17.3.0';
 const STORAGE_KEY='sporTotoStateV140';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
@@ -132,33 +132,92 @@ function renderAnalysis(){
   $('analysisInsights').innerHTML=insightItems.join('');
   $('analysisMatchList').innerHTML=rows.map(r=>{const ci=confidenceInfo(r.confidence),base=getPickDistribution(r.index,state.columns);return`<article class="analysis-match-row"><div class="analysis-match-top"><span class="analysis-match-number">${r.index+1}</span><div><strong>${escapeHtml(r.name)}</strong>${r.league?`<small>${escapeHtml(r.league)}</small>`:''}</div><span class="confidence-badge ${ci.className}"><b>%${Math.round(r.confidence)}</b><small>${ci.label}</small></span></div><div class="heat-grid">${['1','X','2'].map(p=>{const pct=r.total?r.counts[p]/r.total*100:0,basePct=base.total?base.counts[p]/base.total*100:0,delta=pct-basePct,deltaHtml=isLive&&entered>0?`<em class="heat-delta ${delta>0.5?'up':delta<-.5?'down':'flat'}">${delta>0?'+':''}${Math.round(delta)} puan</em>`:'';return`<div class="heat-item"><div class="heat-label"><b>${p}</b><span>${r.counts[p].toLocaleString('tr-TR')} • %${Math.round(pct)} ${deltaHtml}</span></div><div class="heat-track pick-${p==='X'?'x':p}"><span style="width:${pct.toFixed(1)}%"></span>${isLive&&entered>0?`<i style="left:${Math.min(100,basePct).toFixed(1)}%" title="Başlangıç %${Math.round(basePct)}"></i>`:''}</div></div>`}).join('')}</div><div class="confidence-explanation"><span>Güven endeksi</span><strong>${ci.label}</strong><small>En yoğun seçim: ${r.max.pick} (%${Math.round(r.confidence)})</small></div></article>`}).join('')
 }
-function renderKarumZeka(){
-  const total=state.columns.length;
-  const entered=state.results.filter(Boolean).length;
-  const remaining=15-entered;
-  const live=getSurvivingColumns();
-  const eliminated=Math.max(0,total-live.length);
-  const badge=$('kzStatusBadge'),empty=$('kzEmpty'),content=$('kzContent');
-  if(!badge||!empty||!content)return;
-  badge.textContent=total?(remaining?'CANLI HAZIR':'HAFTA TAMAMLANDI'):'VERİ BEKLİYOR';
-  badge.classList.toggle('ready',!!total);
-  if(!total){empty.classList.remove('hidden');content.classList.add('hidden');return}
-  empty.classList.add('hidden');content.classList.remove('hidden');
-  $('kzPlayed').textContent=entered;
-  $('kzRemaining').textContent=remaining;
-  $('kzAlive15').textContent=live.length.toLocaleString('tr-TR');
-  $('kzEliminated').textContent=eliminated.toLocaleString('tr-TR');
-  $('kzWeekName').textContent=state.weekName||'Güncel Hafta';
-  const pending=state.results.map((v,i)=>!v?i:-1).filter(i=>i>=0);
-  const impacts=pending.map(i=>{const d=getPickDistribution(i,live);const vals=['1','X','2'].map(p=>({pick:p,count:d.counts[p]})).sort((a,b)=>b.count-a.count);return {i,vals,spread:vals[0].count-vals[2].count,total:d.total}}).sort((a,b)=>b.spread-a.spread);
-  const critical=impacts.slice(0,3);
-  const narrative=remaining===0
-    ? `Hafta tamamlandı. Girilen 15 sonucun tamamıyla eşleşen ${live.length.toLocaleString('tr-TR')} kolon bulunuyor.`
-    : `${entered} maç sonuçlandı, ${remaining} maç bekliyor. ${live.length.toLocaleString('tr-TR')} kolon 15 bilme yolunda devam ediyor; ${eliminated.toLocaleString('tr-TR')} kolon elendi. V17.1 ile kalan tüm 1-X-2 yolları ve kesin derece koşulları burada hesaplanacak.`;
-  $('kzNarrative').textContent=narrative;
-  $('kzCriticalList').innerHTML=critical.length?critical.map((m,rank)=>`<article class="kz-critical-card"><div class="kz-critical-head"><span>${rank+1}</span><div><strong>${m.i+1}. Maç</strong><small>${escapeHtml(state.matchNames[m.i]||'')}</small></div></div><div class="kz-impact-grid">${m.vals.map(v=>`<div><b>${v.pick}</b><strong>${v.count.toLocaleString('tr-TR')}</strong><small>15 devam</small></div>`).join('')}</div></article>`).join(''):'<div class="kz-empty-mini">Bekleyen maç kalmadı.</div>';
-  $('kzRoadmap').innerHTML=`<article class="done"><span>✓</span><div><strong>V17.0 • Karum Zeka Merkezi</strong><small>Yeni bölüm, canlı durum özeti ve kritik maç görünümü hazır.</small></div></article><article><span>17.1</span><div><strong>Tam Senaryo Motoru</strong><small>15, 14+, 13+ ve 12+ için bütün kalan sonuç yolları.</small></div></article><article><span>17.2</span><div><strong>Garanti ve Tehlike Analizi</strong><small>Kesin derece, sonucu bitiren maçlar ve canlı uyarılar.</small></div></article><article><span>17.3</span><div><strong>Karum Zeka Sor-Cevap</strong><small>“15 için ne gerekiyor?” gibi sorulara matematiksel cevaplar.</small></div></article>`;
+let karumZekaData=null,karumZekaJobToken=0;
+function getDegreeCapableColumns(results=state.results){
+  const out={15:0,14:0,13:0,12:0};
+  for(const col of state.columns){
+    let wrong=0;for(let i=0;i<15;i++)if(results[i]&&col[i]!==results[i])wrong++;
+    if(wrong<=0)out[15]++;if(wrong<=1)out[14]++;if(wrong<=2)out[13]++;if(wrong<=3)out[12]++;
+  }
+  return out;
 }
+function buildKarumPaths(live,pending){
+  const groups=new Map();
+  for(const col of live){const picks=pending.map(i=>col[i]);const key=picks.join('');const item=groups.get(key)||{key,picks,count:0};item.count++;groups.set(key,item)}
+  return [...groups.values()].sort((a,b)=>b.count-a.count||a.key.localeCompare(b.key));
+}
+function pctText(count,total){return total?formatProbability(count/total*100):'%0'}
+function buildKarumNarrative(data){
+  const {entered,remaining,live,eliminated,coverage,critical,guaranteed}=data;
+  if(!remaining)return `Hafta tamamlandı. ${live.length.toLocaleString('tr-TR')} kolon 15 bildi. En yüksek kesin derece ${guaranteed||'belirlenemedi'}.`;
+  if(!live.length){const g=guaranteed?` Buna rağmen kalan bütün senaryolarda en az ${guaranteed} bilme kapsamı garanti.`:'';return `${entered} maç tamamlandı ve 15 bilme ihtimali sona erdi.${g} Karum Zeka, 14+, 13+ ve 12+ yollarını izlemeye devam ediyor.`}
+  const top=critical[0];const danger=top?.outcomes.filter(o=>o.count15===0).map(o=>o.pick);
+  let text=`${entered} maç sonuçlandı, ${remaining} maç kaldı. ${live.length.toLocaleString('tr-TR')} kolon 15 yolunda devam ediyor; ${eliminated.toLocaleString('tr-TR')} kolon elendi. `;
+  text+=`${coverage.counts[15].toLocaleString('tr-TR')} farklı kalan sonuç dizisinde en az bir kolon 15 biliyor.`;
+  if(top)text+=` En kritik karşılaşma ${top.index+1}. maç: ${state.matchNames[top.index]}.`;
+  if(danger?.length)text+=` Bu maçta ${danger.join(' veya ')} sonucu 15 ihtimalini bitiriyor.`;
+  if(guaranteed)text+=` Şu anda en az ${guaranteed} bilme matematiksel olarak garanti.`;
+  return text;
+}
+function answerKarumQuestion(raw){
+  const d=karumZekaData;if(!d)return 'Önce kolon içeren bir Excel yüklenmeli.';
+  const q=trUpper(raw).replace(/[İI]/g,'I');
+  if(q.includes('15')&&(q.includes('GEREK')||q.includes('NASIL')||q.includes('YOL'))){
+    if(!d.live.length)return '15 bilme ihtimali artık kalmadı.';
+    if(!d.pending.length)return `${d.live.length.toLocaleString('tr-TR')} kolon 15 bildi; hafta tamamlandı.`;
+    const shown=d.paths.slice(0,3).map((p,n)=>`${n+1}. yol: ${d.pending.map((mi,j)=>`${mi+1}. maç ${p.picks[j]}`).join(', ')} (${p.count} kolon)`).join('\n');
+    return `15’i yaşatan ${d.paths.length.toLocaleString('tr-TR')} farklı yol var. En güçlü yollar:\n${shown}`;
+  }
+  if(q.includes('14')&&(q.includes('GARANTI')||q.includes('KESIN'))){return d.coverage.counts[14]===d.coverage.totalScenarios?'Evet. Kalan bütün senaryolarda en az bir kolon 14 veya üzeri biliyor; 14+ garanti.':`Hayır. 14+ henüz garanti değil. ${d.coverage.counts[14].toLocaleString('tr-TR')} / ${d.coverage.totalScenarios.toLocaleString('tr-TR')} senaryoda 14+ var (${pctText(d.coverage.counts[14],d.coverage.totalScenarios)}).`}
+  if(q.includes('13')&&(q.includes('GARANTI')||q.includes('KESIN'))){return d.coverage.counts[13]===d.coverage.totalScenarios?'Evet, 13+ garanti.':`13+ henüz garanti değil; kapsama ${pctText(d.coverage.counts[13],d.coverage.totalScenarios)}.`}
+  if(q.includes('12')&&(q.includes('GARANTI')||q.includes('KESIN'))){return d.coverage.counts[12]===d.coverage.totalScenarios?'Evet, 12+ garanti.':`12+ henüz garanti değil; kapsama ${pctText(d.coverage.counts[12],d.coverage.totalScenarios)}.`}
+  if(q.includes('KRITIK')||q.includes('TEHLIKE')||q.includes('RISK')){
+    const c=d.critical[0];if(!c)return 'Bekleyen maç olmadığı için kritik maç yok.';
+    return `En kritik maç ${c.index+1}. maç: ${state.matchNames[c.index]}. 1 gelirse ${c.outcomes.find(x=>x.pick==='1').count15}, X gelirse ${c.outcomes.find(x=>x.pick==='X').count15}, 2 gelirse ${c.outcomes.find(x=>x.pick==='2').count15} kolon 15 yolunda kalır.`;
+  }
+  if(q.includes('BITIR')||q.includes('SONA')||q.includes('ELER')){
+    const hits=[];for(const c of d.critical)for(const o of c.outcomes)if(o.count15===0)hits.push(`${c.index+1}. maç ${o.pick}`);
+    return hits.length?`15’i doğrudan bitiren görünen sonuçlar: ${hits.slice(0,8).join(', ')}${hits.length>8?'…':''}.`:'İncelenen bekleyen maçlarda tek başına 15’i tamamen bitiren bir sonuç görünmüyor.';
+  }
+  if(q.includes('KAC')&&(q.includes('KOLON')||q.includes('DEVAM'))){return `15 için ${d.live.length.toLocaleString('tr-TR')}, 14+ için ${d.capable[14].toLocaleString('tr-TR')}, 13+ için ${d.capable[13].toLocaleString('tr-TR')}, 12+ için ${d.capable[12].toLocaleString('tr-TR')} kolon hâlâ derece yapabilir.`}
+  return `Şu an ${d.entered} maç sonuçlandı, ${d.remaining} maç kaldı. “15 için ne gerekiyor?”, “14 garanti mi?”, “en kritik maç hangisi?” veya “hangi sonuç 15’i bitirir?” diye sorabilirsin.`;
+}
+function bindKarumQuestions(){
+  document.querySelectorAll('[data-kz-question]').forEach(btn=>{if(btn.dataset.bound)return;btn.dataset.bound='1';btn.onclick=()=>{const input=$('kzQuestionInput');if(input)input.value=btn.dataset.kzQuestion;showKarumAnswer(btn.dataset.kzQuestion)}});
+  const form=$('kzQuestionForm');if(form&&!form.dataset.bound){form.dataset.bound='1';form.onsubmit=e=>{e.preventDefault();const q=$('kzQuestionInput').value.trim();if(q)showKarumAnswer(q)}}
+}
+function showKarumAnswer(q){const box=$('kzAnswer');if(!box)return;box.innerHTML=`<span>✦</span><div><strong>${escapeHtml(q)}</strong><p>${escapeHtml(answerKarumQuestion(q)).replace(/\n/g,'<br>')}</p></div>`}
+function renderKarumZeka(){
+  const total=state.columns.length,entered=state.results.filter(Boolean).length,remaining=15-entered;
+  const live=getSurvivingColumns(),eliminated=Math.max(0,total-live.length),pending=state.results.map((v,i)=>!v?i:-1).filter(i=>i>=0);
+  const badge=$('kzStatusBadge'),empty=$('kzEmpty'),content=$('kzContent');if(!badge||!empty||!content)return;
+  badge.textContent=total?(remaining?'CANLI HAZIR':'HAFTA TAMAMLANDI'):'VERİ BEKLİYOR';badge.classList.toggle('ready',!!total);
+  if(!total){empty.classList.remove('hidden');content.classList.add('hidden');karumZekaData=null;return}
+  empty.classList.add('hidden');content.classList.remove('hidden');
+  $('kzPlayed').textContent=entered;$('kzRemaining').textContent=remaining;$('kzAlive15').textContent=live.length.toLocaleString('tr-TR');$('kzEliminated').textContent=eliminated.toLocaleString('tr-TR');$('kzWeekName').textContent=state.weekName||'Güncel Hafta';
+  $('kzScenarioTotal').textContent='Kesin hesap yapılıyor…';
+  const token=++karumZekaJobToken,columns=state.columns.map(c=>c.slice()),results=state.results.slice();
+  setTimeout(()=>{
+    if(token!==karumZekaJobToken)return;
+    const coverage=buildCoverageMap(columns,results),capable=getDegreeCapableColumns(results),paths=buildKarumPaths(live,pending);
+    const critical=pending.map(index=>{const outcomes=['1','X','2'].map(pick=>{const next=results.slice();next[index]=pick;const caps=getDegreeCapableColumns(next);return{pick,count15:caps[15],count14:caps[14],count13:caps[13],count12:caps[12]}});const values=outcomes.map(o=>o.count15);return{index,outcomes,spread:Math.max(...values)-Math.min(...values),min:Math.min(...values)}}).sort((a,b)=>b.spread-a.spread||a.min-b.min).slice(0,5);
+    let guaranteed=0;for(const k of [15,14,13,12])if(coverage.counts[k]===coverage.totalScenarios){guaranteed=k;break}
+    karumZekaData={total,entered,remaining,live,eliminated,pending,coverage,capable,paths,critical,guaranteed};
+    $('kzNarrative').textContent=buildKarumNarrative(karumZekaData);
+    $('kzScenarioTotal').textContent=`${coverage.totalScenarios.toLocaleString('tr-TR')} kalan senaryo`;
+    $('kzDegreeGrid').innerHTML=[15,14,13,12].map(k=>{const c=coverage.counts[k],guarantee=c===coverage.totalScenarios;return`<article class="${guarantee?'guaranteed':''}"><div><span>${k}${k<15?'+':''}</span><em>${guarantee?'GARANTİ':'KAPSAMA'}</em></div><strong>${pctText(c,coverage.totalScenarios)}</strong><small>${c.toLocaleString('tr-TR')} / ${coverage.totalScenarios.toLocaleString('tr-TR')} senaryo</small><p>${capable[k].toLocaleString('tr-TR')} kolon hâlâ bu dereceyi yapabilir</p></article>`}).join('');
+    $('kzGuaranteeList').innerHTML=[15,14,13,12].map(k=>{const yes=coverage.counts[k]===coverage.totalScenarios;return`<article class="${yes?'yes':'no'}"><span>${yes?'✓':'×'}</span><div><strong>${k}${k<15?'+':''} ${yes?'garanti':'henüz garanti değil'}</strong><small>${yes?'Kalan bütün sonuç dizilerinde en az bir kolon bu dereceye ulaşıyor.':`${(coverage.totalScenarios-coverage.counts[k]).toLocaleString('tr-TR')} senaryoda bu derece bulunmuyor.`}</small></div></article>`}).join('');
+    const warnings=[];for(const c of critical)for(const o of c.outcomes)if(o.count15===0&&live.length)warnings.push(`<article><span>!</span><p><strong>${c.index+1}. maçta ${o.pick}</strong> gelirse 15 bilme ihtimali tamamen biter.</p></article>`);
+    if(!warnings.length&&remaining)warnings.push('<article class="safe"><span>✓</span><p>Tek bir bekleyen maç sonucu şu anda 15 ihtimalini tamamen bitirmiyor.</p></article>');
+    if(guaranteed)warnings.unshift(`<article class="safe"><span>✓</span><p><strong>En az ${guaranteed} bilme kesinleşti.</strong> Kalan sonuçlar ne olursa olsun sistemde bu derece veya üzeri bulunuyor.</p></article>`);
+    $('kzWarningList').innerHTML=warnings.slice(0,8).join('');
+    $('kzCriticalList').innerHTML=critical.length?critical.map((m,rank)=>`<article class="kz-critical-card"><div class="kz-critical-head"><span>${rank+1}</span><div><strong>${m.index+1}. Maç</strong><small>${escapeHtml(state.matchNames[m.index]||'')}</small></div></div><div class="kz-impact-grid">${m.outcomes.map(o=>`<div class="${o.count15===0?'danger':''}"><b>${o.pick}</b><strong>${o.count15.toLocaleString('tr-TR')}</strong><small>15 devam</small><em>${o.count14.toLocaleString('tr-TR')} kolon 14+</em></div>`).join('')}</div></article>`).join(''):'<div class="kz-empty-mini">Bekleyen maç kalmadı.</div>';
+    $('kzPathCount').textContent=`${paths.length.toLocaleString('tr-TR')} yol`;
+    $('kzPathList').innerHTML=paths.length?paths.slice(0,10).map((p,n)=>`<article><div><span>#${n+1}</span><strong>${p.count.toLocaleString('tr-TR')} kolon</strong></div><p>${pending.map((mi,j)=>`<b title="${escapeHtml(state.matchNames[mi])}">${mi+1}<em>${p.picks[j]}</em></b>`).join('')}</p></article>`).join(''):'<div class="kz-empty-mini">15 için yaşayan sonuç yolu kalmadı.</div>';
+    bindKarumQuestions();
+  },40);
+}
+
 let currentMatchDetailIndex=null;
 function showView(view){
   const ids=['homeView','matchesView','matchDetailView','analysisView','karumZekaView'];
