@@ -1,4 +1,4 @@
-const APP_VERSION='16.1.0';
+const APP_VERSION='16.1.1';
 const STORAGE_KEY='sporTotoStateV140';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
@@ -146,11 +146,25 @@ function renderLiveScorePanel(message='',kind=''){
   status.className='live-score-status '+(kind||'');status.textContent=message||(matched?`${matched}/15 maç eşleşti • ${finished} maç tamamlandı`:'Henüz canlı skor kontrolü yapılmadı.');
   meta.textContent=state.liveUpdatedAt?`Son güncelleme: ${new Date(state.liveUpdatedAt).toLocaleString('tr-TR')}`:'API-Football bağlantısı hazır.';
 }
+function apiFreePlanWindow(){
+  const today=new Date();today.setHours(0,0,0,0);
+  const min=new Date(today);min.setDate(min.getDate()-1);
+  const max=new Date(today);max.setDate(max.getDate()+1);
+  const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  return {min:iso(min),max:iso(max)};
+}
 async function refreshLiveScores(){
   if(liveScoreBusy)return;
-  const valid=state.matchNames.map((name,index)=>({index,name,league:state.matchLeagues[index]||'',date:state.matchDates[index]||'',time:state.matchTimes[index]||'',fixtureId:state.fixtureIds[index]||null})).filter(m=>m.name&&m.date);
-  if(!valid.length){renderLiveScorePanel('Önce tarih bilgisi olan haftayı yükle.','bad');return}
-  liveScoreBusy=true;renderLiveScorePanel('API-Football bağlantısı kuruluyor…','loading');
+  const allValid=state.matchNames.map((name,index)=>({index,name,league:state.matchLeagues[index]||'',date:state.matchDates[index]||'',time:state.matchTimes[index]||'',fixtureId:state.fixtureIds[index]||null})).filter(m=>m.name&&m.date);
+  if(!allValid.length){renderLiveScorePanel('Önce tarih bilgisi olan haftayı yükle.','bad');return}
+  const window=apiFreePlanWindow();
+  const valid=allValid.filter(m=>m.fixtureId||(m.date>=window.min&&m.date<=window.max));
+  const waiting=allValid.length-valid.length;
+  if(!valid.length){
+    renderLiveScorePanel(`Ücretsiz API planı yalnızca ${window.min} – ${window.max} tarihlerini sorgulayabiliyor. Maçlar bu aralığa girdiğinde kontrol başlayacak.`,'warn');
+    return;
+  }
+  liveScoreBusy=true;renderLiveScorePanel(`${valid.length} uygun maç API-Football üzerinden kontrol ediliyor…`,'loading');
   try{
     const response=await fetch(LIVE_SCORES_URL,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`},body:JSON.stringify({matches:valid,timezone:'Europe/Istanbul'})});
     const data=await response.json().catch(()=>({ok:false,error:'Sunucudan geçerli JSON gelmedi.'}));
@@ -158,7 +172,9 @@ async function refreshLiveScores(){
     let changed=false,autoResults=0;
     for(const f of data.fixtures||[]){const i=Number(f.index);if(i<0||i>14)continue;state.liveFixtures[i]=f;if(Number(f.fixtureId)&&state.fixtureIds[i]!==Number(f.fixtureId)){state.fixtureIds[i]=Number(f.fixtureId);changed=true}if(isFinalFixture(f)){const r=fixtureResult(f);if(r&&state.results[i]!==r){state.results[i]=r;lastChangedMatchIndex=i;autoResults++;changed=true}}}
     state.liveUpdatedAt=data.updatedAt||new Date().toISOString();saveLocal();renderMatches();calculate();if(changed)queueCloudSave();
-    const quota=data.quotaRemaining!=null?` • Kalan API hakkı: ${data.quotaRemaining}`:'';renderLiveScorePanel(`${data.matched||0}/15 maç eşleşti${autoResults?` • ${autoResults} sonuç otomatik işlendi`:''}${quota}`,(data.matched||0)?'ok':'warn');
+    const quota=data.quotaRemaining!=null?` • Kalan API hakkı: ${data.quotaRemaining}`:'';
+    const waitText=waiting?` • ${waiting} ileri tarihli maç bekliyor`:'';
+    renderLiveScorePanel(`${data.matched||0}/${valid.length} uygun maç eşleşti${autoResults?` • ${autoResults} sonuç otomatik işlendi`:''}${waitText}${quota}`,(data.matched||0)?'ok':'warn');
   }catch(err){console.error(err);renderLiveScorePanel(`Canlı skor hatası: ${err.message}`,'bad')}
   finally{liveScoreBusy=false;renderLiveScorePanel($('liveScoreStatus')?.textContent||'', $('liveScoreStatus')?.className.replace('live-score-status','').trim()||'')}
 }
