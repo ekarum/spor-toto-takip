@@ -2,7 +2,7 @@
   "id": "./",
   "name": "Karum Toto - Spor Toto Takip Sistemi",
   "short_name": "Karum Toto",
-  "description": "Spor Toto kolon ve matematiksel analiz takip sistemi.",
+  "description": "Hafif Spor Toto kolon takip ve matematiksel analiz sistemi.",
   "lang": "tr",
   "dir": "ltr",
   "start_url": "./?source=pwa",

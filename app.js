@@ -1,10 +1,10 @@
-const APP_VERSION='20.0.3';
+const APP_VERSION='20.1.0';
 const STORAGE_KEY='sporTotoStateV140';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
 const LIVE_DURATION_MINUTES=120;
 const state={matchNames:[],matchLeagues:Array(15).fill(''),matchDates:Array(15).fill(''),matchTimes:Array(15).fill(''),results:Array(15).fill(''),columns:[],systems:[],activeSystemId:'',weekName:'Güncel Hafta',fileName:'',weekKey:'',weekFingerprint:'',cloudId:null,cloudUpdatedAt:null};
-let db=null,supabaseInitPromise=null,currentUser=null,realtimeChannel=null,cloudWeeks=[],saveTimer=null,isApplyingRemote=false,currentCategory=15,currentCategoryRows={15:[],14:[],13:[],12:[],11:[]},sheetMode='category',analysisMode='live',lastChangedMatchIndex=null,previousLiveTotal=null;
+let db=null,supabaseInitPromise=null,currentUser=null,realtimeChannel=null,cloudWeeks=[],saveTimer=null,isApplyingRemote=false,currentCategory=15,currentCategoryRows={15:[],14:[],13:[],12:[],11:[]},sheetMode='category',analysisMode='live',lastChangedMatchIndex=null;
 const $=id=>document.getElementById(id);
 const trUpper=v=>String(v??'').trim().toLocaleUpperCase('tr-TR');
 function normalize(v){const s=trUpper(v);return s==='1'||s==='2'||s==='X'?s:''}
@@ -93,7 +93,7 @@ function renderAnalysis(){
   $('analysisTotalBadge').textContent=isLive?`${liveTotal.toLocaleString('tr-TR')} kalan`:`${allTotal.toLocaleString('tr-TR')} kolon`;
   $('analysisSubtitle').textContent=state.fileName?(isLive?`${entered} sonuç girildi • Kalan kolonlar anlık analiz ediliyor.`:`${state.weekName} • Başlangıçtaki bütün kolonlar analiz ediliyor.`):'Excel yüklediğinde 15 maç ve bütün kolonlar burada analiz edilir.';
   $('analysisLiveStatus').classList.toggle('hidden',!allTotal);
-  if(allTotal){animateNumber($('liveStart'),allTotal);animateNumber($('liveRemaining'),liveTotal);animateNumber($('liveEliminated'),eliminated);$('liveRate').textContent=`%${survivalRate.toFixed(1).replace('.',',')}`;const impact=calculateLastResultImpact(liveTotal),banner=$('analysisImpactBanner');if(impact&&impact.before!==impact.after){banner.classList.remove('hidden');$('impactMatch').textContent=`${impact.index+1}. maç sonucu`;$('impactFlow').textContent=`${impact.before.toLocaleString('tr-TR')} → ${impact.after.toLocaleString('tr-TR')}`;$('impactEliminated').textContent=`${impact.eliminated.toLocaleString('tr-TR')} kolon elendi`;banner.classList.remove('positive');banner.classList.add('changed')}else{banner.classList.add('hidden');banner.classList.remove('changed')}previousLiveTotal=liveTotal;}
+  if(allTotal){animateNumber($('liveStart'),allTotal);animateNumber($('liveRemaining'),liveTotal);animateNumber($('liveEliminated'),eliminated);$('liveRate').textContent=`%${survivalRate.toFixed(1).replace('.',',')}`;const impact=calculateLastResultImpact(liveTotal),banner=$('analysisImpactBanner');if(impact&&impact.before!==impact.after){banner.classList.remove('hidden');$('impactMatch').textContent=`${impact.index+1}. maç sonucu`;$('impactFlow').textContent=`${impact.before.toLocaleString('tr-TR')} → ${impact.after.toLocaleString('tr-TR')}`;$('impactEliminated').textContent=`${impact.eliminated.toLocaleString('tr-TR')} kolon elendi`;banner.classList.remove('positive');banner.classList.add('changed')}else{banner.classList.add('hidden');banner.classList.remove('changed')}}
   if(!allTotal){empty.classList.remove('hidden');content.classList.add('hidden');return}
   empty.classList.add('hidden');content.classList.remove('hidden');
   renderSmartDecisionAnalysis(liveColumns);
@@ -434,7 +434,7 @@ loadLocal();normalizeState();updateHeader();renderSystems();renderMatches();calc
 const closeStartupSplash=()=>{if(typeof window.__closeKarumSplash==='function'){window.__closeKarumSplash();return}const splash=$('splash');if(splash){splash.classList.add('hide');setTimeout(()=>splash.remove(),500)}};if(document.readyState==='complete')setTimeout(closeStartupSplash,100);else window.addEventListener('load',()=>setTimeout(closeStartupSplash,100),{once:true});
 
 
-// V20.0.3 — güvenli Supabase giriş ve PWA güncelleme altyapısı
+// V20.1.0 — güvenli Supabase giriş ve PWA güncelleme altyapısı
 (function setupPwaUpdates(){
   if(!('serviceWorker' in navigator)) return;
   let refreshing=false;
@@ -456,7 +456,7 @@ const closeStartupSplash=()=>{if(typeof window.__closeKarumSplash==='function'){
   window.addEventListener('load', async()=>{
     button()?.addEventListener('click',applyUpdate);
     try{
-      const registration=await navigator.serviceWorker.register('./sw.js?v=20.0.3',{scope:'./',updateViaCache:'none'});
+      const registration=await navigator.serviceWorker.register('./sw.js?v=20.1.0',{scope:'./',updateViaCache:'none'});
       if(registration.waiting && navigator.serviceWorker.controller) showUpdate(registration.waiting);
       registration.addEventListener('updatefound',()=>{
         const worker=registration.installing;

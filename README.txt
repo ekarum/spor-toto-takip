@@ -1,21 +1,16 @@
-KARUM TOTO V20.0.0 — HAFİF SÜRÜM
+KARUM TOTO V20.1 — KOD TEMİZLİĞİ VE PERFORMANS SÜRÜMÜ
 
-Kaldırılanlar:
-- API-Football canlı skor bağlantısı
-- API eşleştirme raporu
-- Otomatik skor/sonuç çekme işlemleri
-- Tahmin Robotu ve tahmini ikramiye motoru
+Yapılanlar:
+- Kaldırılmış Canlı Skor API modülüne ait CSS kodları temizlendi.
+- Kaldırılmış API eşleştirme raporu stilleri temizlendi.
+- Kaldırılmış Tahmin Robotu ve Tahmini İkramiye stilleri temizlendi.
+- Tekrarlanan ve birbiriyle çakışan alt menü kuralları birleştirildi.
+- Alt menü kesin olarak 5 sekmeye göre optimize edildi.
+- Kullanılmayan JavaScript durum değişkeni kaldırıldı.
+- Ekran geçiş animasyonu hafifletildi.
+- PWA önbelleği ve dosya sürümleri 20.1.0 olarak yenilendi.
+- Giriş sistemi, Supabase bulut senkronizasyonu, Excel yükleme, Analiz ve Karum Zeka korunmuştur.
 
-Korunanlar:
-- Excel yükleme ve çoklu sistem
-- Maç sonuçlarını elle girme
-- Analiz Merkezi
-- Karum Zeka
-- Supabase hafta kayıtları
-- iPhone PWA logosu ve güncelleme bildirimi
-
-Sürüm: 20.0.0
-
-V20.0.3: iPhone/PWA açılış ekranının CDN veya eski önbellek nedeniyle takılı kalması düzeltildi.
-
-V20.0.3: Supabase istemcisi hazır olmadan auth çağrısı yapılması engellendi. Giriş, kayıt ve çıkış işlemlerine null kontrolü, bekleme durumu ve anlaşılır hata mesajları eklendi.
+Kurulum:
+ZIP içindeki tüm dosyaları GitHub deposundaki mevcut dosyaların üzerine yükleyin.
+Bilgisayarda Ctrl+F5 yapın. iPhone ana ekran uygulamasında güncelleme bildirimi gelirse Güncelle'ye basın.
