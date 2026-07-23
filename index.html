@@ -1,377 +1,285 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="tr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#07111f">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Karum Toto">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="format-detection" content="telephone=no">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=19.0.1">
-  <link rel="apple-touch-icon" sizes="167x167" href="./apple-touch-icon-167.png?v=19.0.1">
-  <link rel="apple-touch-icon" sizes="152x152" href="./apple-touch-icon-152.png?v=19.0.1">
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=19.0.1">
-  <link rel="manifest" href="./manifest.webmanifest?v=19.0.1">
-  <link rel="stylesheet" href="styles.css?v=19.0.1">
-  <title>Karum Toto</title>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<meta content="#07111f" name="theme-color"/>
+<meta content="yes" name="apple-mobile-web-app-capable"/>
+<meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"/>
+<meta content="Karum Toto" name="apple-mobile-web-app-title"/>
+<meta content="yes" name="mobile-web-app-capable"/>
+<meta content="telephone=no" name="format-detection"/>
+<link href="./apple-touch-icon.png?v=20.0.0" rel="apple-touch-icon" sizes="180x180"/>
+<link href="./apple-touch-icon-167.png?v=20.0.0" rel="apple-touch-icon" sizes="167x167"/>
+<link href="./apple-touch-icon-152.png?v=20.0.0" rel="apple-touch-icon" sizes="152x152"/>
+<link href="./favicon-32.png?v=20.0.0" rel="icon" sizes="32x32" type="image/png"/>
+<link href="./manifest.webmanifest?v=20.0.0" rel="manifest"/>
+<link href="styles.css?v=20.0.0" rel="stylesheet"/>
+<title>Karum Toto</title>
 </head>
 <body>
-<div id="pwaUpdateBanner" class="pwa-update-banner hidden" role="status" aria-live="polite">
-  <div><strong>Yeni sürüm hazır</strong><span>Güncel dosyaları yüklemek için yenile.</span></div>
-  <button id="pwaUpdateBtn" type="button">Güncelle</button>
+<div aria-live="polite" class="pwa-update-banner hidden" id="pwaUpdateBanner" role="status">
+<div><strong>Yeni sürüm hazır</strong><span>Güncel dosyaları yüklemek için yenile.</span></div>
+<button id="pwaUpdateBtn" type="button">Güncelle</button>
 </div>
-<div id="splash" class="splash" aria-hidden="true">
-  <div class="splash-logo"><svg class="crown-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 48h44l-4 8H14l-4-8Zm2-28 12 10 8-20 8 20 12-10-5 24H17l-5-24Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><circle cx="12" cy="18" r="3" fill="currentColor"/><circle cx="32" cy="8" r="3" fill="currentColor"/><circle cx="52" cy="18" r="3" fill="currentColor"/></svg></div>
-  <div class="splash-title">KARUM TOTO</div>
-  <div class="splash-subtitle">Spor Toto Takip Sistemi</div>
+<div aria-hidden="true" class="splash" id="splash">
+<div class="splash-logo"><svg aria-hidden="true" class="crown-mark" viewbox="0 0 64 64"><path d="M10 48h44l-4 8H14l-4-8Zm2-28 12 10 8-20 8 20 12-10-5 24H17l-5-24Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4"></path><circle cx="12" cy="18" fill="currentColor" r="3"></circle><circle cx="32" cy="8" fill="currentColor" r="3"></circle><circle cx="52" cy="18" fill="currentColor" r="3"></circle></svg></div>
+<div class="splash-title">KARUM TOTO</div>
+<div class="splash-subtitle">Spor Toto Takip Sistemi</div>
 </div>
-
 <main class="app">
-  <header class="hero">
-    <div class="brand-wrap" id="brandHomeBtn" role="button" tabindex="0" aria-label="Ana sayfaya dön">
-      <div class="brand-logo"><svg class="crown-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 48h44l-4 8H14l-4-8Zm2-28 12 10 8-20 8 20 12-10-5 24H17l-5-24Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><circle cx="12" cy="18" r="3" fill="currentColor"/><circle cx="32" cy="8" r="3" fill="currentColor"/><circle cx="52" cy="18" r="3" fill="currentColor"/></svg></div>
-      <div class="brand-text">
-        <h1>KARUM TOTO <small id="versionBadge"></small></h1>
-        <p class="eyebrow">SPOR TOTO TAKİP SİSTEMİ</p>
-        <p id="weekName" class="week-name">Güncel Hafta</p>
-      </div>
-    </div>
-    <div class="hero-actions"><span id="syncBadge" class="sync-badge offline">Çevrimdışı</span><button id="accountBtn" class="ghost">Hesap</button></div>
-  </header>
-
-  <section id="cloudBar" class="cloud-card premium-card hidden">
-    <div class="cloud-row">
-      <div><span class="summary-label">ORTAK KAYIT</span><strong id="cloudUser">Giriş yapılmadı</strong><p id="cloudInfo">Telefon ve bilgisayar aynı veriyi kullanır.</p></div>
-      <div class="week-actions"><select id="weekSelect" class="week-select" aria-label="Hafta seç"><option value="">Hafta seç</option></select><button id="deleteWeekBtn" class="delete-week hidden" type="button" title="Seçili haftayı sil">Sil</button></div>
-    </div>
-  </section>
-
-  <div id="homeView">
-  <section class="upload-card premium-card">
-    <div class="file-summary">
-      <div>
-        <span class="summary-label">BU HAFTA</span>
-        <strong id="fileSummary">Henüz dosya seçilmedi</strong>
-        <p id="uploadInfo">Excel'den maçlar, ligler, tarih-saat ve kolonlar okunur. Sonuçları telefonda sen seçersin.</p>
-      </div>
-      <label class="upload">
-        <input id="fileInput" type="file" accept=".xlsx,.xls,.csv,.txt">
-        <span class="upload-icon">↥</span>
-        <span class="upload-title">Excel Yükle</span>
-      </label>
-    </div>
-  </section>
-
-
-  <section id="systemsPanel" class="systems-panel premium-card">
-    <div class="systems-head">
-      <div><span class="summary-label">BU HAFTANIN SİSTEMLERİ</span><strong>Kupon / Excel Ayrımı</strong><p>Sonuçlar haftaya ortak, kolonlar her sistemde ayrıdır.</p></div>
-      <button id="deleteSystemBtn" class="delete-system hidden" type="button">Sistemi Sil</button>
-    </div>
-    <select id="systemSelect" class="system-select" aria-label="Sistem seç"><option value="">Sistem yok</option></select>
-    <div id="systemCards" class="system-cards"></div>
-  </section>
-
-  <section class="stats">
-    <article class="stat-card stat-main"><span>Kolon</span><strong id="total">0</strong></article>
-    <article class="stat-card stat-main"><span>Maliyet</span><strong id="cost">0 TL</strong></article>
-    <button class="stat-card green stat-button category-card" type="button" data-category="15"><span><i></i>15 Devam</span><strong id="s15">0</strong><small>Kolonları gör</small></button>
-    <button class="stat-card blue stat-button category-card" type="button" data-category="14"><span><i></i>14 Devam</span><strong id="s14">0</strong><small>Kolonları gör</small></button>
-    <button class="stat-card yellow stat-button category-card" type="button" data-category="13"><span><i></i>13 Devam</span><strong id="s13">0</strong><small>Kolonları gör</small></button>
-    <button class="stat-card orange stat-button category-card" type="button" data-category="12"><span><i></i>12 Devam</span><strong id="s12">0</strong><small>Kolonları gör</small></button>
-    <button class="stat-card red stat-button category-card" type="button" data-category="11"><span><i></i>11 ve Altı</span><strong id="s11">0</strong><small>Kolonları gör</small></button>
-    <button id="remainingMatchesBtn" class="stat-card neutral wide stat-button remaining-card" type="button"><span><i></i>Kalan Maç</span><strong id="remaining">15</strong><small>Maçları gör</small></button>
-  </section>
-  <section class="quick-access premium-card" aria-label="Hızlı erişim">
-    <button type="button" data-action="analysis"><span class="qa-icon qa-gold">▥</span><strong>Analiz Merkezi</strong><small>Genel görünüm</small></button>
-    <button type="button" data-action="live"><span class="qa-icon qa-green">⌁</span><strong>Canlı Analiz</strong><small>Kalan kolonlar</small></button>
-    <button type="button" data-action="scenario"><span class="qa-icon qa-purple">◇</span><strong>Senaryo Motoru</strong><small>15 bilme yolları</small></button>
-  </section>
-
-  <div class="week-progress" aria-label="Hafta ilerleme durumu">
-    <div class="progress-head"><span id="progressText">0 / 15 maç tamamlandı</span><strong id="progressPercent">%0</strong></div>
-    <div class="progress-track"><span id="progressBar" style="width:0%"></span></div>
-  </div>
-  <p id="statsSource" class="stats-source">Sonuçları telefonda seçtikçe kalan kolonlar anında hesaplanır.</p>
-
-  <section id="coveragePanel" class="coverage-panel premium-card" aria-labelledby="coverageTitle">
-    <div class="coverage-head">
-      <div><p class="section-kicker">CANLI KAPSAMA ANALİZİ</p><h2 id="coverageTitle">Kupon Sisteminin Gerçek Kapsaması</h2><p>Her 1-X-2 sonucu eşit olasılıklı kabul edilerek, yüklenen kolonların kapsadığı sonuçlar hesaplanır.</p></div>
-      <span id="coverageLiveBadge" class="coverage-live-badge">HAZIR</span>
-    </div>
-    <div id="coverageEmpty" class="coverage-empty">Analiz için kolon içeren bir Excel yükle.</div>
-    <div id="coverageContent" class="hidden">
-      <div class="coverage-prob-grid">
-        <article class="coverage-prob p15"><span>15 Bilme İhtimali</span><strong id="coverage15">%0</strong><small id="coverage15Meta">0 senaryo</small></article>
-        <article class="coverage-prob p14"><span>14+ Bilme İhtimali</span><strong id="coverage14">%0</strong><small id="coverage14Meta">0 senaryo</small></article>
-        <article class="coverage-prob p13"><span>13+ Bilme İhtimali</span><strong id="coverage13">%0</strong><small id="coverage13Meta">0 senaryo</small></article>
-        <article class="coverage-prob p12"><span>12+ Bilme İhtimali</span><strong id="coverage12">%0</strong><small id="coverage12Meta">0 senaryo</small></article>
-      </div>
-      <div class="coverage-info-grid">
-        <article><span>Yüklenen Kolon</span><strong id="coverageLoaded">0</strong></article>
-        <article><span>15 İçin Kalan Kolon</span><strong id="coverageAlive">0</strong></article>
-        <article><span>Elenen Kolon</span><strong id="coverageEliminated">0</strong></article>
-        <article><span>Kalan Maç</span><strong id="coverageRemaining">15</strong></article>
-        <article><span>Toplam Olası Senaryo</span><strong id="coverageTotalScenarios">3¹⁵</strong></article>
-        <article><span>15'i Sağlayan Senaryo</span><strong id="coverageWinningScenarios">0</strong></article>
-      </div>
-      <div class="coverage-meter-wrap">
-        <div class="coverage-meter-head"><span>15 Kapsama Oranı</span><strong id="coverageMeterText">%0</strong></div>
-        <div class="coverage-meter"><span id="coverageMeterBar" style="width:0%"></span></div>
-        <p id="coverageSummary">Sonuç girdikçe kalan maçlara göre otomatik güncellenir.</p>
-      </div>
-    </div>
-  </section>
-
-  </div>
-
-  <section id="matchesView" class="matches-view hidden" aria-labelledby="matchesTitle">
-    <div class="page-head premium-card">
-      <div><p class="section-kicker">HAFTA PROGRAMI</p><h2 id="matchesTitle">15 Maç</h2><p>Maça dokunarak ayrıntılı dağılımı ve sonucu aç.</p></div>
-      <button id="clearResults" class="ghost small">Temizle</button>
-    </div>
-
-    <section class="live-score-panel premium-card" aria-labelledby="liveScoreTitle">
-      <div class="live-score-head">
-        <div><p class="section-kicker">API-FOOTBALL</p><h3 id="liveScoreTitle">Canlı Skor Bağlantısı</h3><p id="liveScoreStatus" class="live-score-status">Henüz canlı skor kontrolü yapılmadı.</p><small id="liveScoreMeta">API-Football bağlantısı hazır.</small></div>
-        <button id="liveScoreRefresh" class="live-score-refresh" type="button">Şimdi Kontrol Et</button>
-      </div>
-    </section>
-
-    <section id="matchingReportPanel" class="matching-report-panel premium-card is-collapsed" aria-labelledby="matchingReportTitle">
-      <button id="matchingReportToggle" class="matching-report-toggle" type="button" aria-expanded="false" aria-controls="matchingReportDetails">
-        <div class="matching-report-head">
-          <div><p class="section-kicker">EŞLEŞTİRME RAPORU</p><h3 id="matchingReportTitle">15 Maç API Kontrolü</h3><small>Maç eşleşme ayrıntılarını görmek için tıkla</small></div>
-          <div class="matching-toggle-side"><div id="matchingSummary" class="matching-summary"></div><span class="matching-chevron" aria-hidden="true">⌄</span></div>
-        </div>
-      </button>
-      <div id="matchingReportDetails" class="matching-report-details" hidden>
-        <div id="matchingReport" class="matching-report"></div>
-      </div>
-    </section>
-
-    <div id="matches" class="matches-list"></div>
-  </section>
-
-  <section id="matchDetailView" class="match-detail-view hidden" aria-labelledby="matchDetailTitle">
-    <button id="matchDetailBack" class="detail-back" type="button">← Maçlara dön</button>
-    <div id="matchDetailContent"></div>
-  </section>
-
-  <section id="analysisView" class="analysis-view hidden" aria-labelledby="analysisTitle">
-    <div class="analysis-hero premium-card">
-      <div><p class="section-kicker">KOLON ANALİZ MERKEZİ</p><h2 id="analysisTitle">Hafta Özeti</h2><p id="analysisSubtitle">Excel yüklediğinde 15 maç ve bütün kolonlar burada analiz edilir.</p></div>
-      <span id="analysisTotalBadge" class="analysis-total-badge">0 kolon</span>
-    </div>
-    <div class="analysis-mode-switch premium-card" role="group" aria-label="Analiz modu">
-      <button class="analysis-mode-btn" data-mode="all" type="button">Tüm Kolonlar</button>
-      <button class="analysis-mode-btn active" data-mode="live" type="button"><span class="mode-live-dot"></span>Kalan Kolonlar</button>
-    </div>
-    <div id="analysisLiveStatus" class="analysis-live-status hidden">
-      <article><span>Başlangıç</span><strong id="liveStart">0</strong></article>
-      <article class="remaining"><span>Kalan</span><strong id="liveRemaining">0</strong></article>
-      <article class="eliminated"><span>Elenen</span><strong id="liveEliminated">0</strong></article>
-      <article><span>Kalan Oranı</span><strong id="liveRate">%0</strong></article>
-    </div>
-    <div id="analysisImpactBanner" class="analysis-impact-banner premium-card hidden"><div><span id="impactMatch">Son sonuç</span><strong id="impactFlow">0 → 0</strong></div><b id="impactEliminated">0 kolon elendi</b></div>
-    <div id="analysisEmpty" class="analysis-empty premium-card">Analiz için önce kolon içeren bir Excel yükle.</div>
-    <div id="analysisContent" class="hidden">
-      <div class="analysis-summary-grid">
-        <article class="analysis-summary-card"><span id="aTotalLabel">Kalan Kolon</span><strong id="aTotal">0</strong><small id="aTotalMeta">Analize dahil</small></article>
-        <article class="analysis-summary-card"><span>En Çok Oynanan</span><strong id="aTopPick">-</strong><small id="aTopPickMeta">-</small></article>
-        <article class="analysis-summary-card safe"><span>En Güvenli Maç</span><strong id="aSafestNo">-</strong><small id="aSafestMeta">-</small></article>
-        <article class="analysis-summary-card risky"><span>En Riskli Maç</span><strong id="aRiskiestNo">-</strong><small id="aRiskiestMeta">-</small></article>
-      </div>
-
-      <div class="analysis-section premium-card">
-        <div class="analysis-section-head"><div><p class="section-kicker">AKILLI ÖZET</p><h3>Bu Haftanın Yorumu</h3></div></div>
-        <div id="analysisInsights" class="analysis-insights"></div>
-      </div>
+<header class="hero">
+<div aria-label="Ana sayfaya dön" class="brand-wrap" id="brandHomeBtn" role="button" tabindex="0">
+<div class="brand-logo"><svg aria-hidden="true" class="crown-mark" viewbox="0 0 64 64"><path d="M10 48h44l-4 8H14l-4-8Zm2-28 12 10 8-20 8 20 12-10-5 24H17l-5-24Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4"></path><circle cx="12" cy="18" fill="currentColor" r="3"></circle><circle cx="32" cy="8" fill="currentColor" r="3"></circle><circle cx="52" cy="18" fill="currentColor" r="3"></circle></svg></div>
+<div class="brand-text">
+<h1>KARUM TOTO <small id="versionBadge"></small></h1>
+<p class="eyebrow">SPOR TOTO TAKİP SİSTEMİ</p>
+<p class="week-name" id="weekName">Güncel Hafta</p>
+</div>
+</div>
+<div class="hero-actions"><span class="sync-badge offline" id="syncBadge">Çevrimdışı</span><button class="ghost" id="accountBtn">Hesap</button></div>
+</header>
+<section class="cloud-card premium-card hidden" id="cloudBar">
+<div class="cloud-row">
+<div><span class="summary-label">ORTAK KAYIT</span><strong id="cloudUser">Giriş yapılmadı</strong><p id="cloudInfo">Telefon ve bilgisayar aynı veriyi kullanır.</p></div>
+<div class="week-actions"><select aria-label="Hafta seç" class="week-select" id="weekSelect"><option value="">Hafta seç</option></select><button class="delete-week hidden" id="deleteWeekBtn" title="Seçili haftayı sil" type="button">Sil</button></div>
+</div>
+</section>
+<div id="homeView">
+<section class="upload-card premium-card">
+<div class="file-summary">
+<div>
+<span class="summary-label">BU HAFTA</span>
+<strong id="fileSummary">Henüz dosya seçilmedi</strong>
+<p id="uploadInfo">Excel'den maçlar, ligler, tarih-saat ve kolonlar okunur. Sonuçları telefonda sen seçersin.</p>
+</div>
+<label class="upload">
+<input accept=".xlsx,.xls,.csv,.txt" id="fileInput" type="file"/>
+<span class="upload-icon">↥</span>
+<span class="upload-title">Excel Yükle</span>
+</label>
+</div>
+</section>
+<section class="systems-panel premium-card" id="systemsPanel">
+<div class="systems-head">
+<div><span class="summary-label">BU HAFTANIN SİSTEMLERİ</span><strong>Kupon / Excel Ayrımı</strong><p>Sonuçlar haftaya ortak, kolonlar her sistemde ayrıdır.</p></div>
+<button class="delete-system hidden" id="deleteSystemBtn" type="button">Sistemi Sil</button>
+</div>
+<select aria-label="Sistem seç" class="system-select" id="systemSelect"><option value="">Sistem yok</option></select>
+<div class="system-cards" id="systemCards"></div>
+</section>
+<section class="stats">
+<article class="stat-card stat-main"><span>Kolon</span><strong id="total">0</strong></article>
+<article class="stat-card stat-main"><span>Maliyet</span><strong id="cost">0 TL</strong></article>
+<button class="stat-card green stat-button category-card" data-category="15" type="button"><span><i></i>15 Devam</span><strong id="s15">0</strong><small>Kolonları gör</small></button>
+<button class="stat-card blue stat-button category-card" data-category="14" type="button"><span><i></i>14 Devam</span><strong id="s14">0</strong><small>Kolonları gör</small></button>
+<button class="stat-card yellow stat-button category-card" data-category="13" type="button"><span><i></i>13 Devam</span><strong id="s13">0</strong><small>Kolonları gör</small></button>
+<button class="stat-card orange stat-button category-card" data-category="12" type="button"><span><i></i>12 Devam</span><strong id="s12">0</strong><small>Kolonları gör</small></button>
+<button class="stat-card red stat-button category-card" data-category="11" type="button"><span><i></i>11 ve Altı</span><strong id="s11">0</strong><small>Kolonları gör</small></button>
+<button class="stat-card neutral wide stat-button remaining-card" id="remainingMatchesBtn" type="button"><span><i></i>Kalan Maç</span><strong id="remaining">15</strong><small>Maçları gör</small></button>
+</section>
+<section aria-label="Hızlı erişim" class="quick-access premium-card">
+<button data-action="analysis" type="button"><span class="qa-icon qa-gold">▥</span><strong>Analiz Merkezi</strong><small>Genel görünüm</small></button>
+<button data-action="live" type="button"><span class="qa-icon qa-green">⌁</span><strong>Canlı Analiz</strong><small>Kalan kolonlar</small></button>
+<button data-action="scenario" type="button"><span class="qa-icon qa-purple">◇</span><strong>Senaryo Motoru</strong><small>15 bilme yolları</small></button>
+</section>
+<div aria-label="Hafta ilerleme durumu" class="week-progress">
+<div class="progress-head"><span id="progressText">0 / 15 maç tamamlandı</span><strong id="progressPercent">%0</strong></div>
+<div class="progress-track"><span id="progressBar" style="width:0%"></span></div>
+</div>
+<p class="stats-source" id="statsSource">Sonuçları telefonda seçtikçe kalan kolonlar anında hesaplanır.</p>
+<section aria-labelledby="coverageTitle" class="coverage-panel premium-card" id="coveragePanel">
+<div class="coverage-head">
+<div><p class="section-kicker">CANLI KAPSAMA ANALİZİ</p><h2 id="coverageTitle">Kupon Sisteminin Gerçek Kapsaması</h2><p>Her 1-X-2 sonucu eşit olasılıklı kabul edilerek, yüklenen kolonların kapsadığı sonuçlar hesaplanır.</p></div>
+<span class="coverage-live-badge" id="coverageLiveBadge">HAZIR</span>
+</div>
+<div class="coverage-empty" id="coverageEmpty">Analiz için kolon içeren bir Excel yükle.</div>
+<div class="hidden" id="coverageContent">
+<div class="coverage-prob-grid">
+<article class="coverage-prob p15"><span>15 Bilme İhtimali</span><strong id="coverage15">%0</strong><small id="coverage15Meta">0 senaryo</small></article>
+<article class="coverage-prob p14"><span>14+ Bilme İhtimali</span><strong id="coverage14">%0</strong><small id="coverage14Meta">0 senaryo</small></article>
+<article class="coverage-prob p13"><span>13+ Bilme İhtimali</span><strong id="coverage13">%0</strong><small id="coverage13Meta">0 senaryo</small></article>
+<article class="coverage-prob p12"><span>12+ Bilme İhtimali</span><strong id="coverage12">%0</strong><small id="coverage12Meta">0 senaryo</small></article>
+</div>
+<div class="coverage-info-grid">
+<article><span>Yüklenen Kolon</span><strong id="coverageLoaded">0</strong></article>
+<article><span>15 İçin Kalan Kolon</span><strong id="coverageAlive">0</strong></article>
+<article><span>Elenen Kolon</span><strong id="coverageEliminated">0</strong></article>
+<article><span>Kalan Maç</span><strong id="coverageRemaining">15</strong></article>
+<article><span>Toplam Olası Senaryo</span><strong id="coverageTotalScenarios">3¹⁵</strong></article>
+<article><span>15'i Sağlayan Senaryo</span><strong id="coverageWinningScenarios">0</strong></article>
+</div>
+<div class="coverage-meter-wrap">
+<div class="coverage-meter-head"><span>15 Kapsama Oranı</span><strong id="coverageMeterText">%0</strong></div>
+<div class="coverage-meter"><span id="coverageMeterBar" style="width:0%"></span></div>
+<p id="coverageSummary">Sonuç girdikçe kalan maçlara göre otomatik güncellenir.</p>
+</div>
+</div>
+</section>
+</div>
+<section aria-labelledby="matchesTitle" class="matches-view hidden" id="matchesView">
+<div class="page-head premium-card">
+<div><p class="section-kicker">HAFTA PROGRAMI</p><h2 id="matchesTitle">15 Maç</h2><p>Maça dokunarak ayrıntılı dağılımı ve sonucu aç.</p></div>
+<button class="ghost small" id="clearResults">Temizle</button>
+</div>
 
 
-      <div id="smartDecisionPanel" class="analysis-section smart-decision-panel premium-card">
-        <div class="analysis-section-head"><div><p class="section-kicker">V10 AKILLI KARAR ANALİZİ</p><h3 id="smartHeadline">Canlı karar özeti</h3></div><span class="smart-ai-badge">KOLON VERİSİ</span></div>
-        <p id="smartSummary" class="smart-summary"></p>
-        <div id="smartDecisionCards" class="smart-decision-cards"></div>
-        <div id="smartBestPath" class="smart-best-path"></div>
-        <div id="smartTopScenarios" class="smart-top-scenarios"></div>
-      </div>
+<div class="matches-list" id="matches"></div>
+</section>
+<section aria-labelledby="matchDetailTitle" class="match-detail-view hidden" id="matchDetailView">
+<button class="detail-back" id="matchDetailBack" type="button">← Maçlara dön</button>
+<div id="matchDetailContent"></div>
+</section>
+<section aria-labelledby="analysisTitle" class="analysis-view hidden" id="analysisView">
+<div class="analysis-hero premium-card">
+<div><p class="section-kicker">KOLON ANALİZ MERKEZİ</p><h2 id="analysisTitle">Hafta Özeti</h2><p id="analysisSubtitle">Excel yüklediğinde 15 maç ve bütün kolonlar burada analiz edilir.</p></div>
+<span class="analysis-total-badge" id="analysisTotalBadge">0 kolon</span>
+</div>
+<div aria-label="Analiz modu" class="analysis-mode-switch premium-card" role="group">
+<button class="analysis-mode-btn" data-mode="all" type="button">Tüm Kolonlar</button>
+<button class="analysis-mode-btn active" data-mode="live" type="button"><span class="mode-live-dot"></span>Kalan Kolonlar</button>
+</div>
+<div class="analysis-live-status hidden" id="analysisLiveStatus">
+<article><span>Başlangıç</span><strong id="liveStart">0</strong></article>
+<article class="remaining"><span>Kalan</span><strong id="liveRemaining">0</strong></article>
+<article class="eliminated"><span>Elenen</span><strong id="liveEliminated">0</strong></article>
+<article><span>Kalan Oranı</span><strong id="liveRate">%0</strong></article>
+</div>
+<div class="analysis-impact-banner premium-card hidden" id="analysisImpactBanner"><div><span id="impactMatch">Son sonuç</span><strong id="impactFlow">0 → 0</strong></div><b id="impactEliminated">0 kolon elendi</b></div>
+<div class="analysis-empty premium-card" id="analysisEmpty">Analiz için önce kolon içeren bir Excel yükle.</div>
+<div class="hidden" id="analysisContent">
+<div class="analysis-summary-grid">
+<article class="analysis-summary-card"><span id="aTotalLabel">Kalan Kolon</span><strong id="aTotal">0</strong><small id="aTotalMeta">Analize dahil</small></article>
+<article class="analysis-summary-card"><span>En Çok Oynanan</span><strong id="aTopPick">-</strong><small id="aTopPickMeta">-</small></article>
+<article class="analysis-summary-card safe"><span>En Güvenli Maç</span><strong id="aSafestNo">-</strong><small id="aSafestMeta">-</small></article>
+<article class="analysis-summary-card risky"><span>En Riskli Maç</span><strong id="aRiskiestNo">-</strong><small id="aRiskiestMeta">-</small></article>
+</div>
+<div class="analysis-section premium-card">
+<div class="analysis-section-head"><div><p class="section-kicker">AKILLI ÖZET</p><h3>Bu Haftanın Yorumu</h3></div></div>
+<div class="analysis-insights" id="analysisInsights"></div>
+</div>
+<div class="analysis-section smart-decision-panel premium-card" id="smartDecisionPanel">
+<div class="analysis-section-head"><div><p class="section-kicker">V10 AKILLI KARAR ANALİZİ</p><h3 id="smartHeadline">Canlı karar özeti</h3></div><span class="smart-ai-badge">KOLON VERİSİ</span></div>
+<p class="smart-summary" id="smartSummary"></p>
+<div class="smart-decision-cards" id="smartDecisionCards"></div>
+<div class="smart-best-path" id="smartBestPath"></div>
+<div class="smart-top-scenarios" id="smartTopScenarios"></div>
+</div>
+<div class="analysis-section scenario-engine premium-card" id="scenarioEngine">
+<div class="analysis-section-head"><div><p class="section-kicker">SENARYO MOTORU</p><h3>15 Bilme Senaryoları</h3></div><small>Kalan kolonların bekleyen maç sonuçları</small></div>
+<div class="scenario-stats">
+<article><span>Kalan Maç</span><strong id="scenarioRemainingMatches">0</strong></article>
+<article><span>15 Devam Kolonu</span><strong id="scenarioExactColumns">0</strong></article>
+<article><span>Farklı Senaryo</span><strong id="scenarioUniqueCount">0</strong></article>
+</div>
+<p class="scenario-summary" id="scenarioSummary"></p>
+<div class="scenario-subhead"><strong>15 gelmesi için kalan yollar</strong><small>Aynı diziler birleştirilir</small></div>
+<div class="scenario-list" id="scenarioList"></div>
+<div class="scenario-subhead impact-head"><strong>Her sonucun 15 devam etkisi</strong><small>Sonuç gelirse kaç kolon yaşar?</small></div>
+<div class="scenario-impact-list" id="scenarioImpactList"></div>
+</div>
+<div class="analysis-section premium-card">
+<div class="analysis-section-head"><div><p class="section-kicker">ISI HARİTASI</p><h3 id="analysisHeatTitle">Kalan Maçlarda Canlı 1 / X / 2 Dağılımı</h3></div><small id="analysisHeatNote">Yüzdeler yalnızca devam eden kolonlara göredir.</small></div>
+<div class="confidence-legend"><span><i class="very-high"></i>Çok Güçlü</span><span><i class="high"></i>Güçlü</span><span><i class="medium"></i>Orta</span><span><i class="balanced"></i>Dengeli</span><span><i class="low"></i>Çok Riskli</span></div>
+<div class="analysis-match-list" id="analysisMatchList"></div>
+</div>
+</div>
+</section>
+<section aria-labelledby="karumZekaTitle" class="karum-zeka-view hidden" id="karumZekaView">
+<div class="kz-hero premium-card">
+<div><p class="section-kicker">KARUM ZEKA • V20</p><h2 id="karumZekaTitle">Canlı Kupon Asistanı</h2><p>Oynanmış kolonları gerçekleşen sonuçlara göre değerlendirir; maç tahmini üretmez.</p></div>
+<span class="kz-status-badge" id="kzStatusBadge">VERİ BEKLİYOR</span>
+</div>
+<div class="kz-empty premium-card" id="kzEmpty">Karum Zeka analizi için önce kolon içeren bir Excel yükle.</div>
+<div class="hidden" id="kzContent">
+<section class="kz-overview premium-card">
+<div class="kz-week"><span>AKTİF HAFTA</span><strong id="kzWeekName">Güncel Hafta</strong></div>
+<div class="kz-stats">
+<article><span>Sonuçlanan</span><strong id="kzPlayed">0</strong><small>maç</small></article>
+<article><span>Bekleyen</span><strong id="kzRemaining">15</strong><small>maç</small></article>
+<article class="alive"><span>15 Devam</span><strong id="kzAlive15">0</strong><small>kolon</small></article>
+<article class="lost"><span>Elenen</span><strong id="kzEliminated">0</strong><small>kolon</small></article>
+</div>
+</section>
+<section class="kz-comment premium-card">
+<div class="kz-brain">✦</div><div><p class="section-kicker">KARUM ZEKA YORUMU</p><h3>Canlı durum değerlendirmesi</h3><p id="kzNarrative"></p></div>
+</section>
+<section class="kz-section premium-card">
+<div class="kz-section-head"><div><p class="section-kicker">CANLI SENARYO MOTORU</p><h3>15, 14+, 13+ ve 12+ kapsaması</h3></div><small id="kzScenarioTotal">Hesaplanıyor</small></div>
+<div class="kz-degree-grid" id="kzDegreeGrid"></div>
+<p class="kz-math-note">Kapsama oranı, kalan 1-X-2 dizilerinin eşit ağırlıklı matematiksel oranıdır; maç tahmini değildir.</p>
+</section>
+<section class="kz-section premium-card">
+<div class="kz-section-head"><div><p class="section-kicker">GARANTİ VE UYARILAR</p><h3>Kesinleşen derece ve tehlikeler</h3></div><small>Tüm kalan senaryolara göre</small></div>
+<div class="kz-guarantee-list" id="kzGuaranteeList"></div>
+<div class="kz-warning-list" id="kzWarningList"></div>
+</section>
+<section class="kz-section premium-card">
+<div class="kz-section-head"><div><p class="section-kicker">KRİTİK MAÇLAR</p><h3>Sonuca göre yaşayan kolonlar</h3></div><small>Mevcut sonuçlara göre</small></div>
+<div class="kz-critical-list" id="kzCriticalList"></div>
+</section>
+<section class="kz-section premium-card">
+<div class="kz-section-head"><div><p class="section-kicker">15 İÇİN KALAN YOLLAR</p><h3>En çok kolonda tekrar eden sonuç dizileri</h3></div><small id="kzPathCount">0 yol</small></div>
+<div class="kz-path-list" id="kzPathList"></div>
+</section>
+<section class="kz-section premium-card kz-chat-section">
+<div class="kz-section-head"><div><p class="section-kicker">KARUM ZEKA'YA SOR</p><h3>Doğal dilde kupon soruları</h3></div><small>Kesin hesaplardan cevap verir</small></div>
+<div class="kz-quick-questions">
+<button data-kz-question="15 için ne gerekiyor?" type="button">15 için ne gerekiyor?</button>
+<button data-kz-question="14 garanti mi?" type="button">14 garanti mi?</button>
+<button data-kz-question="En kritik maç hangisi?" type="button">En kritik maç hangisi?</button>
+<button data-kz-question="Hangi sonuç 15'i bitirir?" type="button">Hangi sonuç 15'i bitirir?</button>
+</div>
+<form class="kz-question-form" id="kzQuestionForm">
+<input autocomplete="off" id="kzQuestionInput" maxlength="160" placeholder="Örnek: 15 için hangi sonuçlar gerekiyor?" type="text"/>
+<button type="submit">Sor</button>
+</form>
+<div class="kz-answer" id="kzAnswer"><span>✦</span><p>Bir soru seç veya kendi sorununu yaz.</p></div>
+</section>
+</div>
+</section>
 
-      <div id="scenarioEngine" class="analysis-section scenario-engine premium-card">
-        <div class="analysis-section-head"><div><p class="section-kicker">SENARYO MOTORU</p><h3>15 Bilme Senaryoları</h3></div><small>Kalan kolonların bekleyen maç sonuçları</small></div>
-        <div class="scenario-stats">
-          <article><span>Kalan Maç</span><strong id="scenarioRemainingMatches">0</strong></article>
-          <article><span>15 Devam Kolonu</span><strong id="scenarioExactColumns">0</strong></article>
-          <article><span>Farklı Senaryo</span><strong id="scenarioUniqueCount">0</strong></article>
-        </div>
-        <p id="scenarioSummary" class="scenario-summary"></p>
-        <div class="scenario-subhead"><strong>15 gelmesi için kalan yollar</strong><small>Aynı diziler birleştirilir</small></div>
-        <div id="scenarioList" class="scenario-list"></div>
-        <div class="scenario-subhead impact-head"><strong>Her sonucun 15 devam etkisi</strong><small>Sonuç gelirse kaç kolon yaşar?</small></div>
-        <div id="scenarioImpactList" class="scenario-impact-list"></div>
-      </div>
-
-      <div class="analysis-section premium-card">
-        <div class="analysis-section-head"><div><p class="section-kicker">ISI HARİTASI</p><h3 id="analysisHeatTitle">Kalan Maçlarda Canlı 1 / X / 2 Dağılımı</h3></div><small id="analysisHeatNote">Yüzdeler yalnızca devam eden kolonlara göredir.</small></div>
-        <div class="confidence-legend"><span><i class="very-high"></i>Çok Güçlü</span><span><i class="high"></i>Güçlü</span><span><i class="medium"></i>Orta</span><span><i class="balanced"></i>Dengeli</span><span><i class="low"></i>Çok Riskli</span></div>
-        <div id="analysisMatchList" class="analysis-match-list"></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="karumZekaView" class="karum-zeka-view hidden" aria-labelledby="karumZekaTitle">
-    <div class="kz-hero premium-card">
-      <div><p class="section-kicker">KARUM ZEKA • V18.1</p><h2 id="karumZekaTitle">Canlı Kupon Asistanı</h2><p>Oynanmış kolonları gerçekleşen sonuçlara göre değerlendirir; maç tahmini üretmez.</p></div>
-      <span id="kzStatusBadge" class="kz-status-badge">VERİ BEKLİYOR</span>
-    </div>
-    <div id="kzEmpty" class="kz-empty premium-card">Karum Zeka analizi için önce kolon içeren bir Excel yükle.</div>
-    <div id="kzContent" class="hidden">
-      <section class="kz-overview premium-card">
-        <div class="kz-week"><span>AKTİF HAFTA</span><strong id="kzWeekName">Güncel Hafta</strong></div>
-        <div class="kz-stats">
-          <article><span>Sonuçlanan</span><strong id="kzPlayed">0</strong><small>maç</small></article>
-          <article><span>Bekleyen</span><strong id="kzRemaining">15</strong><small>maç</small></article>
-          <article class="alive"><span>15 Devam</span><strong id="kzAlive15">0</strong><small>kolon</small></article>
-          <article class="lost"><span>Elenen</span><strong id="kzEliminated">0</strong><small>kolon</small></article>
-        </div>
-      </section>
-
-
-
-      <section class="kz-comment premium-card">
-        <div class="kz-brain">✦</div><div><p class="section-kicker">KARUM ZEKA YORUMU</p><h3>Canlı durum değerlendirmesi</h3><p id="kzNarrative"></p></div>
-      </section>
-
-      <section class="kz-section premium-card">
-        <div class="kz-section-head"><div><p class="section-kicker">CANLI SENARYO MOTORU</p><h3>15, 14+, 13+ ve 12+ kapsaması</h3></div><small id="kzScenarioTotal">Hesaplanıyor</small></div>
-        <div id="kzDegreeGrid" class="kz-degree-grid"></div>
-        <p class="kz-math-note">Kapsama oranı, kalan 1-X-2 dizilerinin eşit ağırlıklı matematiksel oranıdır; maç tahmini değildir.</p>
-      </section>
-
-      <section class="kz-section premium-card">
-        <div class="kz-section-head"><div><p class="section-kicker">GARANTİ VE UYARILAR</p><h3>Kesinleşen derece ve tehlikeler</h3></div><small>Tüm kalan senaryolara göre</small></div>
-        <div id="kzGuaranteeList" class="kz-guarantee-list"></div>
-        <div id="kzWarningList" class="kz-warning-list"></div>
-      </section>
-
-      <section class="kz-section premium-card">
-        <div class="kz-section-head"><div><p class="section-kicker">KRİTİK MAÇLAR</p><h3>Sonuca göre yaşayan kolonlar</h3></div><small>Mevcut sonuçlara göre</small></div>
-        <div id="kzCriticalList" class="kz-critical-list"></div>
-      </section>
-
-      <section class="kz-section premium-card">
-        <div class="kz-section-head"><div><p class="section-kicker">15 İÇİN KALAN YOLLAR</p><h3>En çok kolonda tekrar eden sonuç dizileri</h3></div><small id="kzPathCount">0 yol</small></div>
-        <div id="kzPathList" class="kz-path-list"></div>
-      </section>
-
-      <section class="kz-section premium-card kz-chat-section">
-        <div class="kz-section-head"><div><p class="section-kicker">KARUM ZEKA'YA SOR</p><h3>Doğal dilde kupon soruları</h3></div><small>Kesin hesaplardan cevap verir</small></div>
-        <div class="kz-quick-questions">
-          <button type="button" data-kz-question="15 için ne gerekiyor?">15 için ne gerekiyor?</button>
-          <button type="button" data-kz-question="14 garanti mi?">14 garanti mi?</button>
-          <button type="button" data-kz-question="En kritik maç hangisi?">En kritik maç hangisi?</button>
-          <button type="button" data-kz-question="Hangi sonuç 15'i bitirir?">Hangi sonuç 15'i bitirir?</button>
-        </div>
-        <form id="kzQuestionForm" class="kz-question-form">
-          <input id="kzQuestionInput" type="text" maxlength="160" placeholder="Örnek: 15 için hangi sonuçlar gerekiyor?" autocomplete="off">
-          <button type="submit">Sor</button>
-        </form>
-        <div id="kzAnswer" class="kz-answer"><span>✦</span><p>Bir soru seç veya kendi sorununu yaz.</p></div>
-      </section>
-    </div>
-  </section>
-
-  <section id="predictionRobotView" class="prediction-robot-view hidden" aria-labelledby="predictionRobotTitle">
-    <div class="robot-hero premium-card">
-      <div><p class="section-kicker">TAHMİN ROBOTU • V18.1</p><h2 id="predictionRobotTitle">Türkiye Geneli Tahmin Merkezi</h2><p>Oynanma yüzdeleri ve havuz bilgileriyle tahmini kazanan sayısını, ikramiye aralığını ve sürpriz etkisini hesaplar.</p></div>
-      <span class="robot-badge">TÜRKİYE GENELİ</span>
-    </div>
-      <section id="prizeEstimatePanel" class="kz-section premium-card prize-panel">
-        <div class="kz-section-head"><div><p class="section-kicker">TÜRKİYE GENELİ MODELİ</p><h3>Tahmini İkramiye Motoru</h3></div><span id="prizeModelStatus" class="prize-model-status">VERİ GİR</span></div>
-        <p class="prize-disclaimer">Bu model, Türkiye genelinde her maça oynanan 1-X-2 yüzdelerini kullanır. Sonuçlar kesin ikramiye değil, istatistiksel tahmindir.</p>
-        <div class="prize-tabs"><button type="button" class="prize-tab active" data-prize-tab="summary">Tahmin</button><button type="button" class="prize-tab" data-prize-tab="settings">Ayarlar ve Yüzdeler</button></div>
-        <div id="prizeSummaryTab" class="prize-tab-page">
-          <div class="prize-head-grid">
-            <article><span>Toplam kolon</span><strong id="prizeTotalColumns">0</strong></article>
-            <article><span>Tahmini ciro</span><strong id="prizeTurnover">0 TL</strong></article>
-            <article><span>Sürpriz endeksi</span><strong id="prizeSurprise">0 / 100</strong></article>
-            <article><span>Tahmin güveni</span><strong id="prizeConfidence">0%</strong></article>
-          </div>
-          <div id="prizeDegreeCards" class="prize-degree-cards"></div>
-          <div class="prize-live-card"><div><p class="section-kicker">CANLI DURUM</p><h4>Gerçekleşen sonuçları bilen tahmini kolon</h4></div><strong id="prizeAliveEstimate">0</strong><small id="prizeAliveMeta">Sonuç girilmedi</small></div>
-          <div class="prize-comment"><span>✦</span><p id="prizeNarrative">Yüzdeleri ve havuz ayarlarını girerek modeli başlat.</p></div>
-          <div class="prize-impact-head"><div><p class="section-kicker">SONRAKİ MAÇ ETKİSİ</p><h4>1-X-2 gelirse tahmini 15 kazananı</h4></div><select id="prizeImpactMatch"></select></div>
-          <div id="prizeImpactGrid" class="prize-impact-grid"></div>
-        </div>
-        <div id="prizeSettingsTab" class="prize-tab-page hidden">
-          <form id="prizeSettingsForm">
-            <div class="prize-settings-grid">
-              <label>Toplam oynanan kolon<input id="prizeInputColumns" type="number" min="0" step="1"></label>
-              <label>Kolon fiyatı (TL)<input id="prizeInputPrice" type="number" min="0" step="0.01"></label>
-              <label>Dağıtılabilir havuz (TL)<input id="prizeInputPool" type="number" min="0" step="1"></label>
-              <label>Devreden (TL)<input id="prizeInputCarry" type="number" min="0" step="1"></label>
-            </div>
-            <div class="prize-share-title"><strong>Derece havuz payları</strong><small>Toplamın %100 olması gerekmez; dağıtılmayan bölüm ayrı kalabilir.</small></div>
-            <div class="prize-settings-grid four">
-              <label>15 payı %<input id="prizeShare15" type="number" min="0" max="100" step="0.1"></label>
-              <label>14 payı %<input id="prizeShare14" type="number" min="0" max="100" step="0.1"></label>
-              <label>13 payı %<input id="prizeShare13" type="number" min="0" max="100" step="0.1"></label>
-              <label>12 payı %<input id="prizeShare12" type="number" min="0" max="100" step="0.1"></label>
-            </div>
-            <div class="prize-percent-head"><div><strong>15 maçın oynanma yüzdeleri</strong><small>Her satır 100 olmalı.</small></div><button id="prizeEqualFill" type="button">Tümünü 34-33-33 yap</button></div>
-            <div id="prizePercentRows" class="prize-percent-rows"></div>
-            <div class="prize-form-actions"><button type="submit" class="primary-action">Kaydet ve Hesapla</button><span id="prizeValidationText"></span></div>
-          </form>
-        </div>
-      </section>
-  </section>
-
-  <footer>Karum Toto v19.0.1 • Karum Zeka + Tahmin Robotu • by Eyüp Karum</footer>
+<footer>Karum Toto v20.0.0 • Hafif Sürüm • Karum Zeka • by Eyüp Karum</footer>
 </main>
-
-<div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
-<section id="survivorsSheet" class="bottom-sheet hidden" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
-  <div class="sheet-handle"></div>
-  <div class="sheet-header">
-    <div>
-      <p class="section-kicker">CANLI KOLON TAKİBİ</p>
-      <h2 id="sheetTitle">15 Devam Kolonları</h2>
-      <p id="sheetCount" class="sheet-count">0 kolon</p>
-    </div>
-    <button id="closeSheet" class="sheet-close" type="button" aria-label="Kapat">×</button>
-  </div>
-  <div id="sheetEmpty" class="sheet-empty hidden"></div>
-  <div id="survivorsList" class="survivors-list"></div>
+<div aria-hidden="true" class="sheet-backdrop hidden" id="sheetBackdrop"></div>
+<section aria-labelledby="sheetTitle" aria-modal="true" class="bottom-sheet hidden" id="survivorsSheet" role="dialog">
+<div class="sheet-handle"></div>
+<div class="sheet-header">
+<div>
+<p class="section-kicker">CANLI KOLON TAKİBİ</p>
+<h2 id="sheetTitle">15 Devam Kolonları</h2>
+<p class="sheet-count" id="sheetCount">0 kolon</p>
+</div>
+<button aria-label="Kapat" class="sheet-close" id="closeSheet" type="button">×</button>
+</div>
+<div class="sheet-empty hidden" id="sheetEmpty"></div>
+<div class="survivors-list" id="survivorsList"></div>
 </section>
-
-<div id="authBackdrop" class="auth-backdrop hidden"></div>
-<section id="authModal" class="auth-modal hidden" role="dialog" aria-modal="true">
-  <button id="closeAuth" class="auth-close" aria-label="Kapat">×</button>
-  <div class="brand-logo auth-logo"><svg class="crown-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 48h44l-4 8H14l-4-8Zm2-28 12 10 8-20 8 20 12-10-5 24H17l-5-24Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><circle cx="12" cy="18" r="3" fill="currentColor"/><circle cx="32" cy="8" r="3" fill="currentColor"/><circle cx="52" cy="18" r="3" fill="currentColor"/></svg></div>
-  <h2>Karum Toto Bulut</h2>
-  <p>Telefon ve bilgisayarda aynı e-posta ve şifreyle giriş yap.</p>
-  <label>E-posta<input id="authEmail" type="email" autocomplete="email" placeholder="ornek@email.com"></label>
-  <label>Şifre<input id="authPassword" type="password" autocomplete="current-password" minlength="6" placeholder="En az 6 karakter"></label>
-  <button id="loginBtn" class="primary-action">Giriş Yap</button>
-  <button id="signupBtn" class="secondary-action">İlk Kez Kayıt Ol</button>
-  <button id="logoutBtn" class="danger-action hidden">Çıkış Yap</button>
-  <p id="authMessage" class="auth-message"></p>
+<div class="auth-backdrop hidden" id="authBackdrop"></div>
+<section aria-modal="true" class="auth-modal hidden" id="authModal" role="dialog">
+<button aria-label="Kapat" class="auth-close" id="closeAuth">×</button>
+<div class="brand-logo auth-logo"><svg aria-hidden="true" class="crown-mark" viewbox="0 0 64 64"><path d="M10 48h44l-4 8H14l-4-8Zm2-28 12 10 8-20 8 20 12-10-5 24H17l-5-24Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4"></path><circle cx="12" cy="18" fill="currentColor" r="3"></circle><circle cx="32" cy="8" fill="currentColor" r="3"></circle><circle cx="52" cy="18" fill="currentColor" r="3"></circle></svg></div>
+<h2>Karum Toto Bulut</h2>
+<p>Telefon ve bilgisayarda aynı e-posta ve şifreyle giriş yap.</p>
+<label>E-posta<input autocomplete="email" id="authEmail" placeholder="ornek@email.com" type="email"/></label>
+<label>Şifre<input autocomplete="current-password" id="authPassword" minlength="6" placeholder="En az 6 karakter" type="password"/></label>
+<button class="primary-action" id="loginBtn">Giriş Yap</button>
+<button class="secondary-action" id="signupBtn">İlk Kez Kayıt Ol</button>
+<button class="danger-action hidden" id="logoutBtn">Çıkış Yap</button>
+<p class="auth-message" id="authMessage"></p>
 </section>
+<nav aria-label="Alt menü" class="bottom-nav">
+<button class="nav-item active" data-tab="home" id="homeNavBtn" type="button"><span class="nav-icon">⌂</span><em>Ana Sayfa</em></button>
+<button class="nav-item" data-tab="matches" id="matchesNavBtn" type="button"><span class="nav-icon">●</span><em>Maçlar</em></button>
+<button class="nav-item" data-tab="analysis" id="analysisNavBtn" type="button"><span class="nav-icon">▥</span><em>Analiz</em></button>
+<button class="nav-item" data-tab="smart" id="smartNavBtn" type="button"><span class="nav-icon">✦</span><em>Karum Zeka</em></button>
 
-<nav class="bottom-nav" aria-label="Alt menü">
-  <button id="homeNavBtn" class="nav-item active" type="button" data-tab="home"><span class="nav-icon">⌂</span><em>Ana Sayfa</em></button>
-  <button id="matchesNavBtn" class="nav-item" type="button" data-tab="matches"><span class="nav-icon">●</span><em>Maçlar</em></button>
-  <button id="analysisNavBtn" class="nav-item" type="button" data-tab="analysis"><span class="nav-icon">▥</span><em>Analiz</em></button>
-  <button id="smartNavBtn" class="nav-item" type="button" data-tab="smart"><span class="nav-icon">✦</span><em>Karum Zeka</em></button>
-  <button id="predictionNavBtn" class="nav-item" type="button" data-tab="prediction"><span class="nav-icon">◆</span><em>Tahmin Robotu</em></button>
-  <button id="settingsNavBtn" class="nav-item" type="button" data-tab="settings"><span class="nav-icon">⚙</span><em>Ayarlar</em></button>
+<button class="nav-item" data-tab="settings" id="settingsNavBtn" type="button"><span class="nav-icon">⚙</span><em>Ayarlar</em></button>
 </nav>
-
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="initial-data.js?v=19.0.1"></script>
-<script src="app.js?v=19.0.1"></script>
+<script src="initial-data.js?v=20.0.0"></script>
+<script src="app.js?v=20.0.0"></script>
 </body>
 </html>
