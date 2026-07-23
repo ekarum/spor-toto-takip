@@ -1,4 +1,4 @@
-const APP_VERSION='20.1.0';
+const APP_VERSION='20.1.1';
 const STORAGE_KEY='sporTotoStateV140';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
@@ -434,7 +434,7 @@ loadLocal();normalizeState();updateHeader();renderSystems();renderMatches();calc
 const closeStartupSplash=()=>{if(typeof window.__closeKarumSplash==='function'){window.__closeKarumSplash();return}const splash=$('splash');if(splash){splash.classList.add('hide');setTimeout(()=>splash.remove(),500)}};if(document.readyState==='complete')setTimeout(closeStartupSplash,100);else window.addEventListener('load',()=>setTimeout(closeStartupSplash,100),{once:true});
 
 
-// V20.1.0 — güvenli Supabase giriş ve PWA güncelleme altyapısı
+// V20.1.1 — güvenli Supabase giriş ve PWA güncelleme altyapısı
 (function setupPwaUpdates(){
   if(!('serviceWorker' in navigator)) return;
   let refreshing=false;
@@ -456,7 +456,7 @@ const closeStartupSplash=()=>{if(typeof window.__closeKarumSplash==='function'){
   window.addEventListener('load', async()=>{
     button()?.addEventListener('click',applyUpdate);
     try{
-      const registration=await navigator.serviceWorker.register('./sw.js?v=20.1.0',{scope:'./',updateViaCache:'none'});
+      const registration=await navigator.serviceWorker.register('./sw.js?v=20.1.1',{scope:'./',updateViaCache:'none'});
       if(registration.waiting && navigator.serviceWorker.controller) showUpdate(registration.waiting);
       registration.addEventListener('updatefound',()=>{
         const worker=registration.installing;

@@ -395,10 +395,16 @@ footer{color:#53627a;font-size:10px;padding-top:8px}
 #matchDetailView.hidden,
 #analysisView.hidden,
 #karumZekaView.hidden,
-#kzContent.hidden,
-{
+#kzContent.hidden {
   display: none !important;
 }
+
+/* V20.1.1: Sekme dışındaki uzun içerikler ana sayfaya taşamaz. */
+main.app > #homeView:not(.hidden) { display: block; }
+main.app > #matchesView:not(.hidden),
+main.app > #matchDetailView:not(.hidden),
+main.app > #analysisView:not(.hidden),
+main.app > #karumZekaView:not(.hidden) { min-height: 0; }
 
 
 /* V19 PWA güncelleme bildirimi */
