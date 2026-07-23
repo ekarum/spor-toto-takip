@@ -1,3 +1,14 @@
+KARUM TOTO V18.0.0 - BAĞIMSIZ KARUM ZEKA VE TAHMİN ROBOTU
+
+V18 değişiklikleri:
+- Karum Zeka ana sayfadan kaldırıldı; yalnızca alt menü sekmesinden açılır.
+- Tahmini İkramiye Motoru Karum Zeka içinden çıkarıldı.
+- Alt menüye bağımsız Tahmin Robotu sekmesi eklendi.
+- Ana sayfadaki Karum Zeka hızlı erişim kartı kaldırıldı.
+- Son açık sayfa tarayıcıda hatırlanır.
+- Sayfa geçiş animasyonu eklendi.
+- Alt menü 6 bağımsız sekmeye göre düzenlendi.
+
 KARUM TOTO V17.5.0 - TÜRKİYE GENELİ TAHMİNİ İKRAMİYE MOTORU
 
 Yeni: 15 maç için 1-X-2 oynanma yüzdeleri, toplam kolon/havuz/devreden ayarları, 15-14-13-12 tahmini kazanan ve ikramiye aralıkları, sürpriz ve güven endeksi, sonraki maç 1-X-2 etki analizi.

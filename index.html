@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=17.5.0">
+  <link rel="stylesheet" href="styles.css?v=18.0.0">
   <title>Karum Toto</title>
 </head>
 <body>
@@ -78,7 +78,6 @@
     <button type="button" data-action="analysis"><span class="qa-icon qa-gold">▥</span><strong>Analiz Merkezi</strong><small>Genel görünüm</small></button>
     <button type="button" data-action="live"><span class="qa-icon qa-green">⌁</span><strong>Canlı Analiz</strong><small>Kalan kolonlar</small></button>
     <button type="button" data-action="scenario"><span class="qa-icon qa-purple">◇</span><strong>Senaryo Motoru</strong><small>15 bilme yolları</small></button>
-    <button type="button" data-action="smart"><span class="qa-icon qa-blue">✦</span><strong>Karum Zeka</strong><small>Canlı senaryo asistanı</small></button>
   </section>
 
   <div class="week-progress" aria-label="Hafta ilerleme durumu">
@@ -214,7 +213,7 @@
 
   <section id="karumZekaView" class="karum-zeka-view hidden" aria-labelledby="karumZekaTitle">
     <div class="kz-hero premium-card">
-      <div><p class="section-kicker">KARUM ZEKA • V17.5</p><h2 id="karumZekaTitle">Canlı Kupon Asistanı</h2><p>Oynanmış kolonları gerçekleşen sonuçlara göre değerlendirir; maç tahmini üretmez.</p></div>
+      <div><p class="section-kicker">KARUM ZEKA • V18</p><h2 id="karumZekaTitle">Canlı Kupon Asistanı</h2><p>Oynanmış kolonları gerçekleşen sonuçlara göre değerlendirir; maç tahmini üretmez.</p></div>
       <span id="kzStatusBadge" class="kz-status-badge">VERİ BEKLİYOR</span>
     </div>
     <div id="kzEmpty" class="kz-empty premium-card">Karum Zeka analizi için önce kolon içeren bir Excel yükle.</div>
@@ -229,44 +228,7 @@
         </div>
       </section>
 
-      <section id="prizeEstimatePanel" class="kz-section premium-card prize-panel">
-        <div class="kz-section-head"><div><p class="section-kicker">TÜRKİYE GENELİ MODELİ</p><h3>Tahmini İkramiye Motoru</h3></div><span id="prizeModelStatus" class="prize-model-status">VERİ GİR</span></div>
-        <p class="prize-disclaimer">Bu model, Türkiye genelinde her maça oynanan 1-X-2 yüzdelerini kullanır. Sonuçlar kesin ikramiye değil, istatistiksel tahmindir.</p>
-        <div class="prize-tabs"><button type="button" class="prize-tab active" data-prize-tab="summary">Tahmin</button><button type="button" class="prize-tab" data-prize-tab="settings">Ayarlar ve Yüzdeler</button></div>
-        <div id="prizeSummaryTab" class="prize-tab-page">
-          <div class="prize-head-grid">
-            <article><span>Toplam kolon</span><strong id="prizeTotalColumns">0</strong></article>
-            <article><span>Tahmini ciro</span><strong id="prizeTurnover">0 TL</strong></article>
-            <article><span>Sürpriz endeksi</span><strong id="prizeSurprise">0 / 100</strong></article>
-            <article><span>Tahmin güveni</span><strong id="prizeConfidence">0%</strong></article>
-          </div>
-          <div id="prizeDegreeCards" class="prize-degree-cards"></div>
-          <div class="prize-live-card"><div><p class="section-kicker">CANLI DURUM</p><h4>Gerçekleşen sonuçları bilen tahmini kolon</h4></div><strong id="prizeAliveEstimate">0</strong><small id="prizeAliveMeta">Sonuç girilmedi</small></div>
-          <div class="prize-comment"><span>✦</span><p id="prizeNarrative">Yüzdeleri ve havuz ayarlarını girerek modeli başlat.</p></div>
-          <div class="prize-impact-head"><div><p class="section-kicker">SONRAKİ MAÇ ETKİSİ</p><h4>1-X-2 gelirse tahmini 15 kazananı</h4></div><select id="prizeImpactMatch"></select></div>
-          <div id="prizeImpactGrid" class="prize-impact-grid"></div>
-        </div>
-        <div id="prizeSettingsTab" class="prize-tab-page hidden">
-          <form id="prizeSettingsForm">
-            <div class="prize-settings-grid">
-              <label>Toplam oynanan kolon<input id="prizeInputColumns" type="number" min="0" step="1"></label>
-              <label>Kolon fiyatı (TL)<input id="prizeInputPrice" type="number" min="0" step="0.01"></label>
-              <label>Dağıtılabilir havuz (TL)<input id="prizeInputPool" type="number" min="0" step="1"></label>
-              <label>Devreden (TL)<input id="prizeInputCarry" type="number" min="0" step="1"></label>
-            </div>
-            <div class="prize-share-title"><strong>Derece havuz payları</strong><small>Toplamın %100 olması gerekmez; dağıtılmayan bölüm ayrı kalabilir.</small></div>
-            <div class="prize-settings-grid four">
-              <label>15 payı %<input id="prizeShare15" type="number" min="0" max="100" step="0.1"></label>
-              <label>14 payı %<input id="prizeShare14" type="number" min="0" max="100" step="0.1"></label>
-              <label>13 payı %<input id="prizeShare13" type="number" min="0" max="100" step="0.1"></label>
-              <label>12 payı %<input id="prizeShare12" type="number" min="0" max="100" step="0.1"></label>
-            </div>
-            <div class="prize-percent-head"><div><strong>15 maçın oynanma yüzdeleri</strong><small>Her satır 100 olmalı.</small></div><button id="prizeEqualFill" type="button">Tümünü 34-33-33 yap</button></div>
-            <div id="prizePercentRows" class="prize-percent-rows"></div>
-            <div class="prize-form-actions"><button type="submit" class="primary-action">Kaydet ve Hesapla</button><span id="prizeValidationText"></span></div>
-          </form>
-        </div>
-      </section>
+
 
       <section class="kz-comment premium-card">
         <div class="kz-brain">✦</div><div><p class="section-kicker">KARUM ZEKA YORUMU</p><h3>Canlı durum değerlendirmesi</h3><p id="kzNarrative"></p></div>
@@ -311,7 +273,52 @@
     </div>
   </section>
 
-  <footer>Karum Toto v17.5.0 • Karum Zeka • by Eyüp Karum</footer>
+  <section id="predictionRobotView" class="prediction-robot-view hidden" aria-labelledby="predictionRobotTitle">
+    <div class="robot-hero premium-card">
+      <div><p class="section-kicker">TAHMİN ROBOTU • V18</p><h2 id="predictionRobotTitle">Türkiye Geneli Tahmin Merkezi</h2><p>Oynanma yüzdeleri ve havuz bilgileriyle tahmini kazanan sayısını, ikramiye aralığını ve sürpriz etkisini hesaplar.</p></div>
+      <span class="robot-badge">TÜRKİYE GENELİ</span>
+    </div>
+      <section id="prizeEstimatePanel" class="kz-section premium-card prize-panel">
+        <div class="kz-section-head"><div><p class="section-kicker">TÜRKİYE GENELİ MODELİ</p><h3>Tahmini İkramiye Motoru</h3></div><span id="prizeModelStatus" class="prize-model-status">VERİ GİR</span></div>
+        <p class="prize-disclaimer">Bu model, Türkiye genelinde her maça oynanan 1-X-2 yüzdelerini kullanır. Sonuçlar kesin ikramiye değil, istatistiksel tahmindir.</p>
+        <div class="prize-tabs"><button type="button" class="prize-tab active" data-prize-tab="summary">Tahmin</button><button type="button" class="prize-tab" data-prize-tab="settings">Ayarlar ve Yüzdeler</button></div>
+        <div id="prizeSummaryTab" class="prize-tab-page">
+          <div class="prize-head-grid">
+            <article><span>Toplam kolon</span><strong id="prizeTotalColumns">0</strong></article>
+            <article><span>Tahmini ciro</span><strong id="prizeTurnover">0 TL</strong></article>
+            <article><span>Sürpriz endeksi</span><strong id="prizeSurprise">0 / 100</strong></article>
+            <article><span>Tahmin güveni</span><strong id="prizeConfidence">0%</strong></article>
+          </div>
+          <div id="prizeDegreeCards" class="prize-degree-cards"></div>
+          <div class="prize-live-card"><div><p class="section-kicker">CANLI DURUM</p><h4>Gerçekleşen sonuçları bilen tahmini kolon</h4></div><strong id="prizeAliveEstimate">0</strong><small id="prizeAliveMeta">Sonuç girilmedi</small></div>
+          <div class="prize-comment"><span>✦</span><p id="prizeNarrative">Yüzdeleri ve havuz ayarlarını girerek modeli başlat.</p></div>
+          <div class="prize-impact-head"><div><p class="section-kicker">SONRAKİ MAÇ ETKİSİ</p><h4>1-X-2 gelirse tahmini 15 kazananı</h4></div><select id="prizeImpactMatch"></select></div>
+          <div id="prizeImpactGrid" class="prize-impact-grid"></div>
+        </div>
+        <div id="prizeSettingsTab" class="prize-tab-page hidden">
+          <form id="prizeSettingsForm">
+            <div class="prize-settings-grid">
+              <label>Toplam oynanan kolon<input id="prizeInputColumns" type="number" min="0" step="1"></label>
+              <label>Kolon fiyatı (TL)<input id="prizeInputPrice" type="number" min="0" step="0.01"></label>
+              <label>Dağıtılabilir havuz (TL)<input id="prizeInputPool" type="number" min="0" step="1"></label>
+              <label>Devreden (TL)<input id="prizeInputCarry" type="number" min="0" step="1"></label>
+            </div>
+            <div class="prize-share-title"><strong>Derece havuz payları</strong><small>Toplamın %100 olması gerekmez; dağıtılmayan bölüm ayrı kalabilir.</small></div>
+            <div class="prize-settings-grid four">
+              <label>15 payı %<input id="prizeShare15" type="number" min="0" max="100" step="0.1"></label>
+              <label>14 payı %<input id="prizeShare14" type="number" min="0" max="100" step="0.1"></label>
+              <label>13 payı %<input id="prizeShare13" type="number" min="0" max="100" step="0.1"></label>
+              <label>12 payı %<input id="prizeShare12" type="number" min="0" max="100" step="0.1"></label>
+            </div>
+            <div class="prize-percent-head"><div><strong>15 maçın oynanma yüzdeleri</strong><small>Her satır 100 olmalı.</small></div><button id="prizeEqualFill" type="button">Tümünü 34-33-33 yap</button></div>
+            <div id="prizePercentRows" class="prize-percent-rows"></div>
+            <div class="prize-form-actions"><button type="submit" class="primary-action">Kaydet ve Hesapla</button><span id="prizeValidationText"></span></div>
+          </form>
+        </div>
+      </section>
+  </section>
+
+  <footer>Karum Toto v18.0.0 • Karum Zeka + Tahmin Robotu • by Eyüp Karum</footer>
 </main>
 
 <div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
@@ -348,12 +355,13 @@
   <button id="matchesNavBtn" class="nav-item" type="button" data-tab="matches"><span class="nav-icon">●</span><em>Maçlar</em></button>
   <button id="analysisNavBtn" class="nav-item" type="button" data-tab="analysis"><span class="nav-icon">▥</span><em>Analiz</em></button>
   <button id="smartNavBtn" class="nav-item" type="button" data-tab="smart"><span class="nav-icon">✦</span><em>Karum Zeka</em></button>
+  <button id="predictionNavBtn" class="nav-item" type="button" data-tab="prediction"><span class="nav-icon">◆</span><em>Tahmin Robotu</em></button>
   <button id="settingsNavBtn" class="nav-item" type="button" data-tab="settings"><span class="nav-icon">⚙</span><em>Ayarlar</em></button>
 </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="initial-data.js?v=17.5.0"></script>
-<script src="app.js?v=17.5.0"></script>
+<script src="initial-data.js?v=18.0.0"></script>
+<script src="app.js?v=18.0.0"></script>
 </body>
 </html>

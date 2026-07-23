@@ -1,4 +1,4 @@
-const APP_VERSION='17.5.0';
+const APP_VERSION='18.0.0';
 const STORAGE_KEY='sporTotoStateV140';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
@@ -7,6 +7,7 @@ const state={prizeModel:null,matchNames:[],matchLeagues:Array(15).fill(''),match
 let db=null,currentUser=null,realtimeChannel=null,cloudWeeks=[],saveTimer=null,isApplyingRemote=false,currentCategory=15,currentCategoryRows={15:[],14:[],13:[],12:[],11:[]},sheetMode='category',analysisMode='live',lastChangedMatchIndex=null,previousLiveTotal=null;
 const $=id=>document.getElementById(id);
 const MATCHING_REPORT_OPEN_KEY='karumMatchingReportOpen';
+const LAST_VIEW_KEY='karumLastViewV18';
 function setMatchingReportOpen(open,remember=true){
   const panel=$('matchingReportPanel'),toggle=$('matchingReportToggle'),details=$('matchingReportDetails');
   if(!panel||!toggle||!details)return;
@@ -211,7 +212,7 @@ function renderKarumZeka(){
   const live=getSurvivingColumns(),eliminated=Math.max(0,total-live.length),pending=state.results.map((v,i)=>!v?i:-1).filter(i=>i>=0);
   const badge=$('kzStatusBadge'),empty=$('kzEmpty'),content=$('kzContent');if(!badge||!empty||!content)return;
   badge.textContent=total?(remaining?'CANLI HAZIR':'HAFTA TAMAMLANDI'):'VERİ BEKLİYOR';badge.classList.toggle('ready',!!total);
-  if(!total){empty.classList.remove('hidden');content.classList.remove('hidden');karumZekaData=null;renderPrizeEstimate();bindPrizeModel();return}
+  if(!total){empty.classList.remove('hidden');content.classList.add('hidden');karumZekaData=null;return}
   empty.classList.add('hidden');content.classList.remove('hidden');
   $('kzPlayed').textContent=entered;$('kzRemaining').textContent=remaining;$('kzAlive15').textContent=live.length.toLocaleString('tr-TR');$('kzEliminated').textContent=eliminated.toLocaleString('tr-TR');$('kzWeekName').textContent=state.weekName||'Güncel Hafta';
   $('kzScenarioTotal').textContent='Kesin hesap yapılıyor…';
@@ -233,19 +234,24 @@ function renderKarumZeka(){
     $('kzCriticalList').innerHTML=critical.length?critical.map((m,rank)=>`<article class="kz-critical-card"><div class="kz-critical-head"><span>${rank+1}</span><div><strong>${m.index+1}. Maç</strong><small>${escapeHtml(state.matchNames[m.index]||'')}</small></div></div><div class="kz-impact-grid">${m.outcomes.map(o=>`<div class="${o.count15===0?'danger':''}"><b>${o.pick}</b><strong>${o.count15.toLocaleString('tr-TR')}</strong><small>15 devam</small><em>${o.count14.toLocaleString('tr-TR')} kolon 14+</em></div>`).join('')}</div></article>`).join(''):'<div class="kz-empty-mini">Bekleyen maç kalmadı.</div>';
     $('kzPathCount').textContent=`${paths.length.toLocaleString('tr-TR')} yol`;
     $('kzPathList').innerHTML=paths.length?paths.slice(0,10).map((p,n)=>`<article><div><span>#${n+1}</span><strong>${p.count.toLocaleString('tr-TR')} kolon</strong></div><p>${pending.map((mi,j)=>`<b title="${escapeHtml(state.matchNames[mi])}">${mi+1}<em>${p.picks[j]}</em></b>`).join('')}</p></article>`).join(''):'<div class="kz-empty-mini">15 için yaşayan sonuç yolu kalmadı.</div>';
-    bindKarumQuestions();renderPrizeEstimate();bindPrizeModel();
+    bindKarumQuestions();
   },40);
 }
 
 let currentMatchDetailIndex=null;
-function showView(view){
-  const ids=['homeView','matchesView','matchDetailView','analysisView','karumZekaView'];
+function showView(view,remember=true){
+  const ids=['homeView','matchesView','matchDetailView','analysisView','karumZekaView','predictionRobotView'];
   ids.forEach(id=>$(id)?.classList.add('hidden'));
-  if(view==='karumzeka'){$('karumZekaView').classList.remove('hidden');renderKarumZeka()}
-  else if(view==='analysis'){$('analysisView').classList.remove('hidden');renderAnalysis()}
-  else if(view==='matches'){$('matchesView').classList.remove('hidden');renderMatches()}
-  else if(view==='detail'){$('matchDetailView').classList.remove('hidden');renderMatchDetail(currentMatchDetailIndex)}
-  else $('homeView').classList.remove('hidden');
+  let active='home';
+  if(view==='karumzeka'){$('karumZekaView').classList.remove('hidden');renderKarumZeka();active='smart'}
+  else if(view==='prediction'){$('predictionRobotView').classList.remove('hidden');renderPrizeEstimate();bindPrizeModel();active='prediction'}
+  else if(view==='analysis'){$('analysisView').classList.remove('hidden');renderAnalysis();active='analysis'}
+  else if(view==='matches'){$('matchesView').classList.remove('hidden');renderMatches();active='matches'}
+  else if(view==='detail'){$('matchDetailView').classList.remove('hidden');renderMatchDetail(currentMatchDetailIndex);active='matches'}
+  else {$('homeView').classList.remove('hidden');active='home'}
+  setActiveNav(active);
+  if(remember&&view!=='detail')localStorage.setItem(LAST_VIEW_KEY,view||'home');
+  requestAnimationFrame(()=>document.querySelector(`#${view==='karumzeka'?'karumZekaView':view==='prediction'?'predictionRobotView':view==='analysis'?'analysisView':view==='matches'?'matchesView':'homeView'}`)?.classList.add('view-enter'));
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function liveColumns(){return state.columns.filter(col=>state.results.every((r,i)=>!r||col[i]===r))}
@@ -468,9 +474,10 @@ if(brandHomeBtn){
 $('matchesNavBtn').onclick=()=>openHomeSection('matches');
 $('matchDetailBack').onclick=()=>openHomeSection('matches');
 $('analysisNavBtn').onclick=()=>openAnalysisSection('analysis');
-$('smartNavBtn').onclick=()=>{showView('karumzeka');setActiveNav('smart');window.scrollTo({top:0,behavior:'smooth'});};
+$('smartNavBtn').onclick=()=>showView('karumzeka');
+$('predictionNavBtn').onclick=()=>showView('prediction');
 $('settingsNavBtn').onclick=()=>{setActiveNav('settings');showAuth()};
-document.querySelectorAll('.quick-access button').forEach(btn=>btn.onclick=()=>{const a=btn.dataset.action;if(a==='analysis'||a==='live')openAnalysisSection('analysis');else if(a==='scenario'){openAnalysisSection('analysis');requestAnimationFrame(()=>$('scenarioEngine')?.scrollIntoView({behavior:'smooth',block:'start'}))}else {showView('karumzeka');setActiveNav('smart');window.scrollTo({top:0,behavior:'smooth'});}});
+document.querySelectorAll('.quick-access button').forEach(btn=>btn.onclick=()=>{const a=btn.dataset.action;if(a==='analysis'||a==='live')openAnalysisSection('analysis');else if(a==='scenario'){openAnalysisSection('analysis');requestAnimationFrame(()=>$('scenarioEngine')?.scrollIntoView({behavior:'smooth',block:'start'}))}});
 document.querySelectorAll('.analysis-mode-btn').forEach(btn=>btn.onclick=()=>setAnalysisMode(btn.dataset.mode));
-loadLocal();normalizeState();updateHeader();renderSystems();renderMatches();calculate();renderLiveScorePanel();initMatchingReportAccordion();initSupabase();setInterval(refreshMatchStatuses,30000);
+loadLocal();normalizeState();updateHeader();renderSystems();renderMatches();calculate();renderLiveScorePanel();initMatchingReportAccordion();initSupabase();setInterval(refreshMatchStatuses,30000);const savedView=localStorage.getItem(LAST_VIEW_KEY)||'home';showView(['home','matches','analysis','karumzeka','prediction'].includes(savedView)?savedView:'home',false);
 window.addEventListener('load',()=>{const splash=$('splash');if(splash){setTimeout(()=>splash.classList.add('hide'),650);setTimeout(()=>splash.remove(),1150)}});
