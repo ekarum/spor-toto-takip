@@ -421,3 +421,9 @@ footer{color:#53627a;font-size:10px;padding-top:8px}
 .prize-tab-page.hidden {
   display: none !important;
 }
+
+
+/* V19 PWA güncelleme bildirimi */
+.pwa-update-banner{position:fixed;z-index:9999;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));top:max(12px,env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:14px;padding:13px 14px;border:1px solid rgba(255,201,71,.5);border-radius:16px;background:rgba(7,17,31,.96);box-shadow:0 16px 40px rgba(0,0,0,.4);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.pwa-update-banner.hidden{display:none!important}
+.pwa-update-banner div{display:grid;gap:2px}.pwa-update-banner strong{color:#fff;font-size:14px}.pwa-update-banner span{color:#aeb8c6;font-size:12px}.pwa-update-banner button{border:0;border-radius:12px;padding:10px 14px;background:#f4bf3f;color:#111827;font-weight:800;cursor:pointer}

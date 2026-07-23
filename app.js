@@ -1,4 +1,4 @@
-const APP_VERSION='18.1.0';
+const APP_VERSION='19.0.0';
 const STORAGE_KEY='sporTotoStateV140';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
@@ -492,3 +492,52 @@ document.querySelectorAll('.quick-access button').forEach(btn=>btn.onclick=()=>{
 document.querySelectorAll('.analysis-mode-btn').forEach(btn=>btn.onclick=()=>setAnalysisMode(btn.dataset.mode));
 loadLocal();normalizeState();updateHeader();renderSystems();renderMatches();calculate();renderLiveScorePanel();initMatchingReportAccordion();initSupabase();setInterval(refreshMatchStatuses,30000);const savedView=localStorage.getItem(LAST_VIEW_KEY)||'home';showView(['home','matches','analysis','karumzeka','prediction'].includes(savedView)?savedView:'home',false);
 window.addEventListener('load',()=>{const splash=$('splash');if(splash){setTimeout(()=>splash.classList.add('hide'),650);setTimeout(()=>splash.remove(),1150)}});
+
+
+// V19.0.0 — iOS/PWA güncelleme altyapısı
+(function setupPwaUpdates(){
+  if(!('serviceWorker' in navigator)) return;
+  let refreshing=false;
+  let waitingWorker=null;
+  const banner=()=>document.getElementById('pwaUpdateBanner');
+  const button=()=>document.getElementById('pwaUpdateBtn');
+  const showUpdate=(worker)=>{
+    waitingWorker=worker||waitingWorker;
+    banner()?.classList.remove('hidden');
+  };
+  const applyUpdate=()=>{
+    const worker=waitingWorker;
+    if(worker){
+      worker.postMessage({type:'SKIP_WAITING'});
+    }else{
+      window.location.reload();
+    }
+  };
+  window.addEventListener('load', async()=>{
+    button()?.addEventListener('click',applyUpdate);
+    try{
+      const registration=await navigator.serviceWorker.register('./sw.js?v=19.0.0',{scope:'./',updateViaCache:'none'});
+      if(registration.waiting && navigator.serviceWorker.controller) showUpdate(registration.waiting);
+      registration.addEventListener('updatefound',()=>{
+        const worker=registration.installing;
+        if(!worker) return;
+        worker.addEventListener('statechange',()=>{
+          if(worker.state==='installed' && navigator.serviceWorker.controller) showUpdate(worker);
+        });
+      });
+      // iOS, PWA tekrar öne geldiğinde eski service worker'ı uzun süre tutabilir.
+      // Her açılışta ve görünür olduğunda sunucudan güncel sürümü kontrol et.
+      registration.update().catch(()=>{});
+      document.addEventListener('visibilitychange',()=>{
+        if(document.visibilityState==='visible') registration.update().catch(()=>{});
+      });
+    }catch(error){
+      console.warn('Service worker kaydı başarısız:',error);
+    }
+  });
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(refreshing) return;
+    refreshing=true;
+    window.location.reload();
+  });
+})();

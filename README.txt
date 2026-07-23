@@ -1,3 +1,15 @@
+KARUM TOTO V19.0.0
+
+V19 PWA / iPhone düzeltmeleri:
+- Geçerli manifest.webmanifest oluşturuldu.
+- iPhone için 180x180, 167x167 ve 152x152 Apple Touch Icon eklendi.
+- Ana ekrandan açılışta HTML/JS/CSS için ağ öncelikli güncelleme sistemi eklendi.
+- Yeni sürüm bulunduğunda uygulama içinde Güncelle bildirimi gösterilir.
+- Eski önbellekler yeni service worker etkinleşince otomatik silinir.
+- iOS uygulaması yeniden görünür olduğunda güncelleme kontrolü yapılır.
+
+ÖNEMLİ: GitHub'a tüm dosyaları yükledikten sonra iPhone'daki eski ana ekran kısayolunu bir kez silip Safari'den yeniden Ana Ekrana Ekle yapın. Apple ikonunu mevcut kısayola sonradan uygulamayabilir.
+
 KARUM TOTO V18.1.0 - BAĞIMSIZ KARUM ZEKA VE TAHMİN ROBOTU
 
 V18.1 DÜZELTMESİ:

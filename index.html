@@ -7,11 +7,21 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=18.1.0">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=19.0.0">
+  <link rel="apple-touch-icon" sizes="167x167" href="./apple-touch-icon-167.png?v=19.0.0">
+  <link rel="apple-touch-icon" sizes="152x152" href="./apple-touch-icon-152.png?v=19.0.0">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png?v=19.0.0">
+  <link rel="manifest" href="./manifest.webmanifest?v=19.0.0">
+  <link rel="stylesheet" href="styles.css?v=19.0.0">
   <title>Karum Toto</title>
 </head>
 <body>
+<div id="pwaUpdateBanner" class="pwa-update-banner hidden" role="status" aria-live="polite">
+  <div><strong>Yeni sürüm hazır</strong><span>Güncel dosyaları yüklemek için yenile.</span></div>
+  <button id="pwaUpdateBtn" type="button">Güncelle</button>
+</div>
 <div id="splash" class="splash" aria-hidden="true">
   <div class="splash-logo"><svg class="crown-mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M10 48h44l-4 8H14l-4-8Zm2-28 12 10 8-20 8 20 12-10-5 24H17l-5-24Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round"/><circle cx="12" cy="18" r="3" fill="currentColor"/><circle cx="32" cy="8" r="3" fill="currentColor"/><circle cx="52" cy="18" r="3" fill="currentColor"/></svg></div>
   <div class="splash-title">KARUM TOTO</div>
@@ -318,7 +328,7 @@
       </section>
   </section>
 
-  <footer>Karum Toto v18.1.0 • Karum Zeka + Tahmin Robotu • by Eyüp Karum</footer>
+  <footer>Karum Toto v19.0.0 • Karum Zeka + Tahmin Robotu • by Eyüp Karum</footer>
 </main>
 
 <div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
@@ -361,7 +371,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="initial-data.js?v=18.1.0"></script>
-<script src="app.js?v=18.1.0"></script>
+<script src="initial-data.js?v=19.0.0"></script>
+<script src="app.js?v=19.0.0"></script>
 </body>
 </html>
