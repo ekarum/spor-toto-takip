@@ -16,4 +16,6 @@ Korunanlar:
 
 Sürüm: 20.0.0
 
-V20.0.1: iPhone/PWA açılış ekranının CDN veya eski önbellek nedeniyle takılı kalması düzeltildi.
+V20.0.3: iPhone/PWA açılış ekranının CDN veya eski önbellek nedeniyle takılı kalması düzeltildi.
+
+V20.0.3: Supabase istemcisi hazır olmadan auth çağrısı yapılması engellendi. Giriş, kayıt ve çıkış işlemlerine null kontrolü, bekleme durumu ve anlaşılır hata mesajları eklendi.

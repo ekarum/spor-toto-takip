@@ -1,10 +1,10 @@
-const APP_VERSION='20.0.1';
+const APP_VERSION='20.0.3';
 const STORAGE_KEY='sporTotoStateV140';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
 const LIVE_DURATION_MINUTES=120;
 const state={matchNames:[],matchLeagues:Array(15).fill(''),matchDates:Array(15).fill(''),matchTimes:Array(15).fill(''),results:Array(15).fill(''),columns:[],systems:[],activeSystemId:'',weekName:'Güncel Hafta',fileName:'',weekKey:'',weekFingerprint:'',cloudId:null,cloudUpdatedAt:null};
-let db=null,currentUser=null,realtimeChannel=null,cloudWeeks=[],saveTimer=null,isApplyingRemote=false,currentCategory=15,currentCategoryRows={15:[],14:[],13:[],12:[],11:[]},sheetMode='category',analysisMode='live',lastChangedMatchIndex=null,previousLiveTotal=null;
+let db=null,supabaseInitPromise=null,currentUser=null,realtimeChannel=null,cloudWeeks=[],saveTimer=null,isApplyingRemote=false,currentCategory=15,currentCategoryRows={15:[],14:[],13:[],12:[],11:[]},sheetMode='category',analysisMode='live',lastChangedMatchIndex=null,previousLiveTotal=null;
 const $=id=>document.getElementById(id);
 const trUpper=v=>String(v??'').trim().toLocaleUpperCase('tr-TR');
 function normalize(v){const s=trUpper(v);return s==='1'||s==='2'||s==='X'?s:''}
@@ -316,7 +316,7 @@ function renderCoverageAnalysis(){
 }
 function toSuperscript(number){return String(number).replace(/0/g,'⁰').replace(/1/g,'¹').replace(/2/g,'²').replace(/3/g,'³').replace(/4/g,'⁴').replace(/5/g,'⁵').replace(/6/g,'⁶').replace(/7/g,'⁷').replace(/8/g,'⁸').replace(/9/g,'⁹')}
 
-function calculate(){let counts={15:0,14:0,13:0,12:0,11:0};currentCategoryRows={15:[],14:[],13:[],12:[],11:[]};const entered=state.results.filter(Boolean).length;for(let idx=0;idx<state.columns.length;idx++){const col=state.columns[idx];let wrong=0;for(let i=0;i<15;i++)if(state.results[i]&&col[i]!==state.results[i])wrong++;const score=15-wrong;const category=score>=15?15:score===14?14:score===13?13:score===12?12:11;counts[category]++;currentCategoryRows[category].push([idx+1,col,wrong])}$('total').textContent=state.columns.length.toLocaleString('tr-TR');$('cost').textContent=(state.columns.length*10).toLocaleString('tr-TR')+' TL';$('s15').textContent=counts[15].toLocaleString('tr-TR');$('s14').textContent=counts[14].toLocaleString('tr-TR');$('s13').textContent=counts[13].toLocaleString('tr-TR');$('s12').textContent=counts[12].toLocaleString('tr-TR');$('s11').textContent=counts[11].toLocaleString('tr-TR');$('remaining').textContent=15-entered;const percent=Math.round((entered/15)*100);$('progressText').textContent=`${entered} / 15 maç tamamlandı`;$('progressPercent').textContent=`%${percent}`;$('progressBar').style.width=`${percent}%`;const total=counts[15]+counts[14]+counts[13]+counts[12]+counts[11];$('statsSource').textContent=total===state.columns.length?`${entered} maç seçildi • Kategoriler toplamı: ${total.toLocaleString('tr-TR')} kolon`:`Hesap kontrolü başarısız: ${total}/${state.columns.length}`;if(document.body.classList.contains('sheet-open'))renderOpenSheet();renderAnalysis();renderCoverageAnalysis();renderKarumZeka();renderPrizeEstimate()}
+function calculate(){let counts={15:0,14:0,13:0,12:0,11:0};currentCategoryRows={15:[],14:[],13:[],12:[],11:[]};const entered=state.results.filter(Boolean).length;for(let idx=0;idx<state.columns.length;idx++){const col=state.columns[idx];let wrong=0;for(let i=0;i<15;i++)if(state.results[i]&&col[i]!==state.results[i])wrong++;const score=15-wrong;const category=score>=15?15:score===14?14:score===13?13:score===12?12:11;counts[category]++;currentCategoryRows[category].push([idx+1,col,wrong])}$('total').textContent=state.columns.length.toLocaleString('tr-TR');$('cost').textContent=(state.columns.length*10).toLocaleString('tr-TR')+' TL';$('s15').textContent=counts[15].toLocaleString('tr-TR');$('s14').textContent=counts[14].toLocaleString('tr-TR');$('s13').textContent=counts[13].toLocaleString('tr-TR');$('s12').textContent=counts[12].toLocaleString('tr-TR');$('s11').textContent=counts[11].toLocaleString('tr-TR');$('remaining').textContent=15-entered;const percent=Math.round((entered/15)*100);$('progressText').textContent=`${entered} / 15 maç tamamlandı`;$('progressPercent').textContent=`%${percent}`;$('progressBar').style.width=`${percent}%`;const total=counts[15]+counts[14]+counts[13]+counts[12]+counts[11];$('statsSource').textContent=total===state.columns.length?`${entered} maç seçildi • Kategoriler toplamı: ${total.toLocaleString('tr-TR')} kolon`:`Hesap kontrolü başarısız: ${total}/${state.columns.length}`;if(document.body.classList.contains('sheet-open'))renderOpenSheet();renderAnalysis();renderCoverageAnalysis();renderKarumZeka()}
 function categoryTitle(category){return category===11?'11 ve Altı':`${category} Devam`}
 function renderCategorySheet(){const rows=currentCategoryRows[currentCategory]||[];$('sheetTitle').textContent=`${categoryTitle(currentCategory)} Kolonları`;$('sheetCount').textContent=`${rows.length.toLocaleString('tr-TR')} kolon`;const empty=$('sheetEmpty'),list=$('survivorsList');if(!rows.length){list.innerHTML='';empty.classList.remove('hidden');empty.innerHTML=`<strong>${categoryTitle(currentCategory)} kolonu yok</strong>Yeni sonuç seçildikçe bu liste otomatik güncellenir.`;return}empty.classList.add('hidden');const pending=state.results.filter(v=>!v).length;list.innerHTML=rows.map(([n,c,wrong])=>`<article class="column-card"><div class="column-card-head"><div><span class="column-number">Kolon #${n}</span><small class="column-status"><span class="error-count">${wrong} hata</span><span class="pending-count">${pending} bekliyor</span></small></div><button class="copy-column" data-column="${c.join('-')}">Kopyala</button></div><div class="column-picks">${c.map((v,i)=>{const cls=!state.results[i]?'pending-pick':state.results[i]!==v?'wrong-pick':'correct-pick';return `<span class="column-pick ${cls}" title="${!state.results[i]?'Sonuç bekleniyor':state.results[i]===v?'Doğru tahmin':'Yanlış tahmin'}">${v}</span>`}).join('')}</div></article>`).join('');list.querySelectorAll('.copy-column').forEach(btn=>btn.onclick=async()=>{try{await navigator.clipboard.writeText(btn.dataset.column);btn.textContent='Kopyalandı';btn.classList.add('copied');setTimeout(()=>{btn.textContent='Kopyala';btn.classList.remove('copied')},1000)}catch(e){alert(btn.dataset.column)}})}
 function renderRemainingMatchesSheet(){const pending=state.results.map((v,i)=>!v?i:-1).filter(i=>i>=0);$('sheetTitle').textContent='Kalan Maçlar';$('sheetCount').textContent=`${pending.length} maç`;const empty=$('sheetEmpty'),list=$('survivorsList');if(!pending.length){list.innerHTML='';empty.classList.remove('hidden');empty.innerHTML='<strong>Tüm maçlar tamamlandı</strong>Girilmeyi bekleyen maç sonucu bulunmuyor.';return}empty.classList.add('hidden');list.innerHTML=pending.map(i=>{const date=String(state.matchDates[i]||'').trim(),time=String(state.matchTimes[i]||'').trim(),status=getMatchStatus(date,time);const league=String(state.matchLeagues[i]||'').trim();return `<article class="remaining-match-card"><span class="remaining-match-no">${i+1}</span><div class="remaining-match-info"><strong>${state.matchNames[i]||`Maç ${i+1}`}</strong>${league?`<div class="remaining-league">${league}</div>`:''}<p>${date?`📅 ${date}`:''}${date&&time?' • ':''}${time?`🕒 ${time}`:''}</p>${status?`<small class="remaining-status ${status.kind}">${status.label} • ${status.text}</small>`:'<small class="remaining-status upcoming">Sonuç bekleniyor</small>'}</div></article>`}).join('')}
@@ -328,14 +328,69 @@ function parseRows(rows){const out=[];if(!Array.isArray(rows)||!rows.length)retu
 function rowLabelIndex(rows,labels){const wanted=labels.map(trUpper);for(let r=0;r<rows.length;r++)for(let c=0;c<Math.min(4,(rows[r]||[]).length);c++)if(wanted.includes(trUpper(rows[r][c])))return{r,c};return null}
 function extractMatchData(rows){const nameHit=rowLabelIndex(rows,['Maç Adı','Mac Adi','Maçlar','Takımlar']),leagueHit=rowLabelIndex(rows,['Lig','Ligler','Lig Adı','Lig Adi']),dateHit=rowLabelIndex(rows,['Tarih','Tarihler','Maç Tarihi','Mac Tarihi']),timeHit=rowLabelIndex(rows,['Saat','Saatler','Maç Saati','Mac Saati']);let matchNames=null,matchLeagues=Array(15).fill(''),matchDates=Array(15).fill(''),matchTimes=Array(15).fill('');if(nameHit)matchNames=(rows[nameHit.r]||[]).slice(nameHit.c+1,nameHit.c+16).map((v,i)=>cleanName(v,i));if(leagueHit)matchLeagues=(rows[leagueHit.r]||[]).slice(leagueHit.c+1,leagueHit.c+16).map(v=>String(v??'').trim());if(dateHit)matchDates=(rows[dateHit.r]||[]).slice(dateHit.c+1,dateHit.c+16).map(v=>String(v??'').trim());if(timeHit)matchTimes=(rows[timeHit.r]||[]).slice(timeHit.c+1,timeHit.c+16).map(v=>String(v??'').trim());return{matchNames:matchNames||Array.from({length:15},(_,i)=>`Maç ${i+1}`),matchLeagues,matchDates,matchTimes}}
 function parseWorkbook(wb,fileName){const panelName=wb.SheetNames.find(n=>trUpper(n)==='TAKİP PANELİ')||wb.SheetNames[0],panelRows=XLSX.utils.sheet_to_json(wb.Sheets[panelName],{header:1,raw:false,defval:'',blankrows:false}),{matchNames,matchLeagues,matchDates,matchTimes}=extractMatchData(panelRows);let colName=wb.SheetNames.find(n=>trUpper(n)==='KOLONLAR');if(!colName)colName=wb.SheetNames.find(n=>n!==panelName)||panelName;const columns=parseRows(XLSX.utils.sheet_to_json(wb.Sheets[colName],{header:1,raw:false,defval:'',blankrows:false}));if(!columns.length)throw new Error('Kolonlar sayfasında 15 sonuçtan oluşan kolon bulunamadı.');const weekName=fileName.replace(/\.(xlsx|xls|csv|txt)$/i,'').replace(/[_-]+/g,' ').trim();const imported={matchNames,matchLeagues,matchDates,matchTimes,results:Array(15).fill(''),columns,weekName,fileName};imported.weekFingerprint=makeWeekFingerprint(imported);imported.weekKey=makeWeekKey(imported);return imported}
-async function initSupabase(){if(!window.supabase){setSync('Bulut yüklenemedi','error');return}db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);const {data:{session}}=await db.auth.getSession();await handleSession(session);db.auth.onAuthStateChange((_event,session)=>setTimeout(()=>handleSession(session),0))}
+function setAuthBusy(busy){
+  ['loginBtn','signupBtn','logoutBtn'].forEach(id=>{const el=$(id);if(el)el.disabled=!!busy});
+}
+async function ensureSupabaseClient(){
+  if(db?.auth)return db;
+  if(supabaseInitPromise)return supabaseInitPromise;
+  supabaseInitPromise=(async()=>{
+    if(!window.supabase?.createClient)throw new Error('Bulut giriş sistemi yüklenemedi. İnternet bağlantını kontrol edip sayfayı yenile.');
+    const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+    if(!client?.auth)throw new Error('Bulut giriş sistemi başlatılamadı. Sayfayı yenileyip tekrar dene.');
+    db=client;
+    return client;
+  })();
+  try{return await supabaseInitPromise}
+  catch(error){db=null;throw error}
+  finally{supabaseInitPromise=null}
+}
+async function initSupabase(){
+  try{
+    setAuthBusy(true);
+    const client=await ensureSupabaseClient();
+    const {data,error}=await client.auth.getSession();
+    if(error)throw error;
+    await handleSession(data?.session||null);
+    client.auth.onAuthStateChange((_event,session)=>setTimeout(()=>handleSession(session),0));
+  }catch(error){
+    console.error('Supabase başlatma hatası:',error);
+    setSync('Bulut bağlantısı yok','error');
+    const message=$('authMessage');
+    if(message){message.textContent=error?.message||'Bulut giriş sistemi başlatılamadı.';message.className='auth-message bad'}
+  }finally{setAuthBusy(false)}
+}
 async function handleSession(session){currentUser=session?.user||null;if(!currentUser){unsubscribeRealtime();$('cloudBar').classList.add('hidden');setSync('Giriş gerekli','offline');return}$('cloudBar').classList.remove('hidden');$('cloudUser').textContent=currentUser.email||'Karum Toto hesabı';setSync('Bağlandı','online');closeAuth();await loadCloudWeeks();subscribeRealtime()}
 function showAuth(){const logged=!!currentUser;$('authModal').classList.remove('hidden');$('authBackdrop').classList.remove('hidden');$('logoutBtn').classList.toggle('hidden',!logged);$('loginBtn').classList.toggle('hidden',logged);$('signupBtn').classList.toggle('hidden',logged);$('authEmail').value=currentUser?.email||'';$('authMessage').textContent=logged?'Bu hesapla bulut senkronizasyonu açık.':''}
 function closeAuth(){$('authModal').classList.add('hidden');$('authBackdrop').classList.add('hidden')}
 function authMessage(text,bad=false){const el=$('authMessage');el.textContent=text;el.className='auth-message '+(bad?'bad':'ok')}
-async function login(){try{authMessage('Giriş yapılıyor...');const {error}=await db.auth.signInWithPassword({email:$('authEmail').value.trim(),password:$('authPassword').value});if(error)throw error;authMessage('Giriş başarılı.')}catch(e){authMessage(e.message,true)}}
-async function signup(){try{authMessage('Hesap oluşturuluyor...');const {data,error}=await db.auth.signUp({email:$('authEmail').value.trim(),password:$('authPassword').value});if(error)throw error;authMessage(data.session?'Hesap oluşturuldu ve giriş yapıldı.':'Hesap oluşturuldu. E-postandaki onay bağlantısına basıp giriş yap.')}catch(e){authMessage(e.message,true)}}
-async function logout(){await db.auth.signOut();cloudWeeks=[];$('weekSelect').innerHTML='<option value="">Hafta seç</option>';authMessage('Çıkış yapıldı.');closeAuth()}
+async function login(){
+  try{
+    setAuthBusy(true);authMessage('Giriş yapılıyor...');
+    const client=await ensureSupabaseClient();
+    const email=$('authEmail').value.trim(),password=$('authPassword').value;
+    if(!email||!password)throw new Error('E-posta ve şifre alanlarını doldur.');
+    const {error}=await client.auth.signInWithPassword({email,password});
+    if(error)throw error;authMessage('Giriş başarılı.');
+  }catch(e){authMessage(e?.message||'Giriş yapılamadı.',true)}finally{setAuthBusy(false)}
+}
+async function signup(){
+  try{
+    setAuthBusy(true);authMessage('Hesap oluşturuluyor...');
+    const client=await ensureSupabaseClient();
+    const email=$('authEmail').value.trim(),password=$('authPassword').value;
+    if(!email||!password)throw new Error('E-posta ve şifre alanlarını doldur.');
+    if(password.length<6)throw new Error('Şifre en az 6 karakter olmalı.');
+    const {data,error}=await client.auth.signUp({email,password});
+    if(error)throw error;authMessage(data.session?'Hesap oluşturuldu ve giriş yapıldı.':'Hesap oluşturuldu. E-postandaki onay bağlantısına basıp giriş yap.');
+  }catch(e){authMessage(e?.message||'Kayıt oluşturulamadı.',true)}finally{setAuthBusy(false)}
+}
+async function logout(){
+  try{
+    setAuthBusy(true);const client=await ensureSupabaseClient();const {error}=await client.auth.signOut();if(error)throw error;
+    cloudWeeks=[];$('weekSelect').innerHTML='<option value="">Hafta seç</option>';authMessage('Çıkış yapıldı.');closeAuth();
+  }catch(e){authMessage(e?.message||'Çıkış yapılamadı.',true)}finally{setAuthBusy(false)}
+}
 async function loadCloudWeeks(){if(!currentUser)return;const {data,error}=await db.from('karum_weeks').select('id,week_key,week_name,file_name,payload,updated_at').order('updated_at',{ascending:false});if(error){setSync('Tablo kurulmalı','error');$('cloudInfo').textContent='Önce Supabase SQL kurulumunu çalıştır.';return}cloudWeeks=data||[];const select=$('weekSelect');select.innerHTML='<option value="">Hafta seç</option>'+cloudWeeks.map(w=>{const systems=w.payload?.systems||[];const total=systems.length?systems.reduce((n,s)=>n+(s.columns?.length||0),0):(w.payload?.columns?.length||0);return `<option value="${w.id}">${w.week_name} • ${systems.length||1} sistem • ${total} kolon</option>`}).join('');let chosen=state.cloudId&&cloudWeeks.find(w=>w.id===state.cloudId);if(!chosen&&state.weekKey)chosen=cloudWeeks.find(w=>w.week_key===state.weekKey);if(!chosen&&cloudWeeks.length)chosen=cloudWeeks[0];if(chosen)applyCloudWeek(chosen);updateDeleteWeekButton();$('cloudInfo').textContent=cloudWeeks.length?`${cloudWeeks.length} hafta kayıtlı • Anlık senkronizasyon açık`:'Henüz bulutta hafta yok. Excel yükle.'}
 function applyCloudWeek(row){if(!row?.payload)return;isApplyingRemote=true;Object.assign(state,row.payload,{cloudId:row.id,cloudUpdatedAt:row.updated_at,weekKey:row.week_key,weekName:row.week_name,fileName:row.file_name});normalizeState();saveLocal();updateHeader();renderSystems();renderMatches();calculate();$('weekSelect').value=row.id;setSync('Güncel','online');setTimeout(()=>isApplyingRemote=false,0)}
 function updateDeleteWeekButton(){const btn=$('deleteWeekBtn');if(!btn)return;btn.classList.toggle('hidden',!currentUser||!$('weekSelect').value)}
@@ -379,7 +434,7 @@ loadLocal();normalizeState();updateHeader();renderSystems();renderMatches();calc
 const closeStartupSplash=()=>{if(typeof window.__closeKarumSplash==='function'){window.__closeKarumSplash();return}const splash=$('splash');if(splash){splash.classList.add('hide');setTimeout(()=>splash.remove(),500)}};if(document.readyState==='complete')setTimeout(closeStartupSplash,100);else window.addEventListener('load',()=>setTimeout(closeStartupSplash,100),{once:true});
 
 
-// V20.0.1 — iOS/PWA güncelleme altyapısı
+// V20.0.3 — güvenli Supabase giriş ve PWA güncelleme altyapısı
 (function setupPwaUpdates(){
   if(!('serviceWorker' in navigator)) return;
   let refreshing=false;
@@ -401,7 +456,7 @@ const closeStartupSplash=()=>{if(typeof window.__closeKarumSplash==='function'){
   window.addEventListener('load', async()=>{
     button()?.addEventListener('click',applyUpdate);
     try{
-      const registration=await navigator.serviceWorker.register('./sw.js?v=20.0.1',{scope:'./',updateViaCache:'none'});
+      const registration=await navigator.serviceWorker.register('./sw.js?v=20.0.3',{scope:'./',updateViaCache:'none'});
       if(registration.waiting && navigator.serviceWorker.controller) showUpdate(registration.waiting);
       registration.addEventListener('updatefound',()=>{
         const worker=registration.installing;
