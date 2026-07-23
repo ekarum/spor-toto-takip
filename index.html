@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=14.0.0">
+  <link rel="stylesheet" href="styles.css?v=15.0.0">
   <title>Karum Toto</title>
 </head>
 <body>
@@ -87,6 +87,35 @@
   </div>
   <p id="statsSource" class="stats-source">Sonuçları telefonda seçtikçe kalan kolonlar anında hesaplanır.</p>
 
+  <section id="coveragePanel" class="coverage-panel premium-card" aria-labelledby="coverageTitle">
+    <div class="coverage-head">
+      <div><p class="section-kicker">CANLI KAPSAMA ANALİZİ</p><h2 id="coverageTitle">Kupon Sisteminin Gerçek Kapsaması</h2><p>Her 1-X-2 sonucu eşit olasılıklı kabul edilerek, yüklenen kolonların kapsadığı sonuçlar hesaplanır.</p></div>
+      <span id="coverageLiveBadge" class="coverage-live-badge">HAZIR</span>
+    </div>
+    <div id="coverageEmpty" class="coverage-empty">Analiz için kolon içeren bir Excel yükle.</div>
+    <div id="coverageContent" class="hidden">
+      <div class="coverage-prob-grid">
+        <article class="coverage-prob p15"><span>15 Bilme İhtimali</span><strong id="coverage15">%0</strong><small id="coverage15Meta">0 senaryo</small></article>
+        <article class="coverage-prob p14"><span>14+ Bilme İhtimali</span><strong id="coverage14">%0</strong><small id="coverage14Meta">0 senaryo</small></article>
+        <article class="coverage-prob p13"><span>13+ Bilme İhtimali</span><strong id="coverage13">%0</strong><small id="coverage13Meta">0 senaryo</small></article>
+        <article class="coverage-prob p12"><span>12+ Bilme İhtimali</span><strong id="coverage12">%0</strong><small id="coverage12Meta">0 senaryo</small></article>
+      </div>
+      <div class="coverage-info-grid">
+        <article><span>Yüklenen Kolon</span><strong id="coverageLoaded">0</strong></article>
+        <article><span>15 İçin Kalan Kolon</span><strong id="coverageAlive">0</strong></article>
+        <article><span>Elenen Kolon</span><strong id="coverageEliminated">0</strong></article>
+        <article><span>Kalan Maç</span><strong id="coverageRemaining">15</strong></article>
+        <article><span>Toplam Olası Senaryo</span><strong id="coverageTotalScenarios">3¹⁵</strong></article>
+        <article><span>15'i Sağlayan Senaryo</span><strong id="coverageWinningScenarios">0</strong></article>
+      </div>
+      <div class="coverage-meter-wrap">
+        <div class="coverage-meter-head"><span>15 Kapsama Oranı</span><strong id="coverageMeterText">%0</strong></div>
+        <div class="coverage-meter"><span id="coverageMeterBar" style="width:0%"></span></div>
+        <p id="coverageSummary">Sonuç girdikçe kalan maçlara göre otomatik güncellenir.</p>
+      </div>
+    </div>
+  </section>
+
   </div>
 
   <section id="matchesView" class="matches-view hidden" aria-labelledby="matchesTitle">
@@ -163,7 +192,7 @@
     </div>
   </section>
 
-  <footer>Karum Toto v14.0.0 • Hafta ve Çoklu Sistem Merkezi • by Eyüp Karum</footer>
+  <footer>Karum Toto v15.0.0 • Canlı Kapsama Analizi • by Eyüp Karum</footer>
 </main>
 
 <div id="sheetBackdrop" class="sheet-backdrop hidden" aria-hidden="true"></div>
@@ -205,7 +234,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="initial-data.js?v=14.0.0"></script>
-<script src="app.js?v=14.0.0"></script>
+<script src="initial-data.js?v=15.0.0"></script>
+<script src="app.js?v=15.0.0"></script>
 </body>
 </html>

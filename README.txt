@@ -74,3 +74,10 @@ V11.0.0 Premium Mobile UI
 
 
 V14.0.0: Aynı hafta altında birden fazla Excel/sistem, ortak maç sonuçları, sistem seçimi, tüm sistemler birleşik analizi ve sistem silme eklendi.
+
+
+V15.0.0 YENİLİKLERİ
+- Ana sayfanın altına çalışan Canlı Kapsama Analizi eklendi.
+- 15, 14+, 13+ ve 12+ olasılıkları eşit 1-X-2 senaryo uzayında tam olarak hesaplanır.
+- Girilen maç sonuçlarına göre kalan kolon, elenen kolon, kalan maç ve kalan senaryo sayıları otomatik güncellenir.
+- Hesap, kolonların Hamming mesafesi birleşimini kullanır; bahis oranı veya tahmini olasılık kullanmaz.

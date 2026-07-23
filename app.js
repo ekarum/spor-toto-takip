@@ -1,4 +1,4 @@
-const APP_VERSION='14.0.0';
+const APP_VERSION='15.0.0';
 const STORAGE_KEY='sporTotoStateV140';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
@@ -153,7 +153,65 @@ function renderMatchDetail(i){
   box.innerHTML=`<section class="detail-hero premium-card"><div class="detail-number">${i+1}</div><p>${escapeHtml(league)}</p><h2 id="matchDetailTitle">${escapeHtml(name)}</h2><div class="detail-meta">${escapeHtml(date)}${date&&time?' • ':''}${escapeHtml(time)}</div>${matchStatusHtml(i)}</section><section class="detail-card premium-card"><p class="section-kicker">CANLI DAĞILIM</p><h3>Kalan kolonlarda 1 / X / 2</h3><div class="detail-choices">${['1','X','2'].map(v=>{const c=live.counts[v],pct=live.total?Math.round(c/live.total*100):0;return `<button class="detail-choice ${state.results[i]===v?'active':''}" data-v="${v}"><b>${v}</b><strong>${c.toLocaleString('tr-TR')} kolon</strong><span>%${pct}</span><i style="--w:${pct}%"></i></button>`}).join('')}</div></section><section class="detail-grid"><article class="premium-card"><span>Güven</span><strong>%${confidence}</strong><small>${top[0]} sonucu</small></article><article class="premium-card"><span>Başlangıç Kolonu</span><strong>${all.total.toLocaleString('tr-TR')}</strong><small>Yüklenen toplam</small></article><article class="premium-card"><span>Kalan Kolon</span><strong>${live.total.toLocaleString('tr-TR')}</strong><small>Canlı durum</small></article><article class="premium-card"><span>Seçilen Sonuç</span><strong>${state.results[i]||'-'}</strong><small>${state.results[i]?'Kaydedildi':'Bekleniyor'}</small></article></section><section class="detail-comment premium-card"><p class="section-kicker">AKILLI YORUM</p><h3>${matchSmartComment(i,live)}</h3></section>`;
   box.querySelectorAll('.detail-choice').forEach(btn=>btn.onclick=()=>{const v=btn.dataset.v;lastChangedMatchIndex=i;state.results[i]=state.results[i]===v?'':v;saveLocal();calculate();renderMatches();renderMatchDetail(i);queueCloudSave()})
 }
-function calculate(){let counts={15:0,14:0,13:0,12:0,11:0};currentCategoryRows={15:[],14:[],13:[],12:[],11:[]};const entered=state.results.filter(Boolean).length;for(let idx=0;idx<state.columns.length;idx++){const col=state.columns[idx];let wrong=0;for(let i=0;i<15;i++)if(state.results[i]&&col[i]!==state.results[i])wrong++;const score=15-wrong;const category=score>=15?15:score===14?14:score===13?13:score===12?12:11;counts[category]++;currentCategoryRows[category].push([idx+1,col,wrong])}$('total').textContent=state.columns.length.toLocaleString('tr-TR');$('cost').textContent=(state.columns.length*10).toLocaleString('tr-TR')+' TL';$('s15').textContent=counts[15].toLocaleString('tr-TR');$('s14').textContent=counts[14].toLocaleString('tr-TR');$('s13').textContent=counts[13].toLocaleString('tr-TR');$('s12').textContent=counts[12].toLocaleString('tr-TR');$('s11').textContent=counts[11].toLocaleString('tr-TR');$('remaining').textContent=15-entered;const percent=Math.round((entered/15)*100);$('progressText').textContent=`${entered} / 15 maç tamamlandı`;$('progressPercent').textContent=`%${percent}`;$('progressBar').style.width=`${percent}%`;const total=counts[15]+counts[14]+counts[13]+counts[12]+counts[11];$('statsSource').textContent=total===state.columns.length?`${entered} maç seçildi • Kategoriler toplamı: ${total.toLocaleString('tr-TR')} kolon`:`Hesap kontrolü başarısız: ${total}/${state.columns.length}`;if(document.body.classList.contains('sheet-open'))renderOpenSheet();renderAnalysis()}
+
+let coverageJobToken=0;
+const PICK_DIGIT={'1':0,'X':1,'2':2};
+function formatProbability(value){
+  if(!Number.isFinite(value)||value<=0)return '%0';
+  if(value>=10)return '%'+value.toLocaleString('tr-TR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(value>=1)return '%'+value.toLocaleString('tr-TR',{minimumFractionDigits:3,maximumFractionDigits:3});
+  if(value>=0.01)return '%'+value.toLocaleString('tr-TR',{minimumFractionDigits:4,maximumFractionDigits:4});
+  return '%'+value.toLocaleString('tr-TR',{minimumFractionDigits:6,maximumFractionDigits:6});
+}
+function buildCoverageMap(columns,results){
+  const pending=[];for(let i=0;i<15;i++)if(!results[i])pending.push(i);
+  const powers=pending.map((_,i)=>3**i),bestWrong=new Map();
+  let alive=0;
+  function record(code,wrong){const old=bestWrong.get(code);if(old===undefined||wrong<old)bestWrong.set(code,wrong)}
+  for(const col of columns){
+    let knownWrong=0;for(let i=0;i<15;i++)if(results[i]&&col[i]!==results[i])knownWrong++;
+    if(knownWrong===0)alive++;
+    const budget=3-knownWrong;if(budget<0)continue;
+    let base=0;for(let p=0;p<pending.length;p++)base+=(PICK_DIGIT[col[pending[p]]]??0)*powers[p];
+    record(base,knownWrong);
+    function addMismatches(start,remainingDepth,targetDepth,code){
+      if(remainingDepth===0){record(code,knownWrong+targetDepth);return}
+      for(let p=start;p<=pending.length-remainingDepth;p++){
+        const original=PICK_DIGIT[col[pending[p]]]??0;
+        for(let alt=0;alt<3;alt++)if(alt!==original)addMismatches(p+1,remainingDepth-1,targetDepth,code+(alt-original)*powers[p]);
+      }
+    }
+    for(let d=1;d<=Math.min(budget,pending.length);d++)addMismatches(0,d,d,base);
+  }
+  const counts={15:0,14:0,13:0,12:0};
+  for(const wrong of bestWrong.values()){
+    if(wrong<=0)counts[15]++;
+    if(wrong<=1)counts[14]++;
+    if(wrong<=2)counts[13]++;
+    if(wrong<=3)counts[12]++;
+  }
+  return{pendingCount:pending.length,totalScenarios:3**pending.length,alive,eliminated:Math.max(0,columns.length-alive),counts};
+}
+function setCoverageLoading(loading){const badge=$('coverageLiveBadge');if(!badge)return;badge.textContent=loading?'HESAPLANIYOR':'CANLI';badge.classList.toggle('loading',loading)}
+function renderCoverageAnalysis(){
+  const panel=$('coveragePanel');if(!panel)return;
+  const empty=$('coverageEmpty'),content=$('coverageContent');
+  if(!state.columns.length){empty.classList.remove('hidden');content.classList.add('hidden');$('coverageLiveBadge').textContent='HAZIR';return}
+  empty.classList.add('hidden');content.classList.remove('hidden');setCoverageLoading(true);
+  const token=++coverageJobToken,columns=state.columns.map(c=>c.slice()),results=state.results.slice();
+  setTimeout(()=>{
+    if(token!==coverageJobToken)return;
+    const data=buildCoverageMap(columns,results);if(token!==coverageJobToken)return;
+    const pct=k=>data.totalScenarios?data.counts[k]/data.totalScenarios*100:0;
+    for(const k of [15,14,13,12]){$('coverage'+k).textContent=formatProbability(pct(k));$('coverage'+k+'Meta').textContent=`${data.counts[k].toLocaleString('tr-TR')} / ${data.totalScenarios.toLocaleString('tr-TR')} senaryo`}
+    $('coverageLoaded').textContent=columns.length.toLocaleString('tr-TR');$('coverageAlive').textContent=data.alive.toLocaleString('tr-TR');$('coverageEliminated').textContent=data.eliminated.toLocaleString('tr-TR');$('coverageRemaining').textContent=data.pendingCount.toLocaleString('tr-TR');$('coverageTotalScenarios').textContent=`3${toSuperscript(data.pendingCount)} = ${data.totalScenarios.toLocaleString('tr-TR')}`;$('coverageWinningScenarios').textContent=data.counts[15].toLocaleString('tr-TR');$('coverageMeterText').textContent=formatProbability(pct(15));$('coverageMeterBar').style.width=Math.min(100,pct(15))+'%';
+    const entered=15-data.pendingCount;$('coverageSummary').textContent=entered?`${entered} maç sonucu girildi. Kalan ${data.pendingCount} maçtaki ${data.totalScenarios.toLocaleString('tr-TR')} olası sonucun ${data.counts[15].toLocaleString('tr-TR')} tanesi en az bir kolonunu 15'e götürüyor.`:`Başlangıçta 14.348.907 olası sonucun ${data.counts[15].toLocaleString('tr-TR')} tanesi yüklediğin kolonlarla doğrudan 15'i buluyor.`;
+    setCoverageLoading(false);
+  },30);
+}
+function toSuperscript(number){return String(number).replace(/0/g,'⁰').replace(/1/g,'¹').replace(/2/g,'²').replace(/3/g,'³').replace(/4/g,'⁴').replace(/5/g,'⁵').replace(/6/g,'⁶').replace(/7/g,'⁷').replace(/8/g,'⁸').replace(/9/g,'⁹')}
+
+function calculate(){let counts={15:0,14:0,13:0,12:0,11:0};currentCategoryRows={15:[],14:[],13:[],12:[],11:[]};const entered=state.results.filter(Boolean).length;for(let idx=0;idx<state.columns.length;idx++){const col=state.columns[idx];let wrong=0;for(let i=0;i<15;i++)if(state.results[i]&&col[i]!==state.results[i])wrong++;const score=15-wrong;const category=score>=15?15:score===14?14:score===13?13:score===12?12:11;counts[category]++;currentCategoryRows[category].push([idx+1,col,wrong])}$('total').textContent=state.columns.length.toLocaleString('tr-TR');$('cost').textContent=(state.columns.length*10).toLocaleString('tr-TR')+' TL';$('s15').textContent=counts[15].toLocaleString('tr-TR');$('s14').textContent=counts[14].toLocaleString('tr-TR');$('s13').textContent=counts[13].toLocaleString('tr-TR');$('s12').textContent=counts[12].toLocaleString('tr-TR');$('s11').textContent=counts[11].toLocaleString('tr-TR');$('remaining').textContent=15-entered;const percent=Math.round((entered/15)*100);$('progressText').textContent=`${entered} / 15 maç tamamlandı`;$('progressPercent').textContent=`%${percent}`;$('progressBar').style.width=`${percent}%`;const total=counts[15]+counts[14]+counts[13]+counts[12]+counts[11];$('statsSource').textContent=total===state.columns.length?`${entered} maç seçildi • Kategoriler toplamı: ${total.toLocaleString('tr-TR')} kolon`:`Hesap kontrolü başarısız: ${total}/${state.columns.length}`;if(document.body.classList.contains('sheet-open'))renderOpenSheet();renderAnalysis();renderCoverageAnalysis()}
 function categoryTitle(category){return category===11?'11 ve Altı':`${category} Devam`}
 function renderCategorySheet(){const rows=currentCategoryRows[currentCategory]||[];$('sheetTitle').textContent=`${categoryTitle(currentCategory)} Kolonları`;$('sheetCount').textContent=`${rows.length.toLocaleString('tr-TR')} kolon`;const empty=$('sheetEmpty'),list=$('survivorsList');if(!rows.length){list.innerHTML='';empty.classList.remove('hidden');empty.innerHTML=`<strong>${categoryTitle(currentCategory)} kolonu yok</strong>Yeni sonuç seçildikçe bu liste otomatik güncellenir.`;return}empty.classList.add('hidden');const pending=state.results.filter(v=>!v).length;list.innerHTML=rows.map(([n,c,wrong])=>`<article class="column-card"><div class="column-card-head"><div><span class="column-number">Kolon #${n}</span><small class="column-status"><span class="error-count">${wrong} hata</span><span class="pending-count">${pending} bekliyor</span></small></div><button class="copy-column" data-column="${c.join('-')}">Kopyala</button></div><div class="column-picks">${c.map((v,i)=>{const cls=!state.results[i]?'pending-pick':state.results[i]!==v?'wrong-pick':'correct-pick';return `<span class="column-pick ${cls}" title="${!state.results[i]?'Sonuç bekleniyor':state.results[i]===v?'Doğru tahmin':'Yanlış tahmin'}">${v}</span>`}).join('')}</div></article>`).join('');list.querySelectorAll('.copy-column').forEach(btn=>btn.onclick=async()=>{try{await navigator.clipboard.writeText(btn.dataset.column);btn.textContent='Kopyalandı';btn.classList.add('copied');setTimeout(()=>{btn.textContent='Kopyala';btn.classList.remove('copied')},1000)}catch(e){alert(btn.dataset.column)}})}
 function renderRemainingMatchesSheet(){const pending=state.results.map((v,i)=>!v?i:-1).filter(i=>i>=0);$('sheetTitle').textContent='Kalan Maçlar';$('sheetCount').textContent=`${pending.length} maç`;const empty=$('sheetEmpty'),list=$('survivorsList');if(!pending.length){list.innerHTML='';empty.classList.remove('hidden');empty.innerHTML='<strong>Tüm maçlar tamamlandı</strong>Girilmeyi bekleyen maç sonucu bulunmuyor.';return}empty.classList.add('hidden');list.innerHTML=pending.map(i=>{const date=String(state.matchDates[i]||'').trim(),time=String(state.matchTimes[i]||'').trim(),status=getMatchStatus(date,time);const league=String(state.matchLeagues[i]||'').trim();return `<article class="remaining-match-card"><span class="remaining-match-no">${i+1}</span><div class="remaining-match-info"><strong>${state.matchNames[i]||`Maç ${i+1}`}</strong>${league?`<div class="remaining-league">${league}</div>`:''}<p>${date?`📅 ${date}`:''}${date&&time?' • ':''}${time?`🕒 ${time}`:''}</p>${status?`<small class="remaining-status ${status.kind}">${status.label} • ${status.text}</small>`:'<small class="remaining-status upcoming">Sonuç bekleniyor</small>'}</div></article>`}).join('')}
