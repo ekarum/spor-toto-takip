@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Karum Toto">
   <link rel="manifest" href="manifest.webmanifest">
-  <link rel="stylesheet" href="styles.css?v=15.0.0">
+  <link rel="stylesheet" href="styles.css?v=16.1.0">
   <title>Karum Toto</title>
 </head>
 <body>
@@ -123,6 +123,13 @@
       <div><p class="section-kicker">HAFTA PROGRAMI</p><h2 id="matchesTitle">15 Maç</h2><p>Maça dokunarak ayrıntılı dağılımı ve sonucu aç.</p></div>
       <button id="clearResults" class="ghost small">Temizle</button>
     </div>
+
+    <section class="live-score-panel premium-card" aria-labelledby="liveScoreTitle">
+      <div class="live-score-head">
+        <div><p class="section-kicker">API-FOOTBALL</p><h3 id="liveScoreTitle">Canlı Skor Bağlantısı</h3><p id="liveScoreStatus" class="live-score-status">Henüz canlı skor kontrolü yapılmadı.</p><small id="liveScoreMeta">API-Football bağlantısı hazır.</small></div>
+        <button id="liveScoreRefresh" class="live-score-refresh" type="button">Şimdi Kontrol Et</button>
+      </div>
+    </section>
     <div id="matches" class="matches-list"></div>
   </section>
 
@@ -235,6 +242,6 @@
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="initial-data.js?v=15.0.0"></script>
-<script src="app.js?v=15.0.0"></script>
+<script src="app.js?v=16.1.0"></script>
 </body>
 </html>
