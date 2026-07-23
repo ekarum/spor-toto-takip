@@ -1,0 +1,37 @@
+KARUM TOTO V16 — API-FOOTBALL CANLI SKOR KURULUMU
+
+API_FOOTBALL_KEY secret'ını eklediğin için ilk adım tamam.
+
+1) Bilgisayarında Supabase CLI yoksa kur:
+   npm install -g supabase
+
+2) Bu ZIP'i aç ve terminali Spor_Toto_Safari_V7 klasöründe aç.
+
+3) Supabase hesabına giriş yap:
+   supabase login
+
+4) Projeyi bağla:
+   supabase link --project-ref ffnggyshacjwcdbwsazd
+
+5) Edge Function'ı yayınla:
+   supabase functions deploy live-scores
+
+6) Site dosyalarını GitHub'a yükle / mevcut dosyaların üzerine yaz:
+   index.html
+   app.js
+   styles.css
+   sw.js
+   manifest.webmanifest
+   initial-data.js
+
+ÇALIŞMA KURALI
+- İlk maç başladıktan sonra otomatik kontrol eder.
+- Eşleşen 15 maçın fixture ID'leri hafta kaydında saklanır.
+- En az bir maç zamanı gelmişse 15 dakikada bir toplu sorgu yapar.
+- Yeni başlayan maç için “Şimdi Kontrol Et” düğmesi kullanılabilir.
+- Maç FT/AET/PEN olduğunda sonucu otomatik 1 / X / 2 olarak kaydeder.
+- Canlı Kapsama Analizi otomatik yeniden hesaplanır.
+
+NOT
+Otomatik 15 dakikalık kontrol, Karum Toto sayfası en az bir cihazda açıkken çalışır.
+Arka planda site kapalıyken çalışacak sunucu cron sistemi ayrı bir sonraki adımdır.
