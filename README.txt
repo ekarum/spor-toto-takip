@@ -1,6 +1,11 @@
-KARUM TOTO V18.0.0 - BAĞIMSIZ KARUM ZEKA VE TAHMİN ROBOTU
+KARUM TOTO V18.1.0 - BAĞIMSIZ KARUM ZEKA VE TAHMİN ROBOTU
 
-V18 değişiklikleri:
+V18.1 DÜZELTMESİ:
+- Tahmin Robotu açıldığında Karum Zeka ekranının üstte görünmesi düzeltildi.
+- Her alt menü sekmesi artık diğer ekranlardan tamamen izole çalışır.
+- Görünüm geçişleri aria-hidden ve güçlü CSS kurallarıyla güvenli hale getirildi.
+
+V18.1 değişiklikleri:
 - Karum Zeka ana sayfadan kaldırıldı; yalnızca alt menü sekmesinden açılır.
 - Tahmini İkramiye Motoru Karum Zeka içinden çıkarıldı.
 - Alt menüye bağımsız Tahmin Robotu sekmesi eklendi.

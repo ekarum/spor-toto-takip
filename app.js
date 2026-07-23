@@ -1,4 +1,4 @@
-const APP_VERSION='18.0.0';
+const APP_VERSION='18.1.0';
 const STORAGE_KEY='sporTotoStateV140';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
@@ -241,17 +241,28 @@ function renderKarumZeka(){
 let currentMatchDetailIndex=null;
 function showView(view,remember=true){
   const ids=['homeView','matchesView','matchDetailView','analysisView','karumZekaView','predictionRobotView'];
-  ids.forEach(id=>$(id)?.classList.add('hidden'));
-  let active='home';
-  if(view==='karumzeka'){$('karumZekaView').classList.remove('hidden');renderKarumZeka();active='smart'}
-  else if(view==='prediction'){$('predictionRobotView').classList.remove('hidden');renderPrizeEstimate();bindPrizeModel();active='prediction'}
-  else if(view==='analysis'){$('analysisView').classList.remove('hidden');renderAnalysis();active='analysis'}
-  else if(view==='matches'){$('matchesView').classList.remove('hidden');renderMatches();active='matches'}
-  else if(view==='detail'){$('matchDetailView').classList.remove('hidden');renderMatchDetail(currentMatchDetailIndex);active='matches'}
-  else {$('homeView').classList.remove('hidden');active='home'}
+  ids.forEach(id=>{
+    const el=$(id);
+    if(!el)return;
+    el.classList.add('hidden');
+    el.classList.remove('view-enter');
+    el.setAttribute('aria-hidden','true');
+  });
+  let active='home',targetId='homeView';
+  if(view==='karumzeka'){targetId='karumZekaView';renderKarumZeka();active='smart'}
+  else if(view==='prediction'){targetId='predictionRobotView';renderPrizeEstimate();bindPrizeModel();active='prediction'}
+  else if(view==='analysis'){targetId='analysisView';renderAnalysis();active='analysis'}
+  else if(view==='matches'){targetId='matchesView';renderMatches();active='matches'}
+  else if(view==='detail'){targetId='matchDetailView';renderMatchDetail(currentMatchDetailIndex);active='matches'}
+  else view='home';
+  const target=$(targetId);
+  if(target){
+    target.classList.remove('hidden');
+    target.setAttribute('aria-hidden','false');
+    requestAnimationFrame(()=>target.classList.add('view-enter'));
+  }
   setActiveNav(active);
   if(remember&&view!=='detail')localStorage.setItem(LAST_VIEW_KEY,view||'home');
-  requestAnimationFrame(()=>document.querySelector(`#${view==='karumzeka'?'karumZekaView':view==='prediction'?'predictionRobotView':view==='analysis'?'analysisView':view==='matches'?'matchesView':'homeView'}`)?.classList.add('view-enter'));
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function liveColumns(){return state.columns.filter(col=>state.results.every((r,i)=>!r||col[i]===r))}

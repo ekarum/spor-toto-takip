@@ -408,3 +408,16 @@ footer{color:#53627a;font-size:10px;padding-top:8px}
 .bottom-nav{grid-template-columns:repeat(6,1fr)!important;width:min(700px,calc(100% - 14px))!important}
 .nav-item em{font-size:7px!important}.nav-item .nav-icon{font-size:18px!important}
 @media(max-width:430px){.bottom-nav{gap:0!important;padding-left:3px!important;padding-right:3px!important}.nav-item{padding-left:1px!important;padding-right:1px!important}.nav-item em{font-size:6.4px!important}.robot-hero{align-items:flex-start}.robot-badge{font-size:7px}}
+
+
+/* V18.1 görünüm izolasyonu: aktif olmayan ekranlar kesin olarak gizlenir. */
+#homeView.hidden,
+#matchesView.hidden,
+#matchDetailView.hidden,
+#analysisView.hidden,
+#karumZekaView.hidden,
+#predictionRobotView.hidden,
+#kzContent.hidden,
+.prize-tab-page.hidden {
+  display: none !important;
+}
