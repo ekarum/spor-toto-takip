@@ -1,4 +1,4 @@
-const APP_VERSION='19.0.0';
+const APP_VERSION='19.0.1';
 const STORAGE_KEY='sporTotoStateV140';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
@@ -494,7 +494,7 @@ loadLocal();normalizeState();updateHeader();renderSystems();renderMatches();calc
 window.addEventListener('load',()=>{const splash=$('splash');if(splash){setTimeout(()=>splash.classList.add('hide'),650);setTimeout(()=>splash.remove(),1150)}});
 
 
-// V19.0.0 — iOS/PWA güncelleme altyapısı
+// V19.0.1 — iOS/PWA güncelleme altyapısı
 (function setupPwaUpdates(){
   if(!('serviceWorker' in navigator)) return;
   let refreshing=false;
@@ -516,7 +516,7 @@ window.addEventListener('load',()=>{const splash=$('splash');if(splash){setTimeo
   window.addEventListener('load', async()=>{
     button()?.addEventListener('click',applyUpdate);
     try{
-      const registration=await navigator.serviceWorker.register('./sw.js?v=19.0.0',{scope:'./',updateViaCache:'none'});
+      const registration=await navigator.serviceWorker.register('./sw.js?v=19.0.1',{scope:'./',updateViaCache:'none'});
       if(registration.waiting && navigator.serviceWorker.controller) showUpdate(registration.waiting);
       registration.addEventListener('updatefound',()=>{
         const worker=registration.installing;

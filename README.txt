@@ -1,4 +1,4 @@
-KARUM TOTO V19.0.0
+KARUM TOTO V19.0.1
 
 V19 PWA / iPhone düzeltmeleri:
 - Geçerli manifest.webmanifest oluşturuldu.
