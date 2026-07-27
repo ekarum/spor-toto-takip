@@ -1,4 +1,4 @@
-const APP_VERSION='20.1.1';
+const APP_VERSION='20.3.0';
 const STORAGE_KEY='sporTotoStateV140';
 const SUPABASE_URL='https://ffnggyshacjwcdbwsazd.supabase.co';
 const SUPABASE_KEY='sb_publishable_oVFfgUEbWsQbpoLF1ftRLw_NOUwrKH4';
@@ -221,18 +221,41 @@ function matchSmartComment(i,distribution){
   return 'Kolonlar bu maçta dengeli dağılmış. Haftanın kritik maçlarından biri.';
 }
 
+function getMatchImpact(distribution){
+  if(!distribution.total)return 0;
+  const values=['1','X','2'].map(v=>distribution.counts[v]/distribution.total);
+  const max=Math.max(...values),min=Math.min(...values);
+  return Math.max(0,Math.min(100,Math.round((max-min)*100+max*35)));
+}
+function getMatchIntelligence(i,distribution){
+  if(!distribution.total)return 'Bu maç için aktif kolon bulunmuyor.';
+  const ranked=['1','X','2'].map(v=>({pick:v,count:distribution.counts[v]})).sort((a,b)=>b.count-a.count);
+  const top=ranked[0], pct=Math.round(top.count/distribution.total*100);
+  if(state.results[i])return `${state.results[i]} sonucu girildi. Kalan kolon dağılımı yeniden hesaplandı.`;
+  if(pct>=75)return `Kalan kuponların %${pct} kadarı ${top.pick} sonucunda birleşiyor; bu sonuç sistemi güçlü biçimde koruyor.`;
+  if(pct>=55)return `${top.pick} sonucu ${top.count.toLocaleString('tr-TR')} kuponla önde. Alternatif sonuçlarda kayıp riski artıyor.`;
+  return `Kuponlar 1 / X / 2 arasında dengeli. Bu maç haftanın kritik karşılaşmalarından biri.`;
+}
 function renderMatches(){
   const box=$('matches'); if(!box)return; box.innerHTML='';
+  const live=liveColumns();
+  const statusCounts={finished:0,live:0,upcoming:0};
+  const impacts=[];
+  state.matchNames.forEach((_,i)=>{const st=getMatchStatus(state.matchDates[i],state.matchTimes[i]);if(st?.kind in statusCounts)statusCounts[st.kind]++;const d=getPickDistribution(i,live);impacts.push(getMatchImpact(d))});
+  const averageImpact=impacts.length?Math.round(impacts.reduce((a,b)=>a+b,0)/impacts.length):0;
+  const overview=document.createElement('section');overview.className='matches-overview-v2';
+  overview.innerHTML=`<article><span>Toplam Maç</span><strong>${state.matchNames.length}</strong></article><article class="done"><span>✓ Tamamlandı</span><strong>${statusCounts.finished}</strong></article><article class="playing"><span>▶ Devam Eden</span><strong>${statusCounts.live}</strong></article><article><span>◷ Başlamadı</span><strong>${statusCounts.upcoming}</strong></article><article class="impact"><span>Ortalama Sistem Etkisi</span><strong>%${averageImpact}</strong></article>`;
+  box.appendChild(overview);
   state.matchNames.forEach((name,i)=>{
     const d=document.createElement('article'),status=getMatchStatus(state.matchDates[i],state.matchTimes[i]);
-    d.className=`match match-list-card${status?.kind==='finished'?' match-finished':''}`;d.dataset.matchIndex=i;
+    d.className=`match match-list-card match-card-v2 ${status?.kind||'unknown'}${status?.kind==='finished'?' match-finished':''}`;d.dataset.matchIndex=i;
     const league=String(state.matchLeagues[i]||'').trim(),date=String(state.matchDates[i]||'').trim(),time=String(state.matchTimes[i]||'').trim();
-    const distribution=getPickDistribution(i,liveColumns());
-    d.innerHTML=`<div class="match-list-top"><span class="match-no">${i+1}</span><div class="match-list-info"><small>${league||'Spor Toto'}</small><strong>${name||'Maç '+(i+1)}</strong><span>${date||'Tarih yok'}${time?' • '+time:''}</span></div><span class="match-list-arrow">›</span></div><div class="match-list-status">${matchStatusHtml(i)}</div><div class="choices compact">${['1','X','2'].map(v=>{const count=distribution.counts[v],percent=distribution.total?Math.round(count/distribution.total*100):0;return `<button class="choice ${state.results[i]===v?'active':''}" data-i="${i}" data-v="${v}"><span class="choice-value">${v}</span><small class="choice-count">${count.toLocaleString('tr-TR')}</small><small class="choice-percent">%${percent}</small></button>`}).join('')}</div>`;
-    d.addEventListener('click',e=>{if(e.target.closest('.choice'))return;currentMatchDetailIndex=i;showView('detail');setActiveNav('matches')});
+    const distribution=getPickDistribution(i,live),impact=getMatchImpact(distribution);
+    d.innerHTML=`<div class="match-main-v2"><div class="match-identity-v2"><span class="match-no-v2">${i+1}</span><div><small>${escapeHtml(league||'Spor Toto')}</small><strong>${escapeHtml(name||'Maç '+(i+1))}</strong><span>▣ ${escapeHtml(date||'Tarih yok')}${time?' • '+escapeHtml(time):''}</span>${status?`<em class="status-pill-v2 ${status.kind}">${status.kind==='live'?'● ':status.kind==='finished'?'✓ ':'◷ '}${status.label}${status.text?' · '+status.text.replace(/^⏳\s*/,''):''}</em>`:''}</div></div><div class="choices-v2">${['1','X','2'].map(v=>{const count=distribution.counts[v],percent=distribution.total?Math.round(count/distribution.total*100):0;return `<button class="choice-v2 pick-${v==='X'?'x':v} ${state.results[i]===v?'active':''}" data-i="${i}" data-v="${v}"><span class="selected-check">✓</span><b>${v}</b><strong>%${percent}</strong><i><span style="width:${percent}%"></span></i><small>${count.toLocaleString('tr-TR')} kupon</small></button>`}).join('')}</div><div class="impact-v2" style="--impact:${impact*3.6}deg"><div><strong>%${impact}</strong></div><span>Sistem Etkisi</span></div><span class="match-list-arrow-v2">⌄</span></div><div class="karum-strip-v2"><b>🧠 KARUM ZEKA:</b><span>${getMatchIntelligence(i,distribution)}</span><button type="button">Detay ›</button></div>`;
+    d.addEventListener('click',e=>{if(e.target.closest('.choice-v2'))return;currentMatchDetailIndex=i;showView('detail');setActiveNav('matches')});
     box.appendChild(d)
   });
-  box.querySelectorAll('.choice').forEach(b=>b.onclick=e=>{e.stopPropagation();const i=+b.dataset.i,v=b.dataset.v;lastChangedMatchIndex=i;state.results[i]=state.results[i]===v?'':v;saveLocal();renderMatches();calculate();queueCloudSave()})
+  box.querySelectorAll('.choice-v2').forEach(b=>b.onclick=e=>{e.stopPropagation();const i=+b.dataset.i,v=b.dataset.v;lastChangedMatchIndex=i;state.results[i]=state.results[i]===v?'':v;saveLocal();renderMatches();calculate();queueCloudSave()})
 }
 function renderMatchDetail(i){
   if(i==null||i<0||i>14)return;

@@ -1,12 +1,12 @@
-const CACHE_VERSION='karum-toto-v20.1.1';
+const CACHE_VERSION='karum-toto-v20.3.0';
 const APP_SHELL=[
   './',
   './index.html',
-  './styles.css?v=20.1.1',
-  './app.js?v=20.1.1',
-  './initial-data.js?v=20.1.1',
-  './manifest.webmanifest?v=20.1.1',
-  './apple-touch-icon.png?v=20.1.1',
+  './styles.css?v=20.3.0',
+  './app.js?v=20.3.0',
+  './initial-data.js?v=20.3.0',
+  './manifest.webmanifest?v=20.3.0',
+  './apple-touch-icon.png?v=20.3.0',
   './karum-logo-192.png',
   './karum-logo-512.png'
 ];
