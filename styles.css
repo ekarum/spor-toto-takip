@@ -412,3 +412,9 @@ main.app > #karumZekaView:not(.hidden) { min-height: 0; }
 .pwa-update-banner.hidden{display:none!important}
 .pwa-update-banner div{display:grid;gap:2px}.pwa-update-banner strong{color:#fff;font-size:14px}.pwa-update-banner span{color:#aeb8c6;font-size:12px}.pwa-update-banner button{border:0;border-radius:12px;padding:10px 14px;background:#f4bf3f;color:#111827;font-weight:800;cursor:pointer}
 
+
+/* V20.2 Karum Zeka - dört ayrı derece grubu */
+.kz-exact-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.kz-exact-card{padding:18px;border:1px solid rgba(130,153,184,.18);border-radius:18px;background:rgba(255,255,255,.025)}
+.kz-exact-top{display:flex;align-items:center;gap:13px}.kz-exact-top>span{width:48px;height:48px;display:grid;place-items:center;border-radius:15px;background:#14263d;font-size:22px;font-weight:950}.kz-exact-top small{display:block;color:var(--muted);font-size:10px;font-weight:900;letter-spacing:.04em}.kz-exact-top strong{display:block;margin-top:4px;font-size:25px}.kz-exact-top strong em{font-size:11px;color:var(--muted);font-style:normal}.kz-exact-bar{height:6px;margin:15px 0 12px;border-radius:999px;background:#0a1727;overflow:hidden}.kz-exact-bar i{display:block;height:100%;border-radius:inherit;background:currentColor}.kz-exact-card p{min-height:42px;margin:0;color:#c3cfdd;font-size:12px;line-height:1.55}.kz-exact-card footer{margin-top:12px;color:var(--muted);font-size:10px}.kz-exact-card.degree-15{color:#55e69a;border-color:rgba(85,230,154,.24)}.kz-exact-card.degree-14{color:#55a7ff;border-color:rgba(85,167,255,.24)}.kz-exact-card.degree-13{color:#f0c84b;border-color:rgba(240,200,75,.24)}.kz-exact-card.degree-12{color:#ff9b54;border-color:rgba(255,155,84,.24)}
+@media(max-width:720px){.kz-exact-grid{grid-template-columns:1fr}.kz-exact-card p{min-height:0}}
